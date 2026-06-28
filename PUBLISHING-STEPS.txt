@@ -1,0 +1,11 @@
+SPRITES COLLECTION TRACKER v1.28 — GITHUB PAGES
+
+1. Extract this ZIP.
+2. Create a public GitHub repository named sprites-collection-tracker.
+3. Upload every extracted file to the repository's top level.
+4. Commit the files.
+5. Go to Settings > Pages.
+6. Select Deploy from a branch > main > /(root), then Save.
+
+PRIVACY BEFORE UPLOADING
+Use a brand-only GitHub account or make sure the account profile does not show your real name, personal photo, location, website, or public email. Turn on GitHub's “Keep my email addresses private” option before the first upload. The GitHub username will appear in the public repository and website address.
