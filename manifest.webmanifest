@@ -1,25 +1,36 @@
 {
-  "name": "Sprites Collection Tracker",
-  "short_name": "Sprites Tracker",
-  "description": "A mobile-friendly Sprites collection tracker.",
   "id": "./",
+  "name": "Fortnite Sprites Collection Tracker",
+  "short_name": "Sprite Tracker",
+  "description": "Track, level, showcase, save, and share your Fortnite Sprites collection.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#070a12",
-  "theme_color": "#ffffff",
+  "orientation": "any",
+  "background_color": "#080b14",
+  "theme_color": "#080b14",
+  "categories": [
+    "games",
+    "utilities"
+  ],
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
