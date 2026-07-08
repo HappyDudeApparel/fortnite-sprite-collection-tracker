@@ -1,36 +1,27 @@
 {
-  "id": "./",
-  "name": "Fortnite Sprites Collection Tracker",
-  "short_name": "Sprite Tracker",
-  "description": "Track, level, showcase, save, and share your Fortnite Sprites collection.",
-  "start_url": "./",
+  "name": "HappyDudeCo's Sprite Collection Locker",
+  "short_name": "Sprites Locker",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#080b14",
-  "theme_color": "#080b14",
-  "categories": [
-    "games",
-    "utilities"
-  ],
+  "background_color": "#071226",
+  "theme_color": "#071226",
   "icons": [
     {
       "src": "assets/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "assets/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "assets/icons/icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
