@@ -1,6 +1,5 @@
 {
-  "version": "1.0.44-public-locker-fixes",
-  "date": "2026-07-11",
-  "build": "Public-clean Locker family/logo/layout correction pass",
-  "notes": "Uses the exact crown-face logo everywhere, lists Dash and Superman as separate base sprites, keeps Air variants grouped correctly, prevents Locker clipping, and moves the live Export button below the Fortnite Sprites logo."
+  "version": "1.0.54",
+  "published": "2026-07-15",
+  "url": "https://sprites.happydude.ca/"
 }
