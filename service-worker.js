@@ -1,4 +1,4 @@
-const APP_VERSION = '1.0.54';
+const APP_VERSION = '2.0.5';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = [
   './',
@@ -11,11 +11,9 @@ const APP_SHELL = [
   './assets/icons/icon-512.png',
   './assets/icons/icon-maskable-512.png'
 ];
-
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
 });
-
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
@@ -23,16 +21,13 @@ self.addEventListener('activate', event => {
       .then(() => self.clients.claim())
   );
 });
-
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
-
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
-
   if (event.request.mode === 'navigate') {
     event.respondWith(
       caches.match('./index.html').then(cached => cached || fetch(event.request).then(response => {
@@ -43,7 +38,6 @@ self.addEventListener('fetch', event => {
     );
     return;
   }
-
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
       if (response && response.status === 200 && response.type === 'basic') {
