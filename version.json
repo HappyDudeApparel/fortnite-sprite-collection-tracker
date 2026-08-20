@@ -1,5 +1,5 @@
 {
-  "version": "2.0.15",
+  "version": "2.0.16",
   "published": "2026-08-20",
-  "notes": "C7S4 launch: new default C7S4 tab with 36 live sprites (12 Base/Cheat/Gold families), independent C7S3 117-sprite progress, global Locker expanded, C7S3 roster corrected, John Wick base-only, scale normalization retained, Legacy unchanged and C7S3-only."
+  "notes": "Mobile refinement: edit control moved beside Install/+ without logo overlap, tighter C7S4 row spacing, empty detail-view rail removed, polished C7S4 Base/Cheat/Gold genre markers. No theme or collection-operation changes."
 }
