@@ -1,43 +1,22 @@
 name: Bootstrap v2.0.17 isolated build
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/build-v2017-bootstrap.yml
   pull_request:
     branches:
       - main
 jobs:
-  build:
+  package:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           ref: build-v2-0-17-temp-20260821
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install requests
       - run: |
-          python - <<'PY'
-          from pathlib import Path
-          p=Path('build_v2017.py')
-          s=p.read_text()
-          start=s.index('asset_urls = sorted(set(re.findall(')
-          end=s.index('\nif len(asset_urls)', start)
-          fixed='asset_urls = sorted(set(re.findall(r\'https://fortnite[.]gg/img/x/sprites/icons/[^\"]+\', source)))'
-          p.write_text(s[:start]+fixed+s[end:])
-          PY
-          python build_v2017.py
-      - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html 404.html service-worker.js version.json qa-baseline-v2016.html
-          git commit -m "Built v2.0.17 QA artifacts [skip ci]" || true
-          git push origin HEAD:build-v2-0-17-temp-20260821
+          grep -q "const APP_VERSION='2.0.17'" index.html
+          grep -q '"version": "2.0.17"' version.json
+          grep -q "const APP_VERSION = '2.0.17'" service-worker.js
+          if grep -Rni --include='index.html' --include='404.html' --include='service-worker.js' --include='version.json' 'fortnite.gg' .; then exit 1; fi
+          mkdir -p dist
+          zip -9 -j dist/Sprite-Collection-Locker-v2.0.17-GitHub-overwrite.zip index.html 404.html service-worker.js version.json
       - uses: actions/upload-artifact@v4
         with:
           name: v2017-qa-bundle
