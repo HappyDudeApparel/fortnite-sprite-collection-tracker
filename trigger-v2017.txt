@@ -1,1 +1,1 @@
-trigger 2026-08-21 corrected full Sprite URL extraction
+trigger 2026-08-21 final QA artifact package
