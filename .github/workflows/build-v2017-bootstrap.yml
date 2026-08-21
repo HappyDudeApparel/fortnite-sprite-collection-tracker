@@ -1,0 +1,27 @@
+name: Bootstrap v2.0.17 isolated build
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/build-v2017-bootstrap.yml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: build-v2-0-17-temp-20260821
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - run: python build_v2017.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html 404.html service-worker.js version.json qa-baseline-v2016.html
+          git commit -m "Built v2.0.17 QA artifacts [skip ci]"
+          git push origin HEAD:build-v2-0-17-temp-20260821
