@@ -22,7 +22,15 @@ jobs:
           python-version: '3.12'
       - run: pip install requests
       - run: |
-          sed -i "s/!= 43/!= 33/; s/Expected 43 runtime/Expected 33 runtime/" build_v2017.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('build_v2017.py')
+          s=p.read_text()
+          start=s.index('asset_urls = sorted(set(re.findall(')
+          end=s.index('\nif len(asset_urls)', start)
+          fixed='asset_urls = sorted(set(re.findall(r\'https://fortnite[.]gg/img/x/sprites/icons/[^\"]+\', source)))'
+          p.write_text(s[:start]+fixed+s[end:])
+          PY
           python build_v2017.py
       - run: |
           git config user.name "github-actions[bot]"
