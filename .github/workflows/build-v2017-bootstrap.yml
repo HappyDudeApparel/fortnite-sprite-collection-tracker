@@ -5,6 +5,9 @@ on:
       - main
     paths:
       - .github/workflows/build-v2017-bootstrap.yml
+  pull_request:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
