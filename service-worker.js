@@ -1,4 +1,4 @@
-const APP_VERSION = '2.0.16';
+const APP_VERSION = '2.0.17';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = [
   './',
@@ -27,20 +27,6 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  if (url.hostname === 'fortnite.gg' && url.pathname.startsWith('/img/x/sprites/icons/')) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then(async cache => {
-        const cached = await cache.match(event.request);
-        if (cached) return cached;
-        const response = await fetch(event.request);
-        if (response && (response.ok || response.type === 'opaque')) {
-          await cache.put(event.request, response.clone());
-        }
-        return response;
-      })
-    );
-    return;
-  }
   if (url.origin !== self.location.origin) return;
   if (event.request.mode === 'navigate') {
     event.respondWith(

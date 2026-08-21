@@ -1,5 +1,5 @@
 {
-  "version": "2.0.16",
-  "published": "2026-08-20",
-  "notes": "Mobile refinement: edit control moved beside Install/+ without logo overlap, tighter C7S4 row spacing, empty detail-view rail removed, polished C7S4 Base/Cheat/Gold genre markers. No theme or collection-operation changes."
+  "version": "2.0.17",
+  "published": "2026-08-21",
+  "notes": "Five-step Sprite leveling with direct level selection, safe saved-progress migration, and fully self-contained Sprite artwork."
 }
