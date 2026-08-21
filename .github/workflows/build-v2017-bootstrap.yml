@@ -6,24 +6,34 @@ on:
 jobs:
   package:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           ref: build-v2-0-17-temp-20260821
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python patch_v2017_c7s3.py
       - run: |
           grep -q "const APP_VERSION='2.0.17'" index.html
           grep -q '"version": "2.0.17"' version.json
           grep -q "const APP_VERSION = '2.0.17'" service-worker.js
+          grep -q "function isLevelInteractive(s){return isCollectible(s)}" index.html
           if grep -Rni --include='index.html' --include='404.html' --include='service-worker.js' --include='version.json' 'fortnite.gg' .; then exit 1; fi
-          mkdir -p dist
-          zip -9 -j dist/Sprite-Collection-Locker-v2.0.17-GitHub-overwrite.zip index.html 404.html service-worker.js version.json
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html 404.html
+          git diff --cached --quiet || git commit -m "Enable v2.0.17 leveling for all live C7S3 Sprites [skip ci]"
+          git push origin HEAD:build-v2-0-17-temp-20260821
       - uses: actions/upload-artifact@v4
         with:
-          name: v2017-qa-bundle
+          name: v2017-final-qa-bundle
           path: |
             dist/Sprite-Collection-Locker-v2.0.17-GitHub-overwrite.zip
             index.html
             404.html
             service-worker.js
             version.json
-            qa-baseline-v2016.html
