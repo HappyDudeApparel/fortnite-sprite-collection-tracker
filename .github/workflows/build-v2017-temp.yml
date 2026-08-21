@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -14,16 +16,13 @@ jobs:
           python-version: '3.12'
       - run: pip install requests
       - run: python build_v2017.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html 404.html service-worker.js version.json qa-baseline-v2016.html
+          git commit -m "Built v2.0.17 QA artifacts [skip ci]"
+          git push
       - uses: actions/upload-artifact@v4
         with:
           name: v2017-package
           path: dist/Sprite-Collection-Locker-v2.0.17-GitHub-overwrite.zip
-      - uses: actions/upload-artifact@v4
-        with:
-          name: v2017-built-files
-          path: |
-            index.html
-            404.html
-            service-worker.js
-            version.json
-            qa-baseline-v2016.html
