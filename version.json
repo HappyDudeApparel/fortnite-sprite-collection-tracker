@@ -1,5 +1,5 @@
 {
-  "version": "2.0.17",
-  "published": "2026-08-21",
-  "notes": "Five-step Sprite leveling with direct level selection, safe saved-progress migration, and fully self-contained Sprite artwork."
+  "version": "2.0.18",
+  "published": "2026-08-28",
+  "notes": "C7S4 detail refresh: verified Sprite Dust summon costs, Very Rare chest-chance labeling, and updated one-win Crown mastery wording. No Sprite, artwork, layout, or tracker-function changes."
 }
