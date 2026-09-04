@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.20 — 2026-09-03
+- Expanded C7S4 permanent catalogue from 36 to 61 counting entries across 16 families.
+- Added Mega Man, Overshield, X-Ray, and Onigiri families with verified v42.10 powers and finished embedded artwork.
+- Added Loot Hacker as a C7S4 variant row and catalogued every finished Loot Hacker asset immediately under the permanent inclusion rule, regardless of current obtainability.
+- Added verified v42.10 Sprite Dust summon costs and mastered resummon display at 50% of the base cost.
+- Added the verified Loot Hacker perk: increased chance of items spawning from Loot Hacks.
+- Preserved Very Rare for unpublished Sprite Chest rates.
+- Carried forward the detail-card cleanup: full text wrapping, dynamic fact boxes, and duplicate-description suppression while keeping the rainbow power/bonus treatment.
+- All Sprite artwork remains self-contained in the HTML; no fortnite.gg or other runtime asset dependency was introduced.
+
 ## 2.0.18 — 2026-08-28
 - Updated all 36 C7S4 Sprite Dust summon costs to current family/variant values.
 - Replaced C7S4 placeholder Sprite Chest `0%` values with `Very Rare`.
