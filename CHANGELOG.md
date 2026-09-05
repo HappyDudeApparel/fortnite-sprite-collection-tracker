@@ -1,7 +1,7 @@
 ## v2.0.22 — 2026-09-04
-- Preserved all v2.0.21 Sprite data, 61-entry C7S4 catalogue and Base/Cheat/Hacker/Gold layout.
-- Moved embedded artwork into deterministic local `assets/embedded/` files with no external runtime dependency.
-- Added local asset manifest/offline caching support and reduced HTML size for direct GitHub-connected updates.
+- Preserved v2.0.21 data, 61 C7S4 entries and Base/Cheat/Hacker/Gold layout.
+- Moved embedded artwork into deterministic local repository assets; no external runtime image dependency.
+- Reduced HTML size for direct GitHub-connected maintenance.
 
 ## 2.0.21 — 2026-09-04
 - Fixed C7S4 main collection grid to use four aligned variant columns: Base, Cheat Master, Loot Hacker, Gold.

@@ -13,22 +13,7 @@ const APP_SHELL = [
   './assets/icons/icon-maskable-512.png'
 ];
 self.addEventListener('install', event => {
-  event.waitUntil((async () => {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(APP_SHELL);
-    try {
-      const response = await fetch('./asset-manifest.json', {cache:'no-store'});
-      if (response.ok) {
-        const manifest = await response.json();
-        const assets = Array.isArray(manifest.assets) ? manifest.assets : [];
-        for (let i = 0; i < assets.length; i += 40) {
-          await cache.addAll(assets.slice(i, i + 40).map(path => './' + path));
-        }
-      }
-    } catch (err) {
-      console.warn('Asset pre-cache deferred; runtime cache remains available.', err);
-    }
-  })());
+  event.waitUntil((async()=>{const cache=await caches.open(CACHE_NAME);await cache.addAll(APP_SHELL);try{const r=await fetch('./asset-manifest.json',{cache:'no-store'});if(r.ok){const m=await r.json();const a=Array.isArray(m.assets)?m.assets:[];for(let i=0;i<a.length;i+=40)await cache.addAll(a.slice(i,i+40).map(p=>'./'+p));}}catch(e){console.warn('Asset pre-cache deferred',e);}})());
 });
 self.addEventListener('activate', event => {
   event.waitUntil(
