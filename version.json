@@ -1,5 +1,5 @@
 {
-  "version": "2.0.22",
-  "published": "2026-09-04",
-  "notes": "Local-asset architecture migration preserving the complete v2.0.21 catalogue and UI while making future GitHub-connected updates directly maintainable."
+  "version": "2.0.23",
+  "published": "2026-09-05",
+  "notes": "C7S4 portrait layout fix: four compact Base/Cheat/Hacker/Gold lanes now remain aligned in one row, matching the compact C7S3 spacing approach; detail variants corrected to four lanes as well."
 }

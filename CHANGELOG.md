@@ -1,3 +1,9 @@
+## v2.0.23 — 2026-09-05
+- Fixed the later-loading mobile C7S4 CSS that still hard-coded three variant lanes.
+- Portrait now keeps Base, Cheat, Hacker, and Gold in one compact horizontal row with the same tight spacing approach used by C7S3.
+- Corrected the C7S4 detail variant rail from three lanes to four.
+- No Sprite data, artwork, totals, progress, leveling, or saved-state changes.
+
 ## v2.0.22 — 2026-09-04
 - Preserved v2.0.21 data, 61 C7S4 entries and Base/Cheat/Hacker/Gold layout.
 - Moved embedded artwork into deterministic local repository assets; no external runtime image dependency.
