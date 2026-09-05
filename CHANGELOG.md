@@ -1,3 +1,6 @@
+## v2.0.24 — 2026-09-05
+- Removed the three unverified Mega Man variant silhouette placeholders. Mega Man remains Base-only; no catalogue/count/progress data changed.
+
 ## v2.0.23 — 2026-09-05
 - Fixed the later-loading mobile C7S4 CSS that still hard-coded three variant lanes.
 - Portrait now keeps Base, Cheat, Hacker, and Gold in one compact horizontal row with the same tight spacing approach used by C7S3.

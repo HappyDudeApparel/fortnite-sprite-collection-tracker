@@ -1,5 +1,5 @@
 {
-  "version": "2.0.23",
+  "version": "2.0.24",
   "published": "2026-09-05",
-  "notes": "C7S4 portrait layout fix: four compact Base/Cheat/Hacker/Gold lanes now remain aligned in one row, matching the compact C7S3 spacing approach; detail variants corrected to four lanes as well."
+  "notes": "Mega Man cleanup: removed unverified Cheat Master, Loot Hacker, and Gold silhouette placeholders while preserving Mega Man Base and all C7S4 catalogue counts/data."
 }
