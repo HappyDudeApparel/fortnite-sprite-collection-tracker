@@ -1,0 +1,50 @@
+name: Remove Mega Man silhouettes v2.0.24
+on:
+  push:
+    paths:
+      - '.github/workflows/remove-megaman-silhouettes-v2024.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and apply approved cleanup
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+          files=[Path('index.html'),Path('404.html')]
+          originals=[p.read_text() for p in files]
+          if originals[0] != originals[1]: raise SystemExit('index/404 differ before edit')
+          s=originals[0]
+          # Mega Man is the sole C7S4 Base-only family. Hide empty placeholder cells only for this family,
+          # preserving the four-column alignment used by all other C7S4 families.
+          css='''\n/* v2.0.24: Mega Man is Base-only; suppress unverified variant silhouettes without collapsing the C7S4 grid. */\n.season-c7s4 .familyRow:has(.familyName:is([data-family="Mega Man"],[data-name="Mega Man"])),\n.season-c7s4 .familyRow[data-family="Mega Man"]{--mega-man-base-only:1}\n.season-c7s4 .familyRow:has(.familyName:is([data-family="Mega Man"],[data-name="Mega Man"])) .variantCell:not(:has(img[src])),\n.season-c7s4 .familyRow[data-family="Mega Man"] .variantCell:not(:has(img[src])){visibility:hidden;pointer-events:none}\n'''
+          # Also cover the actual generated family markup by class/text via a tiny runtime marker, without touching data/counts.
+          js='''\n<script>/* v2.0.24 Mega Man Base-only presentation */\naddEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.season-c7s4 .familyRow').forEach(r=>{const n=r.querySelector('.familyName,.familyTitle,.familyLabel');if(n&&n.textContent.trim().toLowerCase().includes('mega man')){r.classList.add('megaManBaseOnly');const cells=[...r.querySelectorAll('.variantCell,.variantSlot,.spriteCell')];cells.slice(1).forEach(c=>{if(!c.querySelector('img[src]')){c.style.visibility='hidden';c.style.pointerEvents='none'}})}})});\n</script>\n'''
+          css += '.season-c7s4 .familyRow.megaManBaseOnly .variantCell:not(:first-of-type),.season-c7s4 .familyRow.megaManBaseOnly .variantSlot:not(:first-of-type){visibility:hidden;pointer-events:none}\n'
+          if '</style>' in s: s=s.replace('</style>',css+'</style>',1)
+          else: raise SystemExit('no style close')
+          if '</body>' in s: s=s.replace('</body>',js+'</body>',1)
+          else: raise SystemExit('no body close')
+          s=s.replace('2.0.23','2.0.24')
+          for p in files: p.write_text(s)
+          if files[0].read_bytes()!=files[1].read_bytes(): raise SystemExit('index/404 differ after edit')
+          # Preserve catalogue/counting data: this is presentation-only.
+          if "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']" not in s: raise SystemExit('C7S4 variant architecture changed')
+          v=Path('version.json'); d=json.loads(v.read_text()); d['version']='2.0.24'; d['published']='2026-09-05'; d['notes']='Mega Man cleanup: removed unverified Cheat Master, Loot Hacker, and Gold silhouette placeholders while preserving Mega Man Base and all C7S4 catalogue counts/data.'; v.write_text(json.dumps(d,indent=2)+'\n')
+          sw=Path('service-worker.js'); t=sw.read_text(); t=t.replace("APP_VERSION='2.0.23'","APP_VERSION='2.0.24'").replace('APP_VERSION = \'2.0.23\'','APP_VERSION = \'2.0.24\'').replace('2.0.23','2.0.24'); sw.write_text(t)
+          ch=Path('CHANGELOG.md'); old=ch.read_text(); ch.write_text('## v2.0.24 — 2026-09-05\n- Removed the three unverified Mega Man variant silhouette placeholders. Mega Man remains Base-only; no catalogue/count/progress data changed.\n\n'+old)
+          PY
+          git add index.html 404.html version.json service-worker.js CHANGELOG.md
+          git diff --cached --check
+          git commit -m "Release v2.0.24 Mega Man Base-only cleanup"
+          git push origin main
