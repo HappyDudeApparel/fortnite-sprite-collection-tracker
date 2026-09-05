@@ -1,0 +1,171 @@
+name: One-time v2.0.22 local asset migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/migrate-v2022-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build v2.0.22 from verified v2.0.21 package
+        shell: bash
+        env:
+          PACKAGE_URL: https://d2ol7oe51mr4n9.cloudfront.net/user_3BMXpheeptMzHvfe5a79t42NvXk/2eca328d-55b1-408c-bfeb-b8ef4315bc4f.zip
+          PACKAGE_SHA256: cb585f300397c141d7e4ebb2c966eb57ee0c657ae31966082ce029f20c498241
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/scl-v2021 /tmp/scl-v2021.zip
+          curl -fL "$PACKAGE_URL" -o /tmp/scl-v2021.zip
+          echo "$PACKAGE_SHA256  /tmp/scl-v2021.zip" | sha256sum -c -
+          mkdir -p /tmp/scl-v2021
+          unzip -q /tmp/scl-v2021.zip -d /tmp/scl-v2021
+          SRC="$(find /tmp/scl-v2021 -type f -name index.html -printf '%h\n' | head -n1)"
+          test -n "$SRC"
+          for f in index.html 404.html service-worker.js version.json CHANGELOG.md; do
+            test -f "$SRC/$f"
+            cp "$SRC/$f" "$f"
+          done
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, json, re
+
+          root = Path('.')
+          out = root / 'assets' / 'embedded'
+          out.mkdir(parents=True, exist_ok=True)
+
+          # Deterministic local filenames mean index.html and 404.html can share
+          # the same assets and future updates only need to add genuinely new art.
+          pat = re.compile(r'data:image/([A-Za-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)')
+          written = {}
+          extmap = {
+              'jpeg': 'jpg', 'jpg': 'jpg', 'png': 'png', 'webp': 'webp',
+              'gif': 'gif', 'svg+xml': 'svg', 'avif': 'avif'
+          }
+
+          def localize(text):
+              def repl(m):
+                  mime = m.group(1).lower()
+                  raw = base64.b64decode(m.group(2))
+                  digest = hashlib.sha256(raw).hexdigest()
+                  ext = extmap.get(mime, re.sub(r'[^a-z0-9]+', '-', mime).strip('-') or 'bin')
+                  rel = f'assets/embedded/{digest[:20]}.{ext}'
+                  p = root / rel
+                  if not p.exists():
+                      p.write_bytes(raw)
+                  written[rel] = len(raw)
+                  return rel
+              return pat.sub(repl, text)
+
+          for name in ('index.html', '404.html'):
+              p = root / name
+              text = p.read_text(encoding='utf-8')
+              text = localize(text)
+              text = text.replace('2.0.21', '2.0.22')
+              p.write_text(text, encoding='utf-8')
+
+          if (root/'index.html').read_bytes() != (root/'404.html').read_bytes():
+              raise SystemExit('QA failed: index.html and 404.html diverged')
+
+          # Keep the HTML connector-friendly. The old files were ~27 MB each.
+          html_size = (root/'index.html').stat().st_size
+          if html_size > 3_000_000:
+              raise SystemExit(f'QA failed: refactored HTML still too large: {html_size}')
+
+          # Record every localized image so the service worker can pre-cache them,
+          # preserving the self-contained/offline behavior of the embedded build.
+          assets = sorted(str(p.as_posix()) for p in out.iterdir() if p.is_file())
+          manifest = {'version':'2.0.22','assets':assets}
+          (root/'asset-manifest.json').write_text(json.dumps(manifest, separators=(',',':')), encoding='utf-8')
+
+          # Version metadata.
+          vp = root/'version.json'
+          v = json.loads(vp.read_text(encoding='utf-8'))
+          v['version'] = '2.0.22'
+          v['published'] = '2026-09-04'
+          v['notes'] = ('Repository architecture migration: preserves the complete v2.0.21 catalogue/UI while moving embedded Sprite/background/UI artwork into local repo assets for smaller, directly maintainable HTML. No external runtime assets.')
+          vp.write_text(json.dumps(v, indent=2) + '\n', encoding='utf-8')
+
+          cp = root/'CHANGELOG.md'
+          old = cp.read_text(encoding='utf-8')
+          entry = ('## v2.0.22 — 2026-09-04\n'
+                   '- Preserved all v2.0.21 Sprite data, 61-entry C7S4 catalogue, four-column Base/Cheat/Hacker/Gold layout, details and progress behavior.\n'
+                   '- Moved embedded image bytes into deterministic local `assets/embedded/` files; no Fortnite.gg, wiki, CDN or other runtime dependency.\n'
+                   '- Added local asset manifest/service-worker pre-cache support so installed/offline behavior remains self-contained.\n'
+                   '- Reduced duplicate giant HTML payloads so future GitHub-connected updates can be committed directly.\n\n')
+          cp.write_text(entry + old, encoding='utf-8')
+
+          print('Localized assets:', len(assets))
+          print('Refactored HTML bytes:', html_size)
+          PY
+
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('service-worker.js')
+          s=p.read_text(encoding='utf-8').replace("const APP_VERSION = '2.0.21';", "const APP_VERSION = '2.0.22';")
+          s=s.replace("  './version.json',", "  './version.json',\n  './asset-manifest.json',")
+          old="""self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+});"""
+          new="""self.addEventListener('install', event => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(APP_SHELL);
+    try {
+      const response = await fetch('./asset-manifest.json', {cache:'no-store'});
+      if (response.ok) {
+        const manifest = await response.json();
+        const assets = Array.isArray(manifest.assets) ? manifest.assets : [];
+        for (let i = 0; i < assets.length; i += 40) {
+          await cache.addAll(assets.slice(i, i + 40).map(path => './' + path));
+        }
+      }
+    } catch (err) {
+      console.warn('Asset pre-cache deferred; runtime cache remains available.', err);
+    }
+  })());
+});"""
+          if old not in s:
+              raise SystemExit('QA failed: expected service-worker install block not found')
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          PY
+
+          # Hard QA: source package changes are present, no external Sprite hotlinks,
+          # four C7S4 columns remain, and all localized asset references resolve.
+          python3 - <<'PY'
+          from pathlib import Path
+          import json, re
+          html=Path('index.html').read_text(encoding='utf-8')
+          checks={
+            'v2022':'2.0.22' in html,
+            '61_count':'61' in html,
+            'four_variants':"const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']" in html,
+            'four_grid':'repeat(4,minmax' in html,
+            'no_fortnite_gg':'fortnite.gg' not in html.lower(),
+          }
+          refs=set(re.findall(r'assets/embedded/[0-9a-f]{20}\.[a-z0-9-]+',html))
+          missing=[r for r in refs if not Path(r).is_file()]
+          if missing: raise SystemExit('QA failed: missing localized assets')
+          if not all(checks.values()): raise SystemExit('QA failed: '+repr(checks))
+          if len(refs) < 200: raise SystemExit(f'QA failed: suspiciously low localized asset count {len(refs)}')
+          print('QA',checks,'asset refs',len(refs))
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html 404.html service-worker.js version.json CHANGELOG.md asset-manifest.json assets/embedded
+          git commit -m 'Release v2.0.22 and migrate embedded artwork to local assets'
+          git push origin HEAD:main
