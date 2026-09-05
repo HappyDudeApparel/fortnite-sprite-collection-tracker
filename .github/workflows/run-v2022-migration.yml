@@ -1,0 +1,81 @@
+name: Run v2.0.22 local asset migration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/run-v2022-migration.yml
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PACKAGE_URL: https://d2ol7oe51mr4n9.cloudfront.net/user_3BMXpheeptMzHvfe5a79t42NvXk/2eca328d-55b1-408c-bfeb-b8ef4315bc4f.zip
+      PACKAGE_SHA256: cb585f300397c141d7e4ebb2c966eb57ee0c657ae31966082ce029f20c498241
+    steps:
+      - name: Build and publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          curl -fL "$PACKAGE_URL" -o /tmp/v2021.zip
+          echo "$PACKAGE_SHA256  /tmp/v2021.zip" | sha256sum -c -
+          rm -rf /tmp/v2021 && mkdir -p /tmp/v2021
+          unzip -q /tmp/v2021.zip -d /tmp/v2021
+          SRC="$(find /tmp/v2021 -type f -name index.html -printf '%h\n' | head -n1)"
+          test -n "$SRC"
+          cp "$SRC/index.html" index.html
+          cp "$SRC/404.html" 404.html
+          cp "$SRC/service-worker.js" service-worker.js
+          cp "$SRC/version.json" version.json
+          cp "$SRC/CHANGELOG.md" CHANGELOG.md
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,json,re
+          root=Path('.'); out=root/'assets'/'embedded'; out.mkdir(parents=True,exist_ok=True)
+          pat=re.compile(r'data:image/([A-Za-z0-9.+-]+);base64,([A-Za-z0-9+/=]+)')
+          ext={'jpeg':'jpg','jpg':'jpg','png':'png','webp':'webp','gif':'gif','svg+xml':'svg','avif':'avif'}
+          def conv(text):
+              def sub(m):
+                  raw=base64.b64decode(m.group(2)); h=hashlib.sha256(raw).hexdigest(); e=ext.get(m.group(1).lower(),'bin')
+                  rel=f'assets/embedded/{h[:20]}.{e}'; p=root/rel
+                  if not p.exists(): p.write_bytes(raw)
+                  return rel
+              return pat.sub(sub,text)
+          for n in ('index.html','404.html'):
+              p=root/n; p.write_text(conv(p.read_text(encoding='utf-8')).replace('2.0.21','2.0.22'),encoding='utf-8')
+          if (root/'index.html').read_bytes()!=(root/'404.html').read_bytes(): raise SystemExit('index/404 mismatch')
+          if (root/'index.html').stat().st_size>3000000: raise SystemExit('HTML remains too large')
+          assets=sorted(str(p.as_posix()) for p in out.iterdir() if p.is_file())
+          if len(assets)<200: raise SystemExit(f'too few localized assets: {len(assets)}')
+          (root/'asset-manifest.json').write_text(json.dumps({'version':'2.0.22','assets':assets},separators=(',',':')),encoding='utf-8')
+          v=json.loads((root/'version.json').read_text(encoding='utf-8')); v['version']='2.0.22'; v['published']='2026-09-04'; v['notes']='Local-asset architecture migration preserving the complete v2.0.21 catalogue and UI while making future GitHub-connected updates directly maintainable.'
+          (root/'version.json').write_text(json.dumps(v,indent=2)+'\n',encoding='utf-8')
+          c=root/'CHANGELOG.md'; old=c.read_text(encoding='utf-8'); c.write_text('## v2.0.22 — 2026-09-04\n- Preserved v2.0.21 data, 61 C7S4 entries and Base/Cheat/Hacker/Gold layout.\n- Moved embedded artwork into deterministic local repository assets; no external runtime image dependency.\n- Reduced HTML size for direct GitHub-connected maintenance.\n\n'+old,encoding='utf-8')
+          html=(root/'index.html').read_text(encoding='utf-8')
+          if "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']" not in html: raise SystemExit('variant QA failed')
+          if 'repeat(4,minmax' not in html: raise SystemExit('grid QA failed')
+          if 'fortnite.gg' in html.lower(): raise SystemExit('external dependency QA failed')
+          print('localized assets',len(assets),'html bytes',(root/'index.html').stat().st_size)
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('service-worker.js'); s=p.read_text(encoding='utf-8')
+          s=s.replace("const APP_VERSION = '2.0.21';","const APP_VERSION = '2.0.22';")
+          s=s.replace("  './version.json',","  './version.json',\n  './asset-manifest.json',")
+          old="self.addEventListener('install', event => {\n  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));\n});"
+          new="self.addEventListener('install', event => {\n  event.waitUntil((async()=>{const cache=await caches.open(CACHE_NAME);await cache.addAll(APP_SHELL);try{const r=await fetch('./asset-manifest.json',{cache:'no-store'});if(r.ok){const m=await r.json();const a=Array.isArray(m.assets)?m.assets:[];for(let i=0;i<a.length;i+=40)await cache.addAll(a.slice(i,i+40).map(p=>'./'+p));}}catch(e){console.warn('Asset pre-cache deferred',e);}})());\n});"
+          if old not in s: raise SystemExit('service-worker QA failed')
+          p.write_text(s.replace(old,new),encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html 404.html service-worker.js version.json CHANGELOG.md asset-manifest.json assets/embedded
+          git commit -m 'Release v2.0.22 with local maintainable assets'
+          git push origin main
