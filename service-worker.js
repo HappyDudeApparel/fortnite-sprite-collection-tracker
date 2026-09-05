@@ -1,10 +1,11 @@
-const APP_VERSION = '2.0.20';
+const APP_VERSION = '2.0.22';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
   './version.json',
+  './asset-manifest.json',
   './assets/icons/favicon-32.png',
   './assets/icons/apple-touch-icon.png',
   './assets/icons/icon-192.png',
@@ -12,7 +13,22 @@ const APP_SHELL = [
   './assets/icons/icon-maskable-512.png'
 ];
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(APP_SHELL);
+    try {
+      const response = await fetch('./asset-manifest.json', {cache:'no-store'});
+      if (response.ok) {
+        const manifest = await response.json();
+        const assets = Array.isArray(manifest.assets) ? manifest.assets : [];
+        for (let i = 0; i < assets.length; i += 40) {
+          await cache.addAll(assets.slice(i, i + 40).map(path => './' + path));
+        }
+      }
+    } catch (err) {
+      console.warn('Asset pre-cache deferred; runtime cache remains available.', err);
+    }
+  })());
 });
 self.addEventListener('activate', event => {
   event.waitUntil(

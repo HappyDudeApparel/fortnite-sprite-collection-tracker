@@ -1,3 +1,14 @@
+## v2.0.22 — 2026-09-04
+- Preserved all v2.0.21 Sprite data, 61-entry C7S4 catalogue and Base/Cheat/Hacker/Gold layout.
+- Moved embedded artwork into deterministic local `assets/embedded/` files with no external runtime dependency.
+- Added local asset manifest/offline caching support and reduced HTML size for direct GitHub-connected updates.
+
+## 2.0.21 — 2026-09-04
+- Fixed C7S4 main collection grid to use four aligned variant columns: Base, Cheat Master, Loot Hacker, Gold.
+- Removed the accidental fourth-item wrap that placed Gold beneath the family column.
+- Updated C7S4 detail variant grid to four columns, including mobile sizing.
+- No Sprite data, artwork, totals, progress, leveling, or saved-state changes.
+
 # Changelog
 
 ## 2.0.20 — 2026-09-03

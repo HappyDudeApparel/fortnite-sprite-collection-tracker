@@ -1,5 +1,5 @@
 {
-  "version": "2.0.20",
-  "published": "2026-09-03",
-  "notes": "v42.10 catalogue expansion: 61 C7S4 counting entries across 16 families, Loot Hacker row with every finished asset embedded locally, X-Ray/Onigiri/Mega Man/Overshield data, verified v42.10 summon costs and mastered half-cost resummon detail, and non-truncating de-duplicated featured details."
+  "version": "2.0.22",
+  "published": "2026-09-04",
+  "notes": "Repository architecture migration: preserves v2.0.21 while moving embedded artwork into local repo assets for smaller directly maintainable HTML. No external runtime assets."
 }
