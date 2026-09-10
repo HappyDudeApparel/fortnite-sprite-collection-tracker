@@ -1,3 +1,8 @@
+## 2.0.27 — 2026-09-10
+- Fixed portrait-only family artwork/name overlap by increasing internal label clearance; landscape remains untouched.
+- Added an explicit non-regression rule: unrelated updates must not alter known-good layouts, orientations, data, artwork mappings, or interactions.
+- Preserved all 15 live Loot Hacker variants and the publish-immediately asset rule.
+
 ## 2.0.26 — 2026-09-10
 - Marked Jonesy, Adventure, Bush, Sonic, Tails, Shadow, 8-Bit, Jackrabbit, Killswitch, Klombo, Overshield, X-Ray, Onigiri, and Storm Scout Loot Hacker variants live.
 - Validated all 14 entries have distinct finished local artwork before publication; Crown remains live, completing 15 Loot Hacker variants.

@@ -1,5 +1,5 @@
 {
-  "version": "2.0.26",
+  "version": "2.0.27",
   "published": "2026-09-10",
-  "notes": "All 15 Loot Hacker variants are live in the tracker. The 14 September 10 variants use their existing finished local artwork and default verified Hacker details; future confirmed Sprite assets are to be pushed immediately with default details until refined."
+  "notes": "Portrait-only UI repair: increased the internal family artwork/name clearance so large family art no longer overlaps labels. Landscape geometry and all Sprite data/artwork/release states are unchanged; all 15 Loot Hacker variants remain live."
 }

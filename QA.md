@@ -1,3 +1,9 @@
+# Non-regression rule — 2026-09-10
+
+- Never change or break a working layout, orientation, feature, dataset, artwork mapping, or interaction as collateral to an unrelated update.
+- UI fixes must be scoped to the failing breakpoint/orientation/component and guarded against changes to known-good states.
+- New confirmed Sprite/variant + finished artwork remains publish-immediately with safe/default details until refined.
+
 # Current publication rule — 2026-09-10
 
 - When a new Sprite/variant is confirmed and finished artwork is available, publish it to the live tracker immediately.
