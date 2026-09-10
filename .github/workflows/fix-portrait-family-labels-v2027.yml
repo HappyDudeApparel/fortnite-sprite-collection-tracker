@@ -1,0 +1,57 @@
+name: Fix portrait family label clearance v2.0.27
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-portrait-family-labels-v2027.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Apply portrait-only clearance without touching landscape or Sprite data
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          git config user.name 'Sprite Locker Update Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+          VERSION='2.0.27'
+          marker='/* v2.0.27 portrait-only family-art/name clearance */'
+          css='''\n/* v2.0.27 portrait-only family-art/name clearance */\n@media (max-width:700px) and (orientation:portrait){\n  .familyHero{grid-template-columns:120px minmax(0,1fr)!important;gap:8px!important}\n}\n'''
+          for name in ('index.html','404.html'):
+              p=Path(name); s=p.read_text(encoding='utf-8')
+              if 'Sprite Collection Locker — v2.0.26' not in s: raise SystemExit(f'{name}: expected v2.0.26 missing')
+              if '.familyHero{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:18px' not in s: raise SystemExit(f'{name}: base familyHero guard failed')
+              if marker in s: raise SystemExit(f'{name}: patch already present')
+              if '</style>' not in s: raise SystemExit(f'{name}: style close missing')
+              s=s.replace('</style>',css+'</style>',1)
+              s=s.replace('Sprite Collection Locker — v2.0.26',f'Sprite Collection Locker — v{VERSION}',1)
+              s=s.replace("const APP_VERSION='2.0.26'",f"const APP_VERSION='{VERSION}'",1)
+              p.write_text(s,encoding='utf-8')
+          if Path('index.html').read_bytes()!=Path('404.html').read_bytes(): raise SystemExit('index/404 mismatch')
+          html=Path('index.html').read_text(encoding='utf-8')
+          for sid in [237,238,239,240,241,242,243,244,245,246,247,248,252,256,260]:
+              m=re.search(r'\{"id":%d,.*?\}'%sid,html)
+              if not m or '"variantKey":"Hacker"' not in m.group(0) or '"releaseState":"released"' not in m.group(0): raise SystemExit(f'Loot Hacker live guard failed: {sid}')
+          if "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']" not in html: raise SystemExit('C7S4 architecture guard failed')
+          if "const legacySprites=[SPRITES.find(s=>s.name==='Dash Sprite')" in html: raise SystemExit('removed Legacy row restored')
+          vp=Path('version.json'); v=json.loads(vp.read_text()); v.update(version=VERSION,published='2026-09-10',notes='Portrait-only UI repair: increased the internal family artwork/name clearance so large family art no longer overlaps labels. Landscape geometry and all Sprite data/artwork/release states are unchanged; all 15 Loot Hacker variants remain live.'); vp.write_text(json.dumps(v,indent=2)+'\n')
+          sw=Path('service-worker.js'); t=sw.read_text(); t,n=re.subn(r"const APP_VERSION = '[^']+';",f"const APP_VERSION = '{VERSION}';",t,count=1); assert n==1; sw.write_text(t)
+          am=Path('asset-manifest.json'); d=json.loads(am.read_text()); d['version']=VERSION; am.write_text(json.dumps(d,separators=(',',':')))
+          qa=Path('QA.md'); old=qa.read_text(); rule='''# Non-regression rule — 2026-09-10\n\n- Never change or break a working layout, orientation, feature, dataset, artwork mapping, or interaction as collateral to an unrelated update.\n- UI fixes must be scoped to the failing breakpoint/orientation/component and guarded against changes to known-good states.\n- New confirmed Sprite/variant + finished artwork remains publish-immediately with safe/default details until refined.\n\n''';
+          if '# Non-regression rule — 2026-09-10' not in old: qa.write_text(rule+old)
+          ch=Path('CHANGELOG.md'); old=ch.read_text(); entry='''## 2.0.27 — 2026-09-10\n- Fixed portrait-only family artwork/name overlap by increasing internal label clearance; landscape remains untouched.\n- Added an explicit non-regression rule: unrelated updates must not alter known-good layouts, orientations, data, artwork mappings, or interactions.\n- Preserved all 15 live Loot Hacker variants and the publish-immediately asset rule.\n\n'''; ch.write_text(entry+old)
+          Path('.github/workflows/fix-portrait-family-labels-v2027.yml').unlink(missing_ok=True)
+          PY
+          git add index.html 404.html version.json service-worker.js asset-manifest.json CHANGELOG.md QA.md .github/workflows/fix-portrait-family-labels-v2027.yml
+          git diff --cached --check
+          git commit -m 'release: portrait non-regression fix v2.0.27'
+          git push origin HEAD:main
+# trigger
