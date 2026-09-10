@@ -1,0 +1,66 @@
+name: Publish live Loot Hacker variants v2.0.26
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/apply-v2.0.26-live-loot-hackers.yml']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Validate assets, mark all Loot Hackers live, publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          git config user.name 'Sprite Locker Update Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+          VERSION='2.0.26'
+          IDS=[237,238,239,240,241,242,243,244,246,247,248,252,256,260]
+          NAMES=['Jonesy','Adventure','Bush','Sonic','Tails','Shadow','8-Bit','Jackrabbit','Killswitch','Klombo','Overshield','X-Ray','Onigiri','Storm Scout']
+          def patch(name):
+              p=Path(name); s=p.read_text(encoding='utf-8')
+              if 'Sprite Collection Locker — v2.0.25' not in s: raise SystemExit(f'{name}: expected v2.0.25 title missing')
+              assets=[]
+              for sid,label in zip(IDS,NAMES):
+                  m=re.search(r'\{"id":%d,.*?\}'%sid,s)
+                  if not m: raise SystemExit(f'{name}: missing Hacker record {sid} {label}')
+                  rec=m.group(0)
+                  if '"variantKey":"Hacker"' not in rec: raise SystemExit(f'{name}: id {sid} is not Hacker')
+                  im=re.search(r'"image":"([^"]+)"',rec)
+                  if not im: raise SystemExit(f'{name}: no finished image for {label}')
+                  asset=im.group(1)
+                  if not asset.startswith('assets/embedded/') or not Path(asset).is_file() or Path(asset).stat().st_size<1000: raise SystemExit(f'{name}: invalid image for {label}: {asset}')
+                  assets.append(asset)
+                  old='"releaseState":"announced-2026-09-10"'
+                  if old not in rec: raise SystemExit(f'{name}: {label} not in expected announced state')
+                  s=s[:m.start()]+rec.replace(old,'"releaseState":"released"',1)+s[m.end():]
+              if len(set(assets))!=14: raise SystemExit(f'{name}: expected 14 distinct finished Hacker images, got {len(set(assets))}')
+              crown=re.search(r'\{"id":245,.*?\}',s)
+              if not crown or '"variantKey":"Hacker"' not in crown.group(0) or '"releaseState":"released"' not in crown.group(0): raise SystemExit(f'{name}: Crown guard failed')
+              if "const legacySprites=[SPRITES.find(s=>s.name==='Dash Sprite')" in s: raise SystemExit(f'{name}: C7S3 legacy row restored')
+              s=s.replace('Sprite Collection Locker — v2.0.25',f'Sprite Collection Locker — v{VERSION}').replace("const APP_VERSION='2.0.25'",f"const APP_VERSION='{VERSION}'")
+              p.write_text(s,encoding='utf-8')
+              print(name,'validated 14 distinct finished local Hacker assets:',*assets,sep='\n  ')
+          patch('index.html'); patch('404.html')
+          if Path('index.html').read_bytes()!=Path('404.html').read_bytes(): raise SystemExit('index/404 mismatch')
+          vp=Path('version.json'); v=json.loads(vp.read_text()); v.update(version=VERSION,published='2026-09-10',notes='All 15 Loot Hacker variants are live in the tracker. The 14 September 10 variants use their existing finished local artwork and default verified Hacker details; future confirmed Sprite assets are pushed immediately with default details until refined.'); vp.write_text(json.dumps(v,indent=2)+'\n')
+          sw=Path('service-worker.js'); t=sw.read_text(); t,n=re.subn(r"const APP_VERSION = '[^']+';",f"const APP_VERSION = '{VERSION}';",t,count=1); assert n==1; sw.write_text(t)
+          am=Path('asset-manifest.json'); d=json.loads(am.read_text()); d['version']=VERSION; am.write_text(json.dumps(d,separators=(',',':')))
+          qa=Path('QA.md'); old=qa.read_text(); rule='''# Current publication rule — 2026-09-10\n\n- When a new Sprite/variant is confirmed and finished artwork is available, publish it to the live tracker immediately.\n- Use safe/default details where exact per-Sprite metadata is not yet verified; refine those fields later without delaying the Sprite/artwork publication.\n- Do not substitute silhouettes when finished artwork is unavailable.\n\n''';
+          if '# Current publication rule — 2026-09-10' not in old: qa.write_text(rule+old)
+          ch=Path('CHANGELOG.md'); old=ch.read_text(); entry='''## 2.0.26 — 2026-09-10\n- Marked Jonesy, Adventure, Bush, Sonic, Tails, Shadow, 8-Bit, Jackrabbit, Killswitch, Klombo, Overshield, X-Ray, Onigiri, and Storm Scout Loot Hacker variants live.\n- Validated all 14 entries have distinct finished local artwork before publication; Crown remains live, completing 15 Loot Hacker variants.\n- Adopted the publication rule: confirmed Sprite + available finished asset = publish immediately with safe/default details, then refine metadata later.\n- Preserved the C7S3 Legacy-row removal while retaining Dash/Superman in Locker/preview.\n\n'''; ch.write_text(entry+old)
+          Path('.github/workflows/apply-v2.0.26-live-loot-hackers.yml').unlink(missing_ok=True)
+          PY
+          git add index.html 404.html version.json service-worker.js asset-manifest.json CHANGELOG.md QA.md .github/workflows/apply-v2.0.26-live-loot-hackers.yml
+          git diff --cached --check
+          git commit -m 'release: all Loot Hacker variants live v2.0.26'
+          git push origin HEAD:main
+# trigger
