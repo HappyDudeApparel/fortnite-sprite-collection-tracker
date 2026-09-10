@@ -1,3 +1,9 @@
+# Current publication rule — 2026-09-10
+
+- When a new Sprite/variant is confirmed and finished artwork is available, publish it to the live tracker immediately.
+- Use safe/default details where exact per-Sprite metadata is not yet verified; refine those fields later without delaying the Sprite/artwork publication.
+- Do not substitute silhouettes when finished artwork is unavailable.
+
 # v2.0.15 validation
 
 Static/data checks completed:

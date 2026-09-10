@@ -1,5 +1,5 @@
 {
-  "version": "2.0.25",
+  "version": "2.0.26",
   "published": "2026-09-10",
-  "notes": "Loot Hacker release-status update: Crown verified live; 14 remaining finished variants marked officially announced for Sept. 10. Removed the custom C7S3 Legacy row from the main collection only; Dash/Superman remain in Locker and featured preview."
+  "notes": "All 15 Loot Hacker variants are live in the tracker. The 14 September 10 variants use their existing finished local artwork and default verified Hacker details; future confirmed Sprite assets are to be pushed immediately with default details until refined."
 }

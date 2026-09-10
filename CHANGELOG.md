@@ -1,3 +1,9 @@
+## 2.0.26 — 2026-09-10
+- Marked Jonesy, Adventure, Bush, Sonic, Tails, Shadow, 8-Bit, Jackrabbit, Killswitch, Klombo, Overshield, X-Ray, Onigiri, and Storm Scout Loot Hacker variants live.
+- Validated all 14 entries have distinct finished local artwork before publication; Crown remains live, completing 15 Loot Hacker variants.
+- Adopted the publication rule: confirmed Sprite + available finished asset = publish immediately with safe/default details, then refine metadata later.
+- Preserved the C7S3 Legacy-row removal while retaining Dash/Superman in Locker/preview.
+
 ## 2.0.25 — 2026-09-10
 - Marked Loot Hacker Crown as verified released/live.
 - Marked the other 14 finished Loot Hacker variants as officially announced for Sept. 10 pending live acquisition verification.
