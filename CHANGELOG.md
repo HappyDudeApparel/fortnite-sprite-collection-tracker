@@ -1,3 +1,9 @@
+## 2.0.25 — 2026-09-10
+- Marked Loot Hacker Crown as verified released/live.
+- Marked the other 14 finished Loot Hacker variants as officially announced for Sept. 10 pending live acquisition verification.
+- Removed the custom Legacy row from the C7S3 main collection view only. Dash and Superman remain available in Locker and featured preview/detail modes.
+- Preserved C7S4 permanent catalogue totals and Mega Man Base-only treatment.
+
 ## v2.0.24 — 2026-09-05
 - Removed the three unverified Mega Man variant silhouette placeholders. Mega Man remains Base-only; no catalogue/count/progress data changed.
 

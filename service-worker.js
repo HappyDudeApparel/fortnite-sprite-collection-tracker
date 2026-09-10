@@ -1,4 +1,4 @@
-const APP_VERSION = '2.0.24';
+const APP_VERSION = '2.0.25';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = [
   './',
