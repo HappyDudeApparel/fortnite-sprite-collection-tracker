@@ -1,4 +1,4 @@
-name: Fix and browser-QA v2.0.28 C7S4 rows
+name: Isolate and browser-QA v2.0.28 without C7S3 regression
 on:
   push:
     branches: [main]
@@ -16,16 +16,47 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import re
-          p=Path('v2.0.28-preview.html');s=p.read_text();s=re.sub(r'<style id="v2028-c7s4">.*?</style>','',s,flags=re.S);s=re.sub(r'<script id="v2028-season-hook">.*?</script>','',s,flags=re.S)
-          css='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body.season-c7s4 .variantTable{overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch}</style>'''
-          hook='''<script id="v2028-season-hook">(()=>{let busy=false;function sync(){if(busy)return;busy=true;const active=[...document.querySelectorAll('.tab.active')].find(x=>/C7S[34]/.test(x.textContent)),on=!!active&&active.textContent.trim()==='C7S4';document.body.classList.toggle('season-c7s4',on);if(on){const portrait=innerWidth<900,cols=portrait?'230px repeat(5,88px)':'minmax(230px,320px) repeat(5,minmax(88px,1fr))';document.querySelectorAll('.variantLegend,.familyRow').forEach(el=>{el.style.setProperty('grid-template-columns',cols,'important');el.style.setProperty('min-width',portrait?'698px':'790px','important');el.style.setProperty('width',portrait?'698px':'100%','important')});document.querySelectorAll('.familyHero').forEach(el=>{el.style.setProperty('grid-template-columns','90px 1fr','important');el.style.setProperty('gap','18px','important')});document.querySelectorAll('.familyHero img').forEach(el=>{el.style.setProperty('width','86px','important');el.style.setProperty('height','86px','important')});document.querySelectorAll('.spriteCell').forEach(el=>{el.style.setProperty('width','88px','important');el.style.setProperty('height','92px','important')});document.querySelectorAll('.spriteCell img').forEach(el=>{el.style.setProperty('width','74px','important');el.style.setProperty('height','74px','important')})}busy=false}document.addEventListener('click',()=>setTimeout(sync,0),true);addEventListener('resize',sync);new MutationObserver(()=>setTimeout(sync,0)).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync();})();</script>'''
-          s=s.replace('</body>',css+hook+'</body>',1);p.write_text(s)
+          p=Path('v2.0.28-preview.html'); s=p.read_text()
+          # Remove every prior v2.0.28 layout hook/override. C7S3 base implementation remains exactly the live v2.0.27 implementation.
+          s=re.sub(r'<style id="v2028-c7s4">.*?</style>','',s,flags=re.S)
+          s=re.sub(r'<script id="v2028-season-hook">.*?</script>','',s,flags=re.S)
+          css='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body.season-c7s4 .variantTable{overflow-x:auto;overflow-y:clip;-webkit-overflow-scrolling:touch}body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(88px,1fr));min-width:790px}body.season-c7s4 .variantLegend{width:max(100%,790px)}body.season-c7s4 .familyRow{width:max(100%,790px)}@media(max-width:760px){body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{grid-template-columns:230px repeat(5,88px);min-width:698px;width:698px}body.season-c7s4 .familyHero{grid-template-columns:90px 1fr;gap:18px}body.season-c7s4 .familyHero img{width:86px;height:86px}body.season-c7s4 .spriteCell{width:88px;height:92px}body.season-c7s4 .spriteCell img{width:74px;height:74px}}</style>'''
+          # The hook ONLY toggles one body class. It never mutates C7S3/shared element styles.
+          hook='''<script id="v2028-season-hook">(()=>{function sync(){const a=[...document.querySelectorAll('.tab.active')].find(x=>/C7S[34]/.test(x.textContent));document.body.classList.toggle('season-c7s4',!!a&&a.textContent.trim()==='C7S4')}document.addEventListener('click',()=>setTimeout(sync,0),true);new MutationObserver(()=>setTimeout(sync,0)).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class']});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync()})();</script>'''
+          s=s.replace('</body>',css+hook+'</body>',1); p.write_text(s)
+          # Permanently record protected-surface rules in repository QA contract.
+          q=Path('QA.md'); qt=q.read_text() if q.exists() else ''
+          rule='''# Protected-surface non-regression rule — 2026-09-19\n\n- C7S3 is a frozen authority. NEVER modify C7S3 data, CSS, DOM geometry, responsive behavior, artwork, rows, labels, details, Locker behavior, or Preview behavior unless the owner explicitly requests a C7S3 change.\n- New-season work must be isolated behind season-specific state/selectors. Shared selectors may not be mutated to obtain a new-season layout.\n- Never use persistent inline style mutations on shared C7S3/C7S4 elements.\n- Every candidate changing C7S4 must browser-test C7S3 directly against the current live index.html at portrait and landscape sizes, including C7S3 -> C7S4 -> C7S3 round-trip. Any geometry/content mismatch blocks publication.\n- Existing working behavior is protected by default. If a requested change appears to require changing a protected surface, STOP and ask the owner before proceeding.\n- A QA claim may be made only for checks actually executed. Source-string assertions alone are not visual/browser QA.\n\n'''
+          if '# Protected-surface non-regression rule — 2026-09-19' not in qt:q.write_text(rule+qt)
           PY
           npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
           cat > qa.js <<'JS'
-          const {chromium}=require('playwright');(async()=>{const browser=await chromium.launch({headless:true});for(const cfg of [{name:'portrait',w:393,h:852},{name:'landscape',w:852,h:393}]){const page=await browser.newPage({viewport:{width:cfg.w,height:cfg.h}});await page.goto('file://'+process.cwd()+'/v2.0.28-preview.html');await page.waitForTimeout(400);await page.getByRole('button',{name:'C7S4',exact:true}).click();await page.waitForTimeout(350);const audit=await page.evaluate(()=>({rows:[...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null).slice(0,15).map(r=>{const b=[...r.children].map(x=>x.getBoundingClientRect());return {n:b.length,h:Math.round(r.getBoundingClientRect().height),cy:b.map(x=>Math.round(x.top+x.height/2)),left:b.map(x=>Math.round(x.left)),grid:getComputedStyle(r).gridTemplateColumns}})}));for(const [i,r] of audit.rows.entries()){if(r.n!==6)throw Error(cfg.name+' children '+i+' '+r.n);if(Math.max(...r.cy)-Math.min(...r.cy)>8)throw Error(cfg.name+' WRAP '+i+' '+JSON.stringify(r));if(r.h>125)throw Error(cfg.name+' HEIGHT '+i+' '+r.h);for(let j=1;j<r.left.length;j++)if(r.left[j]<=r.left[j-1])throw Error(cfg.name+' ORDER '+i+' '+JSON.stringify(r));}await page.screenshot({path:'qa-'+cfg.name+'.png',fullPage:true});console.log('PASS '+cfg.name,JSON.stringify(audit.rows.slice(0,2)));await page.close();}await browser.close();})();
+          const {chromium}=require('playwright');const path=require('path');
+          const url=f=>'file://'+path.join(process.cwd(),f);
+          async function snap(page,season){await page.getByRole('button',{name:season,exact:true}).click();await page.waitForTimeout(250);return await page.evaluate(()=>({legend:[...document.querySelectorAll('.variantLegend .legendItem')].filter(x=>x.offsetParent!==null).map(x=>x.textContent.trim()),rows:[...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null).map(r=>({text:r.querySelector('.familyName')?.textContent.trim(),rect:[r.getBoundingClientRect().x,r.getBoundingClientRect().y,r.getBoundingClientRect().width,r.getBoundingClientRect().height].map(Math.round),kids:[...r.children].map(x=>{let b=x.getBoundingClientRect();return [Math.round(b.x),Math.round(b.y),Math.round(b.width),Math.round(b.height)]}),hero:r.querySelector('.familyHero img')?[r.querySelector('.familyHero img').getBoundingClientRect().width,r.querySelector('.familyHero img').getBoundingClientRect().height].map(Math.round):null,imgs:[...r.querySelectorAll('.spriteCell img')].map(x=>[Math.round(x.getBoundingClientRect().width),Math.round(x.getBoundingClientRect().height)])}))}));}
+          (async()=>{const b=await chromium.launch({headless:true});for(const c of [{n:'portrait',w:393,h:852},{n:'landscape',w:852,h:393}]){let live=await b.newPage({viewport:{width:c.w,height:c.h}}),pre=await b.newPage({viewport:{width:c.w,height:c.h}});await live.goto(url('index.html'));await pre.goto(url('v2.0.28-preview.html'));await live.waitForTimeout(300);await pre.waitForTimeout(300);let authority=await snap(live,'C7S3');let initial=await snap(pre,'C7S3');if(JSON.stringify(authority)!==JSON.stringify(initial))throw Error(c.n+' C7S3 differs from LIVE before roundtrip');await snap(pre,'C7S4');let returned=await snap(pre,'C7S3');if(JSON.stringify(authority)!==JSON.stringify(returned))throw Error(c.n+' C7S3 differs from LIVE after C7S4 roundtrip');let c4=await snap(pre,'C7S4');for(let [i,r] of c4.rows.slice(0,21).entries()){if(r.kids.length!==6)throw Error(c.n+' C7S4 row '+i+' child count '+r.kids.length);let cy=r.kids.map(x=>x[1]+x[3]/2);if(Math.max(...cy)-Math.min(...cy)>8)throw Error(c.n+' C7S4 wrap '+i);if(r.hero&&r.hero.join()!= '86,86')throw Error(c.n+' C7S4 hero size '+i+' '+r.hero);if(r.imgs.some(x=>x.join()!='74,74'))throw Error(c.n+' C7S4 variant size '+i);}await pre.screenshot({path:'qa-v2028-'+c.n+'.png',fullPage:true});console.log('PASS',c.n,'C7S3 exact live geometry before/after roundtrip; C7S4 single-line geometry');await live.close();await pre.close();}await b.close()})();
           JS
           node qa.js
-          rm -f qa.js package.json package-lock.json;rm -rf node_modules
+          rm -rf node_modules package.json package-lock.json qa.js
+          # Data/detail gates: 101 C7S4 entries, local assets only, new records countable, descriptions/effects populated.
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json
+          s=Path('v2.0.28-preview.html').read_text()
+          rec=[json.loads(x) for x in re.findall(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}',s) if '"variantKey"' in x and '"image"' in x]
+          c=[r for r in rec if r.get('season')=='C7S4']
+          assert len(c)==101,len(c)
+          for r in c:
+            assert not str(r.get('image','')).startswith(('http://','https://','//')),r.get('name')
+            assert Path(r['image']).is_file(),r.get('name')
+          new=[r for r in c if r.get('variantKey')=='Bounty' or r.get('family') in ('Morgana','Birthday','Crash Bandicoot','Blinky','Pond')]
+          for r in new:
+            assert r.get('releaseState')=='released',r.get('name')
+            assert str(r.get('effect','')).strip(),('missing description/effect',r.get('name'))
+          assert len({r['image'] for r in c if r.get('variantKey')=='Bounty'})==20
+          print('PASS data/details:',len(c),'C7S4 records; 20 distinct Bounty assets; local-only; new descriptions populated')
+          PY
           git config user.name github-actions[bot];git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add v2.0.28-preview.html qa-portrait.png qa-landscape.png;git commit -m 'preview: browser-verified C7S4 single-line rows';git push origin HEAD:main
+          git add v2.0.28-preview.html QA.md qa-v2028-portrait.png qa-v2028-landscape.png
+          git commit -m 'preview: isolate C7S4 and hard-gate frozen C7S3'
+          git push origin HEAD:main
