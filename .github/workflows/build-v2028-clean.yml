@@ -1,0 +1,59 @@
+name: Build v2.0.28 clean
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-v2028-clean.yml']
+permissions: {contents: write}
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f v2.0.28-preview.html
+          cp v2.0.28-preview.html v2.0.28.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('v2.0.28.html');s=p.read_text()
+          s=s.replace('Sprite Collection Locker — v2.0.28 PREVIEW','Sprite Collection Locker — v2.0.28')
+          # Rebuild C7S4 layout from scratch at the document level. C7S3 remains governed by original CSS.
+          css='''<style id="v2028-production-layout">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body.season-c7s4 .variantTable{overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch}body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{display:grid!important;grid-template-columns:320px repeat(var(--c7s4-cols),88px)!important;grid-template-rows:auto!important;grid-auto-flow:column!important;grid-auto-columns:88px!important;gap:0!important;min-width:calc(320px + var(--c7s4-cols)*88px)!important;width:max(100%,calc(320px + var(--c7s4-cols)*88px))!important;align-items:stretch!important}body.season-c7s4 .variantLegend>*{min-width:0!important;align-self:center!important}body.season-c7s4 .familyRow>*{min-width:0!important;grid-row:1!important}body.season-c7s4 .familyHero{width:320px!important;align-self:stretch!important}body.season-c7s4 .spriteCell{width:88px!important;min-width:88px!important;height:auto!important;min-height:104px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;align-self:stretch!important}@media(max-width:760px){body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{grid-template-columns:230px repeat(var(--c7s4-cols),88px)!important;min-width:calc(230px + var(--c7s4-cols)*88px)!important;width:calc(230px + var(--c7s4-cols)*88px)!important}body.season-c7s4 .familyHero{width:230px!important}}</style>'''
+          hook='''<script id="v2028-production-hook">(()=>{function sync(){const a=[...document.querySelectorAll('.tab.active')].find(x=>/C7S[34]/.test(x.textContent));const on=!!a&&a.textContent.trim()==='C7S4';document.body.classList.toggle('season-c7s4',on);if(on){const rows=[...document.querySelectorAll('.familyRow')].filter(x=>x.offsetParent!==null);document.body.style.setProperty('--c7s4-cols',String(Math.max(0,...rows.map(r=>Math.max(0,r.children.length-1)))))}else document.body.style.removeProperty('--c7s4-cols')}document.addEventListener('click',()=>setTimeout(sync,0),true);new MutationObserver(()=>setTimeout(sync,0)).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class']});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync()})();</script>'''
+          # Remove all abandoned preview layout experiments, then install one production rule-set.
+          s=re.sub(r'<style id="v2028-c7s4">.*?</style>','',s,flags=re.S)
+          s=re.sub(r'<script id="v2028-season-hook">.*?</script>','',s,flags=re.S)
+          s=re.sub(r'<style id="v2028-production-layout">.*?</style>','',s,flags=re.S)
+          s=re.sub(r'<script id="v2028-production-hook">.*?</script>','',s,flags=re.S)
+          s=s.replace('</body>',css+hook+'</body>',1)
+          p.write_text(s)
+          PY
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > qa.js <<'JS'
+          const{chromium}=require('playwright'),path=require('path');const u=f=>'file://'+path.join(process.cwd(),f);
+          async function snap(p,season){await p.getByRole('button',{name:season,exact:true}).click();await p.waitForTimeout(350);return p.evaluate(()=>[...document.querySelectorAll('.familyRow')].filter(x=>x.offsetParent!==null).map(r=>[r.querySelector('.familyName')?.textContent.trim(),...([...r.children].map(x=>{let b=x.getBoundingClientRect();return[Math.round(b.x),Math.round(b.y),Math.round(b.width),Math.round(b.height)]}))]))}
+          ;(async()=>{let b=await chromium.launch({headless:true});for(const v of [[393,852,'portrait'],[852,393,'landscape'],[1440,900,'desktop']]){let old=await b.newPage({viewport:{width:v[0],height:v[1]}}),p=await b.newPage({viewport:{width:v[0],height:v[1]}});await old.goto(u('index.html'));await p.goto(u('v2.0.28.html'));let baseline=await snap(old,'C7S3'),frozen=await snap(p,'C7S3');if(JSON.stringify(baseline)!==JSON.stringify(frozen))throw Error(v[2]+' C7S3 regression');let c=await snap(p,'C7S4');if(!c.length)throw Error(v[2]+' no C7S4 rows');for(let i=0;i<c.length;i++){let cells=c[i].slice(2);if(!cells.length)continue;let ys=cells.map(z=>z[1]);if(Math.max(...ys)-Math.min(...ys)>2)throw Error(v[2]+' wrap row '+i);for(let j=1;j<cells.length;j++){let dx=cells[j][0]-cells[j-1][0];if(dx!==88)throw Error(v[2]+' spacing row '+i+' dx='+dx)}}await p.screenshot({path:'qa-v2028-'+v[2]+'.png',fullPage:true});console.log('PASS',v[2]);await old.close();await p.close()}await b.close()})()
+          JS
+          node qa.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json
+          s=Path('v2.0.28.html').read_text();R=[json.loads(x) for x in re.findall(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}',s) if '"variantKey"' in x and '"image"' in x];C=[r for r in R if r.get('season')=='C7S4'];assert len(C)==101,(len(C),'C7S4');B=[r for r in C if r.get('variantKey')=='Bounty'];assert len(B)==20 and len({r['image'] for r in B})==20
+          for r in C: assert not str(r.get('image','')).startswith(('http://','https://','//')) and Path(r['image']).is_file(),r
+          N=[r for r in C if r.get('variantKey')=='Bounty' or r.get('family') in ('Morgana','Birthday','Crash Bandicoot','Blinky','Pond')]
+          for r in N: assert r.get('releaseState')=='released' and str(r.get('effect','')).strip(),r
+          print('PASS data/assets/details',len(C),len(B))
+          PY
+          cp v2.0.28.html index.html
+          rm -rf node_modules package.json package-lock.json qa.js
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html v2.0.28.html qa-v2028-portrait.png qa-v2028-landscape.png qa-v2028-desktop.png
+          git commit -m 'release: v2.0.28 verified C7S4 update'
+          git push origin HEAD:main
