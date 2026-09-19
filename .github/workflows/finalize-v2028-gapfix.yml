@@ -1,0 +1,33 @@
+name: Finalize v2.0.28 gap fix
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/finalize-v2028-gapfix.yml']
+permissions: {contents: write}
+jobs:
+  final:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('v2.0.28-preview.html');s=p.read_text();old='align-items:stretch!important}body.season-c7s4 .variantLegend>*';new='align-items:stretch!important;column-gap:0!important;row-gap:0!important}body.season-c7s4 .variantLegend>*';assert old in s;s=s.replace(old,new,1);p.write_text(s)
+          PY
+          npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > q.js <<'JS'
+          const{chromium}=require('playwright'),path=require('path');const u=f=>'file://'+path.join(process.cwd(),f);async function S(p,s){await p.getByRole('button',{name:s,exact:true}).click();await p.waitForTimeout(350);return p.evaluate(()=>[...document.querySelectorAll('.familyRow')].filter(x=>x.offsetParent!==null).map(r=>({t:r.textContent,k:[...r.children].map(x=>{let b=x.getBoundingClientRect();return[Math.round(b.x),Math.round(b.y),Math.round(b.width),Math.round(b.height),getComputedStyle(x).gridRowStart]}))}))};(async()=>{let b=await chromium.launch({headless:true});for(let v of [[393,852,'portrait'],[852,393,'landscape']]){let l=await b.newPage({viewport:{width:v[0],height:v[1]}}),p=await b.newPage({viewport:{width:v[0],height:v[1]}});await l.goto(u('index.html'));await p.goto(u('v2.0.28-preview.html'));let a=await S(l,'C7S3'),x=await S(p,'C7S3');if(JSON.stringify(a)!==JSON.stringify(x))throw Error(v[2]+' C7S3 changed');let c=await S(p,'C7S4'),back=await S(p,'C7S3');if(JSON.stringify(a)!==JSON.stringify(back))throw Error(v[2]+' C7S3 roundtrip changed');c=await S(p,'C7S4');for(let[i,r]of c.entries()){let ys=r.k.map(z=>z[1]);if(Math.max(...ys)-Math.min(...ys)>2)throw Error(v[2]+' wrap '+i);if(r.k.some(z=>z[4]!=='1'))throw Error(v[2]+' gridrow '+i);let z=r.k.slice(1);for(let j=1;j<z.length;j++)if(z[j][0]-z[j-1][0]!==88)throw Error(v[2]+' spacing '+i+' '+JSON.stringify(z))}await p.screenshot({path:'qa-v2028-'+v[2]+'.png',fullPage:true});console.log('PASS '+v[2]);await l.close();await p.close()}await b.close()})()
+          JS
+          node q.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json
+          s=Path('v2.0.28-preview.html').read_text();R=[json.loads(x) for x in re.findall(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}',s) if '"variantKey"' in x and '"image"' in x];C=[r for r in R if r.get('season')=='C7S4'];assert len(C)==101;B=[r for r in C if r.get('variantKey')=='Bounty'];assert len(B)==20 and len({r['image'] for r in B})==20
+          for r in C: assert not str(r.get('image','')).startswith(('http://','https://','//')) and Path(r['image']).is_file()
+          print('PASS assets/data')
+          PY
+          rm -rf node_modules package.json package-lock.json q.js
+          git config user.name github-actions[bot];git config user.email 41898282+github-actions[bot]@users.noreply.github.com;git add v2.0.28-preview.html qa-v2028-portrait.png qa-v2028-landscape.png;git commit -m 'preview: final C7S4 row gap correction';git push origin HEAD:main
