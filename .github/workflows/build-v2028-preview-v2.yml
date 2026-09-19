@@ -1,0 +1,85 @@
+name: Build v2.0.28 exact preview v2
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-v2028-preview-v2.yml']
+permissions: {contents: write}
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - shell: bash
+        run: |
+          set -euo pipefail
+          git show 6e5dec3bfecb985a9c3a921aaa0e48dfde515015:index.html > v2.0.28-preview.html
+          rm -rf assets/preview-v2028 && mkdir -p assets/preview-v2028
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json,urllib.request,urllib.error,hashlib,html
+          S=Path('v2.0.28-preview.html').read_text(); M=re.search(r'const SPRITES=(\[.*?\]);\nconst BACKGROUNDS=',S,re.S); D=json.loads(M.group(1)); OLD=[x for x in D if x.get('season')=='C7S4']; assert len(OLD)==61
+          OIDS={x['id'] for x in OLD}; OS=json.dumps(OLD,sort_keys=True,separators=(',',':')); UA={'User-Agent':'Mozilla/5.0 SpriteCollectionLocker/2.0.28'}
+          def slug(x): return re.sub(r'[^a-z0-9]+','-',x.lower()).strip('-')
+          def get(u):
+            try:
+              with urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20) as r: return r.read()
+            except urllib.error.HTTPError as e:
+              if e.code==404:return None
+              raise
+          def prefix(f):
+            pg=f'https://spritechecklist.org/sprites/{slug(f)}/'; t=get(pg).decode('utf8','ignore')
+            # Family page itself is the identity authority. Require its labelled base image.
+            pat=r'<img[^>]+alt=["\'][^"\']*'+re.escape(f)+r' Sprite[^"\']*["\'][^>]+(?:src|data-src)=["\']([^"\']+_basic\.webp)["\']'
+            z=re.search(pat,t,re.I)
+            if not z:
+              # attribute order may be reversed
+              z=re.search(r'<img[^>]+(?:src|data-src)=["\']([^"\']+_basic\.webp)["\'][^>]+alt=["\'][^"\']*'+re.escape(f)+r' Sprite[^"\']*["\']',t,re.I)
+            if not z: raise SystemExit('NO EXACT BASE PREFIX '+f)
+            u=html.unescape(z.group(1)); u=('https://spritechecklist.org'+u) if u.startswith('/') else u
+            assert u.endswith('_basic.webp'); return u[:-len('_basic.webp')],pg
+          SUF={'Base':['basic'],'Gold':['gold'],'Cheat':['cheat','cheatmaster','cheat_master'],'Hacker':['hacker','loothacker','loot_hacker'],'Bounty':['bounty','bountyhunter','bounty_hunter']}
+          def asset(f,v):
+            pre,pg=prefixes[f]; hits=[]
+            for suf in SUF[v]:
+              u=pre+'_'+suf+'.webp'; b=get(u)
+              if b and len(b)>1500 and b.startswith(b'RIFF'): hits.append((u,b,suf))
+            if len(hits)!=1: raise SystemExit('EXACT ASSET FAIL '+f+'|'+v+' hits='+repr([(x[0],len(x[1])) for x in hits]))
+            return hits[0],pg
+          existing=sorted({x['family'] for x in OLD if x['family']!='Mega Man'}); W=[]
+          for f in ['Crash Bandicoot','Blinky','Pond','Birthday','Morgana']: W += [(f,v) for v in ['Base','Cheat','Hacker','Gold','Bounty']]
+          W += [(f,'Bounty') for f in existing]; assert len(W)==40
+          prefixes={f:prefix(f) for f,_ in W}; R={}; A=[]
+          for f,v in W:
+            (u,b,suf),pg=asset(f,v); h=hashlib.sha256(b).hexdigest(); rel='assets/preview-v2028/'+h[:20]+'.webp'; Path(rel).write_bytes(b); R[(f,v)]=(rel,h)
+            A.append({'family':f,'variant':v,'sourcePage':pg,'derivedFamilyPrefix':prefixes[f][0],'exactVariantSuffix':suf,'sourceURL':u,'sha256':h,'local':rel,'bytes':len(b)})
+          hs=[x[1] for x in R.values()]
+          if len(set(hs))!=40:
+            dup={h:[f+'|'+v for (f,v),x in R.items() if x[1]==h] for h in set(hs) if hs.count(h)>1}; raise SystemExit('DUPLICATE BINARY '+json.dumps(dup))
+          META={'Crash Bandicoot':('Legendary','While midair, perform a spin attack that damages and knocks back nearby opponents.','Spotted near high and mountainous areas','Damage increases and cooldown decreases with each Level Up!'),'Blinky':('Legendary','Taking damage cloaks you for a short time, making you harder to spot.','Found in the world at nighttime','Cloak lasts longer with each Level Up!'),'Pond':('Epic','Gain regenerating Super Jump charges. Jump shortly after landing to activate one.','Spotted near high and mountainous areas','Jump strength increases and cooldown decreases with each Level Up!'),'Birthday':('Rare','Opening chests has a chance to spawn a slice of cake; at max level eliminations can too.','Spotted near high and mountainous areas','Cake spawn chance increases with each Level Up!'),'Morgana':('Epic','Increases the effectiveness of healing items.','Location not yet verified','Healing effectiveness increases with each Level Up!')}
+          BF={}; [BF.setdefault(x['family'],[]).append(x) for x in OLD]; nid=max(x['id'] for x in D)+1
+          for f,v in W:
+            if f in META: rarity,desc,loc,lvl=META[f]
+            else:
+              b=next((x for x in BF[f] if x['variantKey']=='Base'),BF[f][0]); rarity,desc,loc,lvl=b['rarity'],b['description'],b.get('location',''),b.get('levelUp',b['description'])
+            b=BF.get(f,[{}])[0]; vn={'Base':'Base','Cheat':'Cheat Master','Hacker':'Loot Hacker','Gold':'Gold','Bounty':'Bounty Hunter'}[v]; eff=desc
+            if v=='Gold':eff='Gain 3x bonus Sprite XP from eliminations'
+            elif v=='Cheat':eff='All Cheat Code inputs count as correct'
+            elif v=='Hacker':eff='Increases chances of spawning items from your Loot Hacks'
+            elif v=='Bounty':eff='Chance to appear when you eliminate opponents; levels up only from eliminations'
+            D.append({'id':nid,'family':f,'displayFamily':f,'familyName':f+' Sprite','variantKey':v,'variant':vn,'variantOrder':{'Base':0,'Cheat':1,'Hacker':2,'Gold':3,'Bounty':4}[v],'name':f+' Sprite' if v=='Base' else vn+' '+f+' Sprite','description':desc,'location':loc,'effect':eff,'rarity':rarity if v=='Base' else 'Special','image':R[(f,v)][0],'releaseState':'catalogued','summonCost':b.get('summonCost'),'spriteChestChance':'Not published','standardIndex':nid,'status':'Collectible','preview':False,'countsTowardCollection':True,'levelUp':lvl,'season':'C7S4'}); nid+=1
+          NEW=[x for x in D if x.get('season')=='C7S4']; assert len(NEW)==101 and len({(x['family'],x['variantKey']) for x in NEW})==101
+          assert json.dumps([x for x in NEW if x['id'] in OIDS],sort_keys=True,separators=(',',':'))==OS
+          S=S[:M.start(1)]+json.dumps(D,separators=(',',':'))+S[M.end(1):]
+          assert "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']" in S; S=S.replace("const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']","const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty']")
+          S=S.replace("APP_VERSION='2.0.27'","APP_VERSION='2.0.28-preview'").replace('Sprite Collection Locker — v2.0.27','Sprite Collection Locker — v2.0.28 PREVIEW')
+          CSS='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(62px,1fr))}@media(max-width:760px){body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(132px,1.45fr) repeat(5,minmax(46px,.72fr));padding-left:8px;padding-right:8px}body[data-season="C7S4"] .legendItem{font-size:10px;gap:4px}body[data-season="C7S4"] .dot{width:10px;height:10px}body[data-season="C7S4"] .familyHero{grid-template-columns:58px minmax(0,1fr);gap:8px}body[data-season="C7S4"] .familyHero img{width:56px;height:56px}body[data-season="C7S4"] .spriteCell{width:min(64px,13vw)}}</style>'''; S=S.replace('</head>',CSS+'</head>',1); Path('v2.0.28-preview.html').write_text(S)
+          Q=Path('v2.0.28-preview.html').read_text(); assert '.spriteCell img{width:74px;height:74px;' in Q and '.familyHero img{width:86px;height:86px;' in Q; assert "const C7S3_VARIANTS=['Base','Gold','Gummy','Galaxy','Holofoil','Cube','Quack','Gem']" in Q; assert 'Dash Sprite' in Q and 'Superman Sprite' in Q; assert not re.search(r'(?:src|image)["\':= ]+https?://',Q,re.I)
+          Path('v2.0.28-preview-manifest.json').write_text(json.dumps({'version':'2.0.28-preview-exact','c7s4Count':101,'existingPreserved':61,'newCount':40,'uniqueNewBinaries':40,'assetAudit':A},indent=2))
+          print('QA PASS exact family prefix + exact variant suffix; 40/40 unique local assets; 101 C7S4; C7S3 unchanged')
+          PY
+          git config user.name github-actions[bot]; git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A v2.0.28-preview.html v2.0.28-preview-manifest.json assets/preview-v2028
+          git commit -m 'preview: exact-asset v2.0.28 101-entry rebuild'
+          git push origin HEAD:main
