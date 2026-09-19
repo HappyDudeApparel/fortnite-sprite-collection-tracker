@@ -1,11 +1,11 @@
-name: Fix v2.0.28 C7S4 row flow
+name: Fix and browser-QA v2.0.28 C7S4 rows
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/build-v2028-preview-v2.yml']
 permissions: {contents: write}
 jobs:
-  build:
+  qa:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -16,20 +16,32 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           p=Path('v2.0.28-preview.html'); s=p.read_text()
-          old='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(62px,1fr))}@media(max-width:760px){body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(132px,1.45fr) repeat(5,minmax(46px,.72fr));padding-left:8px;padding-right:8px}body[data-season="C7S4"] .legendItem{font-size:10px;gap:4px}body[data-season="C7S4"] .dot{width:10px;height:10px}body[data-season="C7S4"] .familyHero{grid-template-columns:58px minmax(0,1fr);gap:8px}body[data-season="C7S4"] .familyHero img{width:56px;height:56px}body[data-season="C7S4"] .spriteCell{width:min(64px,13vw)}}</style>'''
-          new='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body[data-season="C7S4"] .variantTable{overflow-x:auto;overflow-y:clip;-webkit-overflow-scrolling:touch}body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(88px,1fr));min-width:790px}body[data-season="C7S4"] .variantLegend{width:max(100%,790px)}body[data-season="C7S4"] .familyRow{width:max(100%,790px)}@media(max-width:760px){body[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:210px repeat(5,88px);min-width:650px;padding-left:14px;padding-right:14px}body[data-season="C7S4"] .familyHero{grid-template-columns:90px 1fr;gap:18px}body[data-season="C7S4"] .familyHero img{width:86px;height:86px}body[data-season="C7S4"] .spriteCell{width:88px;height:92px}body[data-season="C7S4"] .spriteCell img{width:74px;height:74px}body[data-season="C7S4"] .legendItem{font-size:13px;gap:6px}body[data-season="C7S4"] .dot{width:12px;height:12px}}</style>'''
-          assert old in s, 'expected old C7S4 override not found'
-          s=s.replace(old,new)
+          a=s.index('<style id="v2028-c7s4">'); b=s.index('</style>',a)+8
+          css='''<style id="v2028-c7s4">:root{--bounty:#ff4fc8}.v-Bounty{color:var(--bounty)}body.season-c7s4 .variantTable{overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch}body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{grid-template-columns:230px repeat(5,88px)!important;min-width:698px!important;width:698px!important}body.season-c7s4 .familyHero{grid-template-columns:90px 1fr!important;gap:18px!important}body.season-c7s4 .familyHero img{width:86px!important;height:86px!important}body.season-c7s4 .spriteCell{width:88px!important;height:92px!important}body.season-c7s4 .spriteCell img{width:74px!important;height:74px!important}body.season-c7s4 .legendItem{font-size:13px!important;gap:6px!important}body.season-c7s4 .dot{width:12px!important;height:12px!important}@media(min-width:900px){body.season-c7s4 .variantLegend,body.season-c7s4 .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(88px,1fr))!important;min-width:790px!important;width:100%!important}}</style>'''
+          s=s[:a]+css+s[b:]
+          hook='''<script id="v2028-season-hook">(()=>{function sync(){const active=[...document.querySelectorAll('.tab.active')].find(x=>/C7S[34]/.test(x.textContent));document.body.classList.toggle('season-c7s4',!!active&&active.textContent.trim()==='C7S4')}document.addEventListener('click',()=>setTimeout(sync,0),true);new MutationObserver(sync).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['class']});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync);else sync();})();</script>'''
+          s=s.replace('</body>',hook+'</body>',1)
           p.write_text(s)
-          q=p.read_text()
-          assert 'grid-template-columns:210px repeat(5,88px)' in q
-          assert 'body[data-season="C7S4"] .familyHero img{width:86px;height:86px}' in q
-          assert 'body[data-season="C7S4"] .spriteCell img{width:74px;height:74px}' in q
-          assert 'min-width:650px' in q and 'overflow-x:auto' in q
-          print('QA PASS: C7S4 now preserves C7S3 row geometry and horizontally scrolls overflow')
           PY
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > /tmp/qa.js <<'JS'
+          const {chromium}=require('playwright');
+          (async()=>{const browser=await chromium.launch({headless:true});
+          for(const cfg of [{name:'portrait',w:393,h:852},{name:'landscape',w:852,h:393}]){
+            const page=await browser.newPage({viewport:{width:cfg.w,height:cfg.h}});
+            await page.goto('file://'+process.cwd()+'/v2.0.28-preview.html'); await page.waitForTimeout(700);
+            const c7=page.getByRole('button',{name:'C7S4',exact:true}); await c7.click(); await page.waitForTimeout(300);
+            const audit=await page.evaluate(()=>{const rows=[...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null);const legend=document.querySelector('.variantLegend');return {classOK:document.body.classList.contains('season-c7s4'),rows:rows.slice(0,12).map(r=>{const kids=[...r.children];const boxes=kids.map(x=>x.getBoundingClientRect());return {n:kids.length,h:r.getBoundingClientRect().height,tops:boxes.map(b=>Math.round(b.top)),lefts:boxes.map(b=>Math.round(b.left)),bottoms:boxes.map(b=>Math.round(b.bottom))}}),legend:legend?[...legend.children].map(x=>Math.round(x.getBoundingClientRect().left)):[]};});
+            if(!audit.classOK) throw Error(cfg.name+' C7S4 class absent');
+            for(const [i,r] of audit.rows.entries()){if(r.n!==6) throw Error(cfg.name+' row '+i+' child count '+r.n);if(Math.max(...r.tops)-Math.min(...r.tops)>12) throw Error(cfg.name+' row '+i+' wrapped '+JSON.stringify(r));if(r.h>125) throw Error(cfg.name+' row '+i+' too tall '+r.h);for(let j=1;j<r.lefts.length;j++)if(r.lefts[j]<=r.lefts[j-1])throw Error(cfg.name+' row '+i+' non-horizontal '+JSON.stringify(r));}
+            await page.screenshot({path:'qa-'+cfg.name+'.png',fullPage:true}); console.log(cfg.name,JSON.stringify(audit)); await page.close();}
+          await browser.close();})();
+          JS
+          node /tmp/qa.js
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add v2.0.28-preview.html
-          git commit -m 'preview: align C7S4 row geometry with C7S3'
+          git add v2.0.28-preview.html qa-portrait.png qa-landscape.png
+          git commit -m 'preview: rendered-QA C7S4 single-line rows'
           git push origin HEAD:main
