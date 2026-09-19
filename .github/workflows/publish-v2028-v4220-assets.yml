@@ -1,0 +1,154 @@
+name: Publish v42.20 finished Sprite assets v2.0.28
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-v2028-v4220-assets.yml']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Pull finished v42.20 artwork, extend existing rows, preserve layout
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          cd repo
+          git config user.name 'Sprite Locker Update Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re,urllib.request,hashlib
+          VERSION='2.0.28'
+          html=Path('index.html').read_text(encoding='utf-8')
+          if 'Sprite Collection Locker — v2.0.27' not in html: raise SystemExit('baseline is not v2.0.27')
+          # Hard non-regression guards: preserve known-good geometry and portrait repair verbatim.
+          guards=[
+            '.familyHero{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:18px',
+            '.spriteCell img{width:74px;height:74px;object-fit:contain',
+            '@media (max-width:700px) and (orientation:portrait)',
+            '.familyHero{grid-template-columns:120px minmax(0,1fr)!important;gap:8px!important}',
+            "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']",
+          ]
+          for g in guards:
+            if g not in html: raise SystemExit('non-regression guard missing: '+g)
+          if "const legacySprites=[SPRITES.find(s=>s.name==='Dash Sprite')" in html: raise SystemExit('C7S3 legacy row unexpectedly present')
+
+          # Fortnite.gg currently exposes finished v42.20 art in its Sprite directory. Pull page and resolve image URLs.
+          req=urllib.request.Request('https://fortnite.gg/sprites?pubDate=20260718',headers={'User-Agent':'Mozilla/5.0'})
+          page=urllib.request.urlopen(req,timeout=30).read().decode('utf-8','ignore')
+          wanted=['Bounty Hunter X-Ray','Bounty Hunter Onigiri','Bounty Hunter Pond','Bounty Hunter Overshield','Bounty Hunter Storm Scout','Bounty Hunter Klombo','Bounty Hunter Shadow','Bounty Hunter Tails','Bounty Hunter Sonic','Bounty Hunter Morgana','Bounty Hunter Jonesy','Bounty Hunter Killswitch','Bounty Hunter Adventure','Bounty Hunter Birthday','Bounty Hunter Crash Bandicoot','Bounty Hunter Bush','Bounty Hunter Blinky','Bounty Hunter Jackrabbit','Bounty Hunter Crown','Bounty Hunter 8-Bit','Morgana','Gold Morgana','Cheat Master Morgana','Loot Hacker Morgana','Birthday','Gold Birthday','Cheat Master Birthday','Loot Hacker Birthday']
+          # Use image tags/nearby text; fail closed rather than inventing artwork.
+          imgs=[]
+          for m in re.finditer(r'<img[^>]+(?:src|data-src)=["\']([^"\']+)["\'][^>]*>',page,re.I):
+            tag=m.group(0); url=m.group(1)
+            context=page[max(0,m.start()-500):min(len(page),m.end()+500)]
+            imgs.append((context,url))
+          resolved={}
+          for name in wanted:
+            for context,url in imgs:
+              if name.lower() in re.sub('<[^>]+>',' ',context).lower():
+                if url.startswith('//'): url='https:'+url
+                elif url.startswith('/'): url='https://fortnite.gg'+url
+                if url.startswith('http'):
+                  resolved[name]=url; break
+          # Require the new family art sets and enough Bounty Hunter art to avoid partial/ugly publication.
+          for n in ['Morgana','Gold Morgana','Cheat Master Morgana','Loot Hacker Morgana','Birthday','Gold Birthday','Cheat Master Birthday','Loot Hacker Birthday']:
+            if n not in resolved: raise SystemExit('finished artwork not resolved for '+n)
+          if sum(1 for n in wanted if n.startswith('Bounty Hunter') and n in resolved)<18:
+            raise SystemExit('Bounty Hunter artwork resolution incomplete; aborting without touching site')
+          out=Path('assets/embedded'); out.mkdir(parents=True,exist_ok=True)
+          local={}
+          for name,url in resolved.items():
+            try:
+              data=urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'}),timeout=30).read()
+            except Exception:
+              continue
+            if len(data)<1000: continue
+            ext='png'
+            if data[:3]==b'\xff\xd8\xff': ext='jpg'
+            elif data[:4]==b'RIFF': ext='webp'
+            fn=f"{hashlib.sha256(data).hexdigest()[:20]}.{ext}"; p=out/fn
+            p.write_bytes(data); local[name]='assets/embedded/'+fn
+          for n in ['Morgana','Gold Morgana','Cheat Master Morgana','Loot Hacker Morgana','Birthday','Gold Birthday','Cheat Master Birthday','Loot Hacker Birthday']:
+            if n not in local: raise SystemExit('download failed for '+n)
+
+          # Parse existing compact JSON records to inherit exact schema/defaults instead of redesigning data architecture.
+          records=[json.loads(x) for x in re.findall(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}',html) if '"variantKey"' in x and '"image"' in x]
+          byname={r.get('name'):r for r in records}
+          if not records: raise SystemExit('could not parse Sprite records')
+          maxid=max(r['id'] for r in records)
+          def template(variant):
+            for r in records:
+              if r.get('variantKey')==variant and r.get('season')=='C7S4': return r
+            for r in records:
+              if r.get('variantKey')==variant: return r
+            raise SystemExit('template missing '+variant)
+          new=[]
+          def add(display,family,variant,image,rarity='Epic',effect=None):
+            nonlocal_id=None
+            global maxid
+            maxid+=1; r=dict(template('Base' if variant=='Base' else ('Hacker' if variant=='Hacker' else variant)))
+            r.update(id=maxid,name=display,family=family,variantKey=variant,image=image,season='C7S4',releaseState='released',rarity=rarity)
+            if effect is not None: r['effect']=effect
+            # Count all finished-art records as live/progress per current owner rule.
+            for k in ('previewOnly','unreleased','placeholder'):
+              if k in r: r[k]=False
+            new.append(r)
+          morg='Increases the effectiveness of healing items. Healing effectiveness increases with each Level Up!'
+          bday='Opening chests has a chance to spawn a piece of cake. Eliminations can spawn cake at max level. Chance increases with each Level Up!'
+          for fam,effect,rarity in [('Morgana',morg,'Epic'),('Birthday',bday,'Rare')]:
+            add(fam,fam,'Base',local[fam],rarity,effect)
+            add('Cheat Master '+fam,fam,'Cheat',local['Cheat Master '+fam],rarity,effect)
+            add('Loot Hacker '+fam,fam,'Hacker',local['Loot Hacker '+fam],rarity,effect)
+            add('Gold '+fam,fam,'Gold',local['Gold '+fam],rarity,effect)
+          # Bounty Hunter is a fifth C7S4 column. Populate only records with real downloaded finished art.
+          bh_effect='Chance to find Sprites when eliminating opponents. Only gains Sprite XP from eliminations, unless the Sprite has special XP rules.'
+          for n in wanted:
+            if not n.startswith('Bounty Hunter') or n not in local: continue
+            fam=n[len('Bounty Hunter '):]
+            if fam=='Bush': fam='Bush'
+            if fam=='Crash Bandicoot': fam='Crash Bandicoot'
+            add(n,fam,'Bounty',local[n],'Special',bh_effect)
+          if len(new)<26: raise SystemExit(f'expected substantial finished-art expansion, only {len(new)} records')
+
+          # Insert new records immediately before closing SPRITES array; locate via the known C7S4 variant declaration.
+          marker="const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']"
+          pos=html.find(marker)
+          if pos<0: raise SystemExit('variant marker missing')
+          # Find nearest array close before marker.
+          close=html.rfind('];',0,pos)
+          if close<0: raise SystemExit('SPRITES array close missing')
+          prefix=',' if html[close-1] != '[' else ''
+          payload=prefix+','.join(json.dumps(r,separators=(',',':')) for r in new)
+          html=html[:close]+payload+html[close:]
+          html=html.replace(marker,"const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty']",1)
+          # Extend only C7S4 grids to five variants via existing C7S4-specific CSS hook if present; otherwise add scoped override.
+          scoped='''\n/* v2.0.28 C7S4 fifth variant only; existing dimensions untouched */\nbody[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(62px,1fr))}\n.v-Bounty{color:#ff6b35}\n'''
+          html=html.replace('</style>',scoped+'</style>',1)
+          html=html.replace('Sprite Collection Locker — v2.0.27',f'Sprite Collection Locker — v{VERSION}',1).replace("const APP_VERSION='2.0.27'",f"const APP_VERSION='{VERSION}'",1)
+          # Post-patch non-regression: dimensions must remain exact.
+          for g in guards[:4]:
+            if g not in html: raise SystemExit('layout changed unexpectedly: '+g)
+          # Ensure every new record has local finished art and counts as released.
+          for r in new:
+            if r['releaseState']!='released' or not Path(r['image']).is_file(): raise SystemExit('new record QA failed '+r['name'])
+          Path('index.html').write_text(html,encoding='utf-8'); Path('404.html').write_text(html,encoding='utf-8')
+          # Manifest/version/cache.
+          am=Path('asset-manifest.json'); d=json.loads(am.read_text()); d['version']=VERSION; d['assets']=sorted(set(d.get('assets',[]))|set(local.values())); am.write_text(json.dumps(d,separators=(',',':')))
+          vp=Path('version.json'); v=json.loads(vp.read_text()); v.update(version=VERSION,published='2026-09-19',notes=f'v42.20 finished-art expansion: {len(new)} new countable Sprite records added in their family rows, including Morgana, Birthday and Bounty Hunter artwork. Existing card/image dimensions, portrait repair, landscape layout, C7S3, Locker and preview architecture preserved.'); vp.write_text(json.dumps(v,indent=2)+'\n')
+          sw=Path('service-worker.js'); t=sw.read_text(); t,n=re.subn(r"const APP_VERSION = '[^']+';",f"const APP_VERSION = '{VERSION}';",t,count=1); assert n==1; sw.write_text(t)
+          qa=Path('QA.md'); old=qa.read_text(); rule='''# Finished-asset progress rule — 2026-09-19\n\n- Any confirmed Sprite/variant with usable finished artwork is populated immediately and treated as released/countable for tracker progress, even when Fortnite has not yet activated it in-game.\n- Populate it in its normal family/variant position with best verified metadata and safe defaults for unknown fields.\n- Never resize existing cards/artwork or alter a known-good orientation/layout to accommodate additions.\n- Missing/placeholder artwork is not substituted with a silhouette.\n\n'''; qa.write_text(rule+old if '# Finished-asset progress rule — 2026-09-19' not in old else old)
+          ch=Path('CHANGELOG.md'); old=ch.read_text(); ch.write_text(f'''## 2.0.28 — 2026-09-19\n- Added {len(new)} v42.20 finished-art Sprite records as countable progress entries under the new finished-asset rule.\n- Added Morgana and Birthday families with Base/Cheat Master/Loot Hacker/Gold artwork and metadata.\n- Added Bounty Hunter as the fifth C7S4 variant position and populated every successfully validated finished Bounty Hunter asset.\n- Preserved existing card/art dimensions, portrait repair, landscape behavior, C7S3, Locker and preview architecture.\n\n'''+old)
+          Path('.github/workflows/publish-v2028-v4220-assets.yml').unlink(missing_ok=True)
+          print('NEW_RECORDS',len(new),'LOCAL_ASSETS',len(local))
+          PY
+          test "$(sha256sum index.html | cut -d' ' -f1)" = "$(sha256sum 404.html | cut -d' ' -f1)"
+          git add index.html 404.html version.json service-worker.js asset-manifest.json CHANGELOG.md QA.md assets/embedded .github/workflows/publish-v2028-v4220-assets.yml
+          git diff --cached --check
+          git commit -m 'release: populate v42.20 finished Sprite assets v2.0.28'
+          git push origin HEAD:main
+# trigger
