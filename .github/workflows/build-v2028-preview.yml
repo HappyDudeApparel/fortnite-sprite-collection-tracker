@@ -1,0 +1,167 @@
+name: Build v2.0.28 preview
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-v2028-preview.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Build isolated preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp index.html v2.0.28-preview.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re,urllib.request,urllib.parse,hashlib,html as H
+          p=Path('v2.0.28-preview.html'); s=p.read_text('utf-8')
+          # Never touch the known-good production index in this preview job.
+          assert "APP_VERSION='2.0.27'" in s
+          m=re.search(r'const SPRITES=(\[.*?\]);\nconst BACKGROUNDS=',s,re.S); assert m
+          data=json.loads(m.group(1))
+          c4=[x for x in data if x.get('season')=='C7S4']
+          assert len(c4)==61, len(c4)
+          # Existing families and verified v42.20 metadata.
+          base_meta={
+            'Crash Bandicoot':('Legendary','While midair, perform a spin attack that damages and knocks back nearby opponents.','Spotted near high and mountainous areas','Damage increases and cooldown decreases with each Level Up!'),
+            'Blinky':('Legendary','Taking damage cloaks you for a short time, making you harder to spot.','Found in the world at nighttime','Cloak lasts longer with each Level Up!'),
+            'Pond':('Epic','Gain regenerating Super Jump charges. Jump shortly after landing to activate one.','Spotted near high and mountainous areas','Jump strength increases and cooldown decreases with each Level Up!'),
+            'Birthday':('Rare','Opening chests has a chance to spawn a slice of cake; at max level eliminations can too.','Spotted near high and mountainous areas','Cake spawn chance increases with each Level Up!'),
+            'Morgana':('Epic','Increases the effectiveness of healing items.','Location not yet verified','Healing effectiveness increases with each Level Up!')}
+          # Pull only from the independent current Sprite directory pages; no Fortnite.gg runner dependency.
+          slugs={'Crash Bandicoot':'crash-bandicoot','Blinky':'blinky','Pond':'pond','Birthday':'birthday','Morgana':'morgana'}
+          pages={}
+          ua={'User-Agent':'Mozilla/5.0 SpriteCollectionLocker/2.0.28'}
+          for fam,slug in slugs.items():
+            u=f'https://spritechecklist.org/sprites/{slug}/'
+            req=urllib.request.Request(u,headers=ua)
+            with urllib.request.urlopen(req,timeout=30) as r: pages[fam]=r.read().decode('utf-8','ignore')
+          # Also fetch the all-sprites page because its rendered markup contains current variant art references.
+          req=urllib.request.Request('https://spritechecklist.org/',headers=ua)
+          with urllib.request.urlopen(req,timeout=30) as r: pages['_home']=r.read().decode('utf-8','ignore')
+          # Extract candidate image URLs around each family/variant token.
+          def urls_for(text):
+            vals=[]
+            for pat in [r'<img[^>]+(?:src|data-src)=["\']([^"\']+)',r'https?://[^"\'<> ]+\.(?:png|webp|jpg|jpeg)']:
+              vals += re.findall(pat,text,re.I)
+            out=[]
+            for u in vals:
+              u=H.unescape(u)
+              if u.startswith('//'): u='https:'+u
+              elif u.startswith('/'): u='https://spritechecklist.org'+u
+              if u.startswith('http') and u not in out: out.append(u)
+            return out
+          all_urls={fam:urls_for(txt) for fam,txt in pages.items()}
+          print('candidate counts', {k:len(v) for k,v in all_urls.items()})
+          # Candidate scoring by URL filename/path tokens. Abort if exact art cannot be resolved.
+          def norm(x): return re.sub(r'[^a-z0-9]+','-',x.lower()).strip('-')
+          variants=['Base','Cheat','Hacker','Gold','Bounty']
+          labels={'Base':['base','normal'],'Cheat':['cheat','cheat-master'],'Hacker':['hacker','loot-hacker'],'Gold':['gold'],'Bounty':['bounty','bounty-hunter']}
+          def pick(fam,var):
+            f=norm(fam); candidates=[]
+            pool=[]
+            for k in (fam,'_home'): pool += all_urls.get(k,[])
+            for u in dict.fromkeys(pool):
+              nu=norm(urllib.parse.unquote(u))
+              score=0
+              ftoks=[t for t in f.split('-') if len(t)>2]
+              score += sum(4 for t in ftoks if t in nu)
+              if var=='Base':
+                if not any(t in nu for t in ['gold','cheat','hacker','bounty']): score+=5
+              else:
+                score += max([6 if t in nu else 0 for t in labels[var]])
+              if 'sprite' in nu: score+=2
+              if score: candidates.append((score,u))
+            candidates.sort(reverse=True)
+            return candidates[0][1] if candidates and candidates[0][0]>=6 else None
+          # For Bounty art of existing families, use each family page.
+          existing=sorted({x['family'] for x in c4 if x['family']!='Mega Man'})
+          for fam in existing:
+            slug=norm(fam)
+            if fam not in pages:
+              try:
+                req=urllib.request.Request(f'https://spritechecklist.org/sprites/{slug}/',headers=ua)
+                with urllib.request.urlopen(req,timeout=30) as r: pages[fam]=r.read().decode('utf-8','ignore')
+                all_urls[fam]=urls_for(pages[fam])
+              except Exception as e: print('page warning',fam,e)
+          wanted=[]
+          for fam in ['Crash Bandicoot','Blinky','Pond']:
+            for v in ['Base','Cheat','Hacker','Gold']: wanted.append((fam,v))
+          for fam in existing: wanted.append((fam,'Bounty'))
+          for fam in ['Birthday','Morgana']:
+            for v in variants: wanted.append((fam,v))
+          resolved={}; missing=[]
+          for fam,var in wanted:
+            u=pick(fam,var)
+            if u: resolved[(fam,var)]=u
+            else: missing.append((fam,var))
+          print('resolved',len(resolved),'missing',missing)
+          if missing: raise SystemExit('QA ABORT: could not deterministically resolve all finished artwork: '+repr(missing))
+          out=Path('assets/preview-v2028'); out.mkdir(parents=True,exist_ok=True)
+          local={}
+          for key,u in resolved.items():
+            req=urllib.request.Request(u,headers=ua)
+            try:
+              raw=urllib.request.urlopen(req,timeout=30).read()
+            except Exception as e: raise SystemExit(f'asset download failed {key} {u}: {e}')
+            if len(raw)<1500: raise SystemExit(f'asset suspiciously small {key}: {len(raw)}')
+            ext='webp'
+            path=urllib.parse.urlparse(u).path.lower()
+            for e in ('png','webp','jpg','jpeg'):
+              if path.endswith('.'+e): ext='jpg' if e=='jpeg' else e
+            rel=f'assets/preview-v2028/{hashlib.sha256(raw).hexdigest()[:20]}.{ext}'
+            Path(rel).write_bytes(raw); local[key]=rel
+          # Build new records while preserving all old records byte-for-byte semantically.
+          maxid=max(x['id'] for x in data); nextid=maxid+1
+          byfam={}
+          for x in c4: byfam.setdefault(x['family'],[]).append(x)
+          def add(fam,var,img):
+            global nextid
+            rarity,desc,loc,lvl=base_meta.get(fam,(byfam[fam][0]['rarity'],byfam[fam][0]['description'],byfam[fam][0].get('location',''),byfam[fam][0].get('levelUp',byfam[fam][0]['description'])))
+            base=byfam.get(fam,[{}])[0]
+            vk={'Base':'Base','Cheat':'Cheat','Hacker':'Hacker','Gold':'Gold','Bounty':'Bounty'}[var]
+            variant={'Base':'Base','Cheat':'Cheat Master','Hacker':'Loot Hacker','Gold':'Gold','Bounty':'Bounty Hunter'}[var]
+            name=(fam+' Sprite') if var=='Base' else (variant+' '+fam+' Sprite')
+            effect=desc
+            if var=='Gold': effect='Gain 3x bonus Sprite XP from eliminations'
+            elif var=='Cheat': effect='All Cheat Code inputs count as correct'
+            elif var=='Hacker': effect='Increases chances of spawning items from your Loot Hacks'
+            elif var=='Bounty': effect='Chance to find Sprites from eliminations; levels up only from eliminations'
+            cost=base.get('summonCost')
+            rec={'id':nextid,'family':fam,'displayFamily':fam,'familyName':fam+' Sprite','variantKey':vk,'variant':variant,'variantOrder':{'Base':0,'Cheat':1,'Hacker':2,'Gold':3,'Bounty':4}[var],'name':name,'description':desc,'location':loc,'effect':effect,'rarity':rarity if var=='Base' else 'Special','image':img,'releaseState':'catalogued','summonCost':cost,'spriteChestChance':'Not published','standardIndex':nextid,'status':'Collectible','preview':False,'countsTowardCollection':True,'levelUp':lvl,'season':'C7S4'}
+            nextid+=1; data.append(rec); byfam.setdefault(fam,[]).append(rec)
+          for fam,var in wanted: add(fam,var,local[(fam,var)])
+          # 61 + 40 = 101 under owner's finished-asset counting rule.
+          c4new=[x for x in data if x.get('season')=='C7S4']; assert len(c4new)==101,len(c4new)
+          # Do not duplicate any family+variant key.
+          keys=[(x['family'],x['variantKey']) for x in c4new]; assert len(keys)==len(set(keys))
+          # Replace only data/version/variant list + C7S4-specific grid column count. Do not alter C7S3 or global image dimensions.
+          s=s[:m.start(1)]+json.dumps(data,separators=(',',':'))+s[m.end(1):]
+          s=s.replace("const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold']","const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty']")
+          s=s.replace("APP_VERSION='2.0.27'","APP_VERSION='2.0.28-preview'")
+          s=s.replace('Sprite Collection Locker — v2.0.27','Sprite Collection Locker — v2.0.28 PREVIEW')
+          # Existing renderer uses VARIANTS.length in mobile; desktop C7S4 override was four columns. Add a narrow C7S4-only override without changing card/image dimensions.
+          insert='''\n<style id="v2028-preview-c7s4-only">\nbody[data-season="C7S4"] .variantLegend,body[data-season="C7S4"] .familyRow{grid-template-columns:minmax(230px,320px) repeat(5,minmax(62px,1fr))}\n</style>\n'''
+          s=s.replace('</head>',insert+'</head>',1)
+          p.write_text(s,'utf-8')
+          Path('v2.0.28-preview-manifest.json').write_text(json.dumps({'version':'2.0.28-preview','count':101,'newAssets':local},indent=2),'utf-8')
+          # Regression guards: preserve exact established dimensions and Legacy hidden-row behavior source.
+          q=p.read_text('utf-8')
+          assert '.spriteCell img{width:74px;height:74px;' in q
+          assert '.familyHero img{width:86px;height:86px;' in q
+          assert 'Dash Sprite' in q and 'Superman Sprite' in q
+          assert "const C7S3_VARIANTS=['Base','Gold','Gummy','Galaxy','Holofoil','Cube','Quack','Gem']" in q
+          assert '101' in Path('v2.0.28-preview-manifest.json').read_text()
+          print('PREVIEW QA PASS: 101 C7S4 entries; existing image dimensions preserved')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add v2.0.28-preview.html v2.0.28-preview-manifest.json assets/preview-v2028
+          git commit -m 'preview: Sprite Collection Locker v2.0.28 expanded 101-entry board'
+          git push origin HEAD:main
