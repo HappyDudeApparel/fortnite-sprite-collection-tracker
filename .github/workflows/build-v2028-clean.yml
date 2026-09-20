@@ -1,11 +1,11 @@
-name: Build v2.0.28 clean
+name: Audit C7S3 visual baseline
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/build-v2028-clean.yml']
 permissions: {contents: write}
 jobs:
-  build:
+  audit:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -13,31 +13,110 @@ jobs:
       - shell: bash
         run: |
           set -euo pipefail
-          npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
           cat > audit.js <<'JS'
-          const{chromium}=require('playwright'),fs=require('fs'),path=require('path');const u='file://'+path.join(process.cwd(),'index.html');(async()=>{let b=await chromium.launch({headless:true}),out={};for(const v of [[393,852,'portrait'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){let p=await b.newPage({viewport:{width:v[0],height:v[1]}});await p.goto(u);await p.getByRole('button',{name:'C7S3',exact:true}).click();await p.waitForTimeout(500);out[v[2]]=await p.evaluate(()=>[...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null).map(r=>({family:r.querySelector('.familyName')?.textContent.trim(),sprites:[...r.querySelectorAll('.spriteCell')].map(c=>{let i=c.querySelector('img'),ir=i?.getBoundingClientRect(),cr=c.getBoundingClientRect(),cs=getComputedStyle(c);return{src:i?.getAttribute('src'),mastered:c.classList.contains('mastered'),cell:[Math.round(cr.x),Math.round(cr.y),Math.round(cr.width),Math.round(cr.height)],img:ir?[Math.round(ir.x),Math.round(ir.y),Math.round(ir.width),Math.round(ir.height)]:null,crown:cs.getPropertyValue('--none')}})}));await p.screenshot({path:'audit-c7s3-'+v[2]+'.png',fullPage:true});await p.close()}fs.writeFileSync('audit-c7s3.json',JSON.stringify(out,null,2));await b.close()})()
+          const { chromium } = require('playwright');
+          const fs = require('fs');
+          const path = require('path');
+          const url = 'file://' + path.join(process.cwd(), 'index.html');
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const output = {};
+            const viewports = [
+              [393, 852, 'portrait'],
+              [852, 393, 'landscape'],
+              [1024, 768, 'tablet'],
+              [1440, 900, 'desktop']
+            ];
+
+            for (const [width, height, name] of viewports) {
+              const page = await browser.newPage({ viewport: { width, height } });
+              await page.goto(url);
+              await page.getByRole('button', { name: 'C7S3', exact: true }).click();
+              await page.waitForTimeout(500);
+
+              output[name] = await page.evaluate(() => {
+                const rows = [...document.querySelectorAll('.familyRow')]
+                  .filter(row => row.offsetParent !== null);
+                return rows.map(row => ({
+                  family: row.querySelector('.familyName')?.textContent.trim() || '',
+                  sprites: [...row.querySelectorAll('.spriteCell')].map(cell => {
+                    const img = cell.querySelector('img');
+                    const cellRect = cell.getBoundingClientRect();
+                    const imgRect = img ? img.getBoundingClientRect() : null;
+                    const crown = cell.querySelector('.masteredBadge, .masteredCrown, .crown');
+                    const crownRect = crown ? crown.getBoundingClientRect() : null;
+                    return {
+                      src: img?.getAttribute('src') || null,
+                      mastered: cell.classList.contains('mastered'),
+                      cell: [cellRect.x, cellRect.y, cellRect.width, cellRect.height].map(Math.round),
+                      img: imgRect ? [imgRect.x, imgRect.y, imgRect.width, imgRect.height].map(Math.round) : null,
+                      crown: crownRect ? [crownRect.x, crownRect.y, crownRect.width, crownRect.height].map(Math.round) : null
+                    };
+                  })
+                }));
+              });
+
+              await page.screenshot({ path: `audit-c7s3-${name}.png`, fullPage: true });
+              await page.close();
+            }
+
+            fs.writeFileSync('audit-c7s3-render.json', JSON.stringify(output, null, 2));
+            await browser.close();
+          })().catch(err => { console.error(err); process.exit(1); });
           JS
           node audit.js
+
           python3 - <<'PY'
           from PIL import Image
           from pathlib import Path
-          import json,statistics
-          d=json.load(open('audit-c7s3.json')); seen={}
-          for rows in d.values():
-            for r in rows:
-              for s in r['sprites']:
-                src=s.get('src')
-                if not src or src in seen or not Path(src).is_file(): continue
-                im=Image.open(src).convert('RGBA'); a=im.getchannel('A'); box=a.getbbox()
-                if not box: continue
-                W,H=im.size; x0,y0,x1,y1=box; seen[src]={'family':r['family'],'W':W,'H':H,'visibleW':x1-x0,'visibleH':y1-y0,'fillW':round((x1-x0)/W,4),'fillH':round((y1-y0)/H,4),'topPad':round(y0/H,4),'rightPad':round((W-x1)/W,4)}
-          vals=[x['fillH'] for x in seen.values()]; med=statistics.median(vals) if vals else 0
-          report={'count':len(seen),'medianFillH':med,'assets':seen}
-          Path('audit-c7s3-visible-bounds.json').write_text(json.dumps(report,indent=2))
-          print('C7S3 assets',len(seen),'median visible-height fill',med)
-          for k,x in sorted(seen.items(),key=lambda kv:kv[1]['fillH']): print(x['family'],x['fillH'],k)
+          import json, statistics
+
+          rendered = json.loads(Path('audit-c7s3-render.json').read_text())
+          assets = {}
+          for rows in rendered.values():
+              for row in rows:
+                  for sprite in row['sprites']:
+                      src = sprite.get('src')
+                      if not src or src in assets:
+                          continue
+                      p = Path(src)
+                      if not p.is_file():
+                          continue
+                      im = Image.open(p).convert('RGBA')
+                      box = im.getchannel('A').getbbox()
+                      if not box:
+                          continue
+                      W, H = im.size
+                      x0, y0, x1, y1 = box
+                      assets[src] = {
+                          'family': row['family'],
+                          'width': W, 'height': H,
+                          'visibleWidth': x1-x0, 'visibleHeight': y1-y0,
+                          'fillWidth': round((x1-x0)/W, 4),
+                          'fillHeight': round((y1-y0)/H, 4),
+                          'topPad': round(y0/H, 4),
+                          'rightPad': round((W-x1)/W, 4)
+                      }
+
+          fills = [v['fillHeight'] for v in assets.values()]
+          median = statistics.median(fills) if fills else 0
+          for v in assets.values():
+              v['heightVsMedian'] = round(v['fillHeight']/median, 4) if median else 0
+
+          report = {'assetCount': len(assets), 'medianFillHeight': median, 'assets': assets}
+          Path('audit-c7s3-visible-bounds.json').write_text(json.dumps(report, indent=2))
+          print('PASS audit assets:', len(assets), 'median fill-height:', median)
+          for src, v in sorted(assets.items(), key=lambda kv: kv[1]['fillHeight']):
+              print(v['family'], v['fillHeight'], v['heightVsMedian'], src)
           PY
-          rm -rf node_modules package.json package-lock.json audit.js audit-c7s3.json
-          git config user.name github-actions[bot];git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+          rm -rf node_modules package.json package-lock.json audit.js audit-c7s3-render.json
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add audit-c7s3-visible-bounds.json audit-c7s3-portrait.png audit-c7s3-landscape.png audit-c7s3-tablet.png audit-c7s3-desktop.png
-          git commit -m 'qa: record C7S3 sprite bounds baseline';git push origin HEAD:main
+          git commit -m 'qa: record clean C7S3 visual baseline'
+          git push origin HEAD:main
