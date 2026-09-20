@@ -16,104 +16,55 @@ jobs:
           npm init -y >/dev/null 2>&1
           npm install playwright@1.55.0 >/dev/null 2>&1
           npx playwright install --with-deps chromium >/dev/null 2>&1
+          python3 -m pip install --quiet pillow
           cat > audit.js <<'JS'
           const { chromium } = require('playwright');
           const fs = require('fs');
           const path = require('path');
           const url = 'file://' + path.join(process.cwd(), 'index.html');
-
           (async () => {
-            const browser = await chromium.launch({ headless: true });
+            const browser = await chromium.launch({headless:true});
             const output = {};
-            const viewports = [
-              [393, 852, 'portrait'],
-              [852, 393, 'landscape'],
-              [1024, 768, 'tablet'],
-              [1440, 900, 'desktop']
-            ];
-
-            for (const [width, height, name] of viewports) {
-              const page = await browser.newPage({ viewport: { width, height } });
+            for (const [width,height,name] of [[393,852,'portrait'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]) {
+              const page = await browser.newPage({viewport:{width,height}});
               await page.goto(url);
-              await page.getByRole('button', { name: 'C7S3', exact: true }).click();
+              await page.getByRole('button',{name:'C7S3',exact:true}).click();
               await page.waitForTimeout(500);
-
-              output[name] = await page.evaluate(() => {
-                const rows = [...document.querySelectorAll('.familyRow')]
-                  .filter(row => row.offsetParent !== null);
-                return rows.map(row => ({
-                  family: row.querySelector('.familyName')?.textContent.trim() || '',
-                  sprites: [...row.querySelectorAll('.spriteCell')].map(cell => {
-                    const img = cell.querySelector('img');
-                    const cellRect = cell.getBoundingClientRect();
-                    const imgRect = img ? img.getBoundingClientRect() : null;
-                    const crown = cell.querySelector('.masteredBadge, .masteredCrown, .crown');
-                    const crownRect = crown ? crown.getBoundingClientRect() : null;
-                    return {
-                      src: img?.getAttribute('src') || null,
-                      mastered: cell.classList.contains('mastered'),
-                      cell: [cellRect.x, cellRect.y, cellRect.width, cellRect.height].map(Math.round),
-                      img: imgRect ? [imgRect.x, imgRect.y, imgRect.width, imgRect.height].map(Math.round) : null,
-                      crown: crownRect ? [crownRect.x, crownRect.y, crownRect.width, crownRect.height].map(Math.round) : null
-                    };
-                  })
-                }));
-              });
-
-              await page.screenshot({ path: `audit-c7s3-${name}.png`, fullPage: true });
+              output[name] = await page.evaluate(() => [...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null).map(row => ({
+                family: row.querySelector('.familyName')?.textContent.trim() || '',
+                sprites: [...row.querySelectorAll('.spriteCell')].map(cell => {
+                  const img=cell.querySelector('img'), cr=cell.getBoundingClientRect(), ir=img?.getBoundingClientRect();
+                  return {src:img?.getAttribute('src')||null, mastered:cell.classList.contains('mastered'), cell:[cr.x,cr.y,cr.width,cr.height].map(Math.round), img:ir?[ir.x,ir.y,ir.width,ir.height].map(Math.round):null};
+                })
+              })));
+              await page.screenshot({path:`audit-c7s3-${name}.png`,fullPage:true});
               await page.close();
             }
-
-            fs.writeFileSync('audit-c7s3-render.json', JSON.stringify(output, null, 2));
+            fs.writeFileSync('audit-c7s3-render.json',JSON.stringify(output,null,2));
             await browser.close();
-          })().catch(err => { console.error(err); process.exit(1); });
+          })().catch(e=>{console.error(e);process.exit(1)});
           JS
           node audit.js
-
           python3 - <<'PY'
           from PIL import Image
           from pathlib import Path
           import json, statistics
-
-          rendered = json.loads(Path('audit-c7s3-render.json').read_text())
-          assets = {}
+          rendered=json.loads(Path('audit-c7s3-render.json').read_text()); assets={}
           for rows in rendered.values():
-              for row in rows:
-                  for sprite in row['sprites']:
-                      src = sprite.get('src')
-                      if not src or src in assets:
-                          continue
-                      p = Path(src)
-                      if not p.is_file():
-                          continue
-                      im = Image.open(p).convert('RGBA')
-                      box = im.getchannel('A').getbbox()
-                      if not box:
-                          continue
-                      W, H = im.size
-                      x0, y0, x1, y1 = box
-                      assets[src] = {
-                          'family': row['family'],
-                          'width': W, 'height': H,
-                          'visibleWidth': x1-x0, 'visibleHeight': y1-y0,
-                          'fillWidth': round((x1-x0)/W, 4),
-                          'fillHeight': round((y1-y0)/H, 4),
-                          'topPad': round(y0/H, 4),
-                          'rightPad': round((W-x1)/W, 4)
-                      }
-
-          fills = [v['fillHeight'] for v in assets.values()]
-          median = statistics.median(fills) if fills else 0
-          for v in assets.values():
-              v['heightVsMedian'] = round(v['fillHeight']/median, 4) if median else 0
-
-          report = {'assetCount': len(assets), 'medianFillHeight': median, 'assets': assets}
-          Path('audit-c7s3-visible-bounds.json').write_text(json.dumps(report, indent=2))
-          print('PASS audit assets:', len(assets), 'median fill-height:', median)
-          for src, v in sorted(assets.items(), key=lambda kv: kv[1]['fillHeight']):
-              print(v['family'], v['fillHeight'], v['heightVsMedian'], src)
+            for row in rows:
+              for sprite in row['sprites']:
+                src=sprite.get('src')
+                if not src or src in assets or not Path(src).is_file(): continue
+                im=Image.open(src).convert('RGBA'); box=im.getchannel('A').getbbox()
+                if not box: continue
+                W,H=im.size; x0,y0,x1,y1=box
+                assets[src]={'family':row['family'],'width':W,'height':H,'visibleWidth':x1-x0,'visibleHeight':y1-y0,'fillWidth':round((x1-x0)/W,4),'fillHeight':round((y1-y0)/H,4),'topPad':round(y0/H,4),'rightPad':round((W-x1)/W,4)}
+          fills=[v['fillHeight'] for v in assets.values()]; med=statistics.median(fills) if fills else 0
+          for v in assets.values(): v['heightVsMedian']=round(v['fillHeight']/med,4) if med else 0
+          Path('audit-c7s3-visible-bounds.json').write_text(json.dumps({'assetCount':len(assets),'medianFillHeight':med,'assets':assets},indent=2))
+          print('PASS audit assets',len(assets),'median',med)
+          for src,v in sorted(assets.items(),key=lambda kv:kv[1]['fillHeight']): print(v['family'],v['fillHeight'],v['heightVsMedian'],src)
           PY
-
           rm -rf node_modules package.json package-lock.json audit.js audit-c7s3-render.json
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
