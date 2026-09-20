@@ -1,11 +1,11 @@
-name: Audit C7S3 visual baseline
+name: Fix C7S4 portrait native row flow
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/build-v2028-clean.yml']
 permissions: {contents: write}
 jobs:
-  audit:
+  fix:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -13,61 +13,49 @@ jobs:
       - shell: bash
         run: |
           set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          files=['index.html','v2.0.28.html']
+          css='''<style id="v2028-c7s4-portrait-native">
+@media (max-width:760px){
+ body.season-c7s4 .variantTable{overflow:visible!important;scrollbar-width:auto!important}
+ body.season-c7s4 .variantTable::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+ body.season-c7s4 .variantLegend{display:none!important}
+ body.season-c7s4 .familyRow{grid-template-columns:80px repeat(var(--c7s4-cols),54px)!important;min-width:0!important;width:auto!important;max-width:none!important;overflow-x:auto!important;overflow-y:visible!important;scrollbar-width:none!important}
+ body.season-c7s4 .familyRow::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+ body.season-c7s4 .familyHero{grid-template-columns:1fr!important;gap:0!important;justify-items:center!important;text-align:center!important;padding-right:0!important}
+ body.season-c7s4 .familyHero img{width:58px!important;height:58px!important}
+ body.season-c7s4 .familyName{font-size:15px!important;white-space:normal!important;line-height:1.05!important}
+ body.season-c7s4 .familyCount{display:none!important}
+ body.season-c7s4 .spriteCell{width:54px!important}
+ body.season-c7s4 .spriteCell img{width:52px!important;height:52px!important}
+ body.season-c7s4 .emptyCell.silhouette{width:54px!important}
+ body.season-c7s4 .emptyCell.silhouette img{width:52px!important;height:52px!important}
+}
+</style>'''
+          for name in files:
+            p=Path(name)
+            if not p.exists(): continue
+            s=p.read_text(encoding='utf-8')
+            s=re.sub(r'<style id="v2028-c7s4-portrait-native">.*?</style>','',s,flags=re.S)
+            if 'id="v2028-c7s4-lanes"' not in s: raise SystemExit(name+': C7S4 lane authority missing')
+            p.write_text(s.replace('</body>',css+'</body>',1),encoding='utf-8')
+          PY
           npm init -y >/dev/null 2>&1
           npm install playwright@1.55.0 >/dev/null 2>&1
           npx playwright install --with-deps chromium >/dev/null 2>&1
-          python3 -m pip install --quiet pillow
-          cat > audit.js <<'JS'
-          const { chromium } = require('playwright');
-          const fs = require('fs');
-          const path = require('path');
-          const url = 'file://' + path.join(process.cwd(), 'index.html');
-          (async () => {
-            const browser = await chromium.launch({headless:true});
-            const output = {};
-            for (const [width,height,name] of [[393,852,'portrait'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]) {
-              const page = await browser.newPage({viewport:{width,height}});
-              await page.goto(url);
-              await page.getByRole('button',{name:'C7S3',exact:true}).click();
-              await page.waitForTimeout(500);
-              output[name] = await page.evaluate(() => [...document.querySelectorAll('.familyRow')].filter(r=>r.offsetParent!==null).map(row => ({
-                family: row.querySelector('.familyName')?.textContent.trim() || '',
-                sprites: [...row.querySelectorAll('.spriteCell')].map(cell => {
-                  const img=cell.querySelector('img'), cr=cell.getBoundingClientRect(), ir=img?.getBoundingClientRect();
-                  return {src:img?.getAttribute('src')||null, mastered:cell.classList.contains('mastered'), cell:[cr.x,cr.y,cr.width,cr.height].map(Math.round), img:ir?[ir.x,ir.y,ir.width,ir.height].map(Math.round):null};
-                })
-              })));
-              await page.screenshot({path:`audit-c7s3-${name}.png`,fullPage:true});
-              await page.close();
-            }
-            fs.writeFileSync('audit-c7s3-render.json',JSON.stringify(output,null,2));
-            await browser.close();
-          })().catch(e=>{console.error(e);process.exit(1)});
+          cat > qa.js <<'JS'
+          const{chromium}=require('playwright'),path=require('path');
+          const u='file://'+path.join(process.cwd(),'index.html');
+          async function click(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(300)}
+          async function state(p){return p.evaluate(()=>{const t=document.querySelector('.variantTable'),l=document.querySelector('.variantLegend'),r=document.querySelector('.familyRow');const c=x=>getComputedStyle(x);return{tableOverflow:c(t).overflowX,tableScroll:t.scrollWidth,tableClient:t.clientWidth,legendDisplay:c(l).display,rowOverflow:c(r).overflowX,rowScroll:r.scrollWidth,rowClient:r.clientWidth,rowCols:c(r).gridTemplateColumns,bodyWidth:document.body.scrollWidth,viewport:innerWidth}})}
+          (async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[393,852,'portrait'],[412,915,'portrait-wide'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}});await p.goto(u);await click(p,'C7S4');const s4=await state(p);if(w<=760){if(s4.tableOverflow!=='visible')throw Error(n+' C7S4 table still scrolls: '+JSON.stringify(s4));if(s4.legendDisplay!=='none')throw Error(n+' C7S4 legend not using native mobile treatment');if(!['auto','scroll'].includes(s4.rowOverflow))throw Error(n+' C7S4 row not independently scrollable');if(s4.bodyWidth>s4.viewport+1)throw Error(n+' page-level horizontal overflow');}await click(p,'C7S3');const s3=await state(p);if(w<=760){if(s3.tableOverflow!=='visible'||s3.legendDisplay!=='none'||!['auto','scroll'].includes(s3.rowOverflow))throw Error(n+' C7S3 baseline unexpectedly differs');}await p.screenshot({path:`qa-c7s4-native-${n}.png`,fullPage:true});console.log('PASS',n,s4);await p.close()}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
           JS
-          node audit.js
-          python3 - <<'PY'
-          from PIL import Image
-          from pathlib import Path
-          import json, statistics
-          rendered=json.loads(Path('audit-c7s3-render.json').read_text()); assets={}
-          for rows in rendered.values():
-            for row in rows:
-              for sprite in row['sprites']:
-                src=sprite.get('src')
-                if not src or src in assets or not Path(src).is_file(): continue
-                im=Image.open(src).convert('RGBA'); box=im.getchannel('A').getbbox()
-                if not box: continue
-                W,H=im.size; x0,y0,x1,y1=box
-                assets[src]={'family':row['family'],'width':W,'height':H,'visibleWidth':x1-x0,'visibleHeight':y1-y0,'fillWidth':round((x1-x0)/W,4),'fillHeight':round((y1-y0)/H,4),'topPad':round(y0/H,4),'rightPad':round((W-x1)/W,4)}
-          fills=[v['fillHeight'] for v in assets.values()]; med=statistics.median(fills) if fills else 0
-          for v in assets.values(): v['heightVsMedian']=round(v['fillHeight']/med,4) if med else 0
-          Path('audit-c7s3-visible-bounds.json').write_text(json.dumps({'assetCount':len(assets),'medianFillHeight':med,'assets':assets},indent=2))
-          print('PASS audit assets',len(assets),'median',med)
-          for src,v in sorted(assets.items(),key=lambda kv:kv[1]['fillHeight']): print(v['family'],v['fillHeight'],v['heightVsMedian'],src)
-          PY
-          rm -rf node_modules package.json package-lock.json audit.js audit-c7s3-render.json
+          node qa.js
+          rm -rf node_modules package.json package-lock.json qa.js
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add audit-c7s3-visible-bounds.json audit-c7s3-portrait.png audit-c7s3-landscape.png audit-c7s3-tablet.png audit-c7s3-desktop.png
-          git commit -m 'qa: record clean C7S3 visual baseline'
+          git add index.html v2.0.28.html qa-c7s4-native-*.png
+          git commit -m 'fix: restore native C7S4 portrait row scrolling'
           git push origin HEAD:main
