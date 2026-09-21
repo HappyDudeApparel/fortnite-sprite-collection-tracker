@@ -1,7 +1,8 @@
 {
+  "id": "./sprite-collection-locker-v2.0.28",
   "name": "Sprite Collection Locker",
   "short_name": "Sprites Locker",
-  "start_url": "./index.html",
+  "start_url": "./index.html?v=2.0.28",
   "scope": "./",
   "display": "standalone",
   "background_color": "#071226",
