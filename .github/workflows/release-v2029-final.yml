@@ -1,0 +1,77 @@
+name: Final v2.0.29 live-only release
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/release-v2029-final.yml']
+permissions: {contents: write}
+jobs:
+  release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,json,shutil
+          OBJ=re.compile(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}')
+          def recs(s,season=None):
+            out=[]
+            for m in OBJ.finditer(s):
+              x=m.group(0)
+              if '"variantKey"' not in x or '"image"' not in x:continue
+              try:r=json.loads(x)
+              except:continue
+              if season is None or r.get('season')==season:out.append((m,r))
+            return out
+          original=Path('index.html').read_text();s3=[m.group(0) for m,r in recs(original,'C7S3')];moved=set();research=[]
+          def tx(s):
+            edits=[];removed=[]
+            for m,r in recs(s,'C7S4'):
+              if r.get('family')=='Birthday':removed.append(r);edits.append((m.start(),m.end(),None));continue
+              r.update(releaseState='released',status='Collectible',preview=False,countsTowardCollection=True)
+              if r.get('variantKey')=='Bounty':r['spriteChestChance']='Not published';r['effect']='Chance to find Sprites when eliminating opponents. Only gains Sprite XP from eliminations, unless Sprite has special XP rules.'
+              if r.get('family')=='Crash Bandicoot' and r.get('variantKey')=='Bounty':r['name']='Bounty Hunter Body Slam'
+              if r.get('family')=='Morgana':
+                r['description']='Increases the effectiveness of healing items.';r['levelUp']='Healing effectiveness increases with each Level Up!'
+                if r.get('variantKey')=='Base':r['effect']='Increases the effectiveness of healing items.'
+              img=str(r.get('image',''))
+              if img.startswith('assets/preview-v2028/'):
+                src=Path(img);dst=Path('assets/embedded')/src.name
+                if not src.is_file():raise SystemExit('missing '+img)
+                if dst.exists() and dst.read_bytes()!=src.read_bytes():raise SystemExit('collision '+str(dst))
+                if not dst.exists():shutil.copy2(src,dst)
+                moved.add(str(dst));r['image']=str(dst).replace('\\','/')
+              edits.append((m.start(),m.end(),json.dumps(r,separators=(',',':'),ensure_ascii=False)))
+            for a,b,v in reversed(edits):
+              if v is None:
+                if b<len(s) and s[b]==',':b+=1
+                elif a and s[a-1]==',':a-=1
+                s=s[:a]+s[b:]
+              else:s=s[:a]+v+s[b:]
+            return s,removed
+          new,research=tx(original);new=new.replace('Sprite Collection Locker — v2.0.28','Sprite Collection Locker — v2.0.29').replace('v2.0.28','v2.0.29');Path('index.html').write_text(new);Path('v2.0.29.html').write_text(new)
+          Path('research').mkdir(exist_ok=True);Path('research/c7s4-unreleased.json').write_text(json.dumps({'asOf':'2026-09-26T03:21:00-04:00','rule':'Research only; never render until collectible in-game.','records':research},indent=2,ensure_ascii=False))
+          mp=Path('asset-manifest.json');man=json.loads(mp.read_text());man['version']='2.0.29';man['assets']=sorted(set(man.get('assets',[]))|moved);mp.write_text(json.dumps(man,separators=(',',':')))
+          wm=Path('manifest.webmanifest');man=json.loads(wm.read_text());man['id']='./sprite-collection-locker-v2.0.29';man['start_url']='./index.html?v=2.0.29';wm.write_text(json.dumps(man,indent=2)+'\n')
+          rr=[r for m,r in recs(new,'C7S4')]
+          assert len(rr)==96 and len({r['family'] for r in rr})==20
+          assert {k:sum(r['variantKey']==k for r in rr) for k in ('Base','Gold','Cheat','Hacker','Bounty')}=={'Base':20,'Gold':19,'Cheat':19,'Hacker':19,'Bounty':19}
+          assert not any(r['family']=='Birthday' for r in rr) and sum(r['family']=='Morgana' for r in rr)==5
+          assert all(r['releaseState']=='released' and not r['preview'] and r['countsTowardCollection'] for r in rr)
+          assert all(not str(r['image']).startswith(('http://','https://','//')) and 'preview-v2028' not in r['image'] and Path(r['image']).is_file() for r in rr)
+          assert [m.group(0) for m,r in recs(new,'C7S3')]==s3
+          assert len(research)==5 and any(r['name']=='Bounty Hunter Body Slam' for r in rr)
+          print('PASS DATA')
+          PY
+          npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > qa.js <<'JS'
+          const{chromium}=require('playwright'),path=require('path');const u='file://'+path.join(process.cwd(),'index.html');async function c(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(350)};(async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[360,800,'phone-small'],[393,852,'phone'],[412,915,'phone-wide'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}});await p.goto(u);await c(p,'C7S4');const q=await p.evaluate(()=>{const t=document.querySelector('.variantTable');return{text:t?.innerText||'',bad:t?.querySelectorAll('.spriteCell.preview,.previewBadge').length||0,bw:document.body.scrollWidth,hw:document.documentElement.scrollWidth,vw:innerWidth,imgs:[...t.querySelectorAll('img')].filter(x=>x.offsetParent!==null).map(x=>({src:x.getAttribute('src'),ok:x.complete&&x.naturalWidth>0})),nums:[...document.querySelectorAll('.sumNum')].map(x=>x.textContent.trim())}});if(/Birthday Sprite|\bComing\b|\bSoon\b/i.test(q.text)||q.bad)throw Error(n+' unreleased leak');if(!q.nums.includes('96'))throw Error(n+' total '+JSON.stringify(q.nums));if(!/Morgana/i.test(q.text))throw Error(n+' Morgana missing');if(q.imgs.some(x=>!x.ok||/^https?:|^\/\//.test(x.src||'')))throw Error(n+' image');if(w<=760&&(q.bw>q.vw+1||q.hw>q.vw+1))throw Error(n+' overflow');await p.screenshot({path:'qa-v2029-'+n+'.png',fullPage:true});await c(p,'C7S3');await p.close();console.log('PASS',n)}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
+          JS
+          node qa.js
+          rm -rf node_modules package.json package-lock.json qa.js
+          git config user.name github-actions[bot];git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html v2.0.29.html asset-manifest.json manifest.webmanifest research/c7s4-unreleased.json assets/embedded qa-v2029-*.png
+          git commit -m 'release: v2.0.29 live-only C7S4 96 collection';git push origin HEAD:main
