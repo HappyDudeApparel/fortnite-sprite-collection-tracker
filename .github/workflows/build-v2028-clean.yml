@@ -1,42 +1,32 @@
-name: Fix C7S4 portrait native row flow
+name: Inspect C7S4 live dataset
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/build-v2028-clean.yml'
-permissions:
-  contents: write
+    paths: ['.github/workflows/build-v2028-clean.yml']
+permissions: {contents: read}
 jobs:
-  fix:
+  inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch production and QA
-        shell: bash
+      - shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import re
-          css='''<style id="v2028-c7s4-portrait-native">@media(max-width:760px){body.season-c7s4 .mainShell{width:100%!important;max-width:100%!important;overflow-x:hidden!important}body.season-c7s4 .variantTable{width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden!important}body.season-c7s4 .variantTable::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}body.season-c7s4 .variantLegend{display:none!important}body.season-c7s4 .familyRow{box-sizing:border-box!important;grid-template-columns:80px repeat(var(--c7s4-cols),54px)!important;column-gap:0!important;min-width:0!important;width:100%!important;max-width:100%!important;padding-left:0!important;padding-right:0!important;overflow-x:auto!important;overflow-y:visible!important;scrollbar-width:none!important;overscroll-behavior-x:contain!important}body.season-c7s4 .familyRow::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}body.season-c7s4 .familyHero{grid-template-columns:1fr!important;gap:0!important;justify-items:center!important;text-align:center!important;padding-right:0!important;width:80px!important;min-width:80px!important}body.season-c7s4 .familyHero img{width:58px!important;height:58px!important}body.season-c7s4 .familyName{font-size:15px!important;white-space:normal!important;line-height:1.05!important}body.season-c7s4 .familyCount{display:none!important}body.season-c7s4 .spriteCell{width:54px!important;min-width:54px!important;max-width:54px!important;min-height:64px!important}body.season-c7s4 .spriteCell img{width:52px!important;height:52px!important}body.season-c7s4 .emptyCell.silhouette{width:54px!important;min-width:54px!important}body.season-c7s4 .emptyCell.silhouette img{width:52px!important;height:52px!important}}</style>'''
-          for name in ('index.html','v2.0.28.html'):
-            p=Path(name)
-            if not p.exists(): continue
-            s=p.read_text(encoding='utf-8')
-            if 'id="v2028-production-layout"' not in s: raise SystemExit(name+': production C7S4 layout missing')
-            s=re.sub(r'<style id="v2028-c7s4-portrait-native">.*?</style>','',s,flags=re.S)
-            p.write_text(s.replace('</body>',css+'</body>',1),encoding='utf-8')
+          import re,json
+          s=Path('index.html').read_text(encoding='utf-8')
+          rec=[]
+          for x in re.findall(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}',s):
+            if '"variantKey"' not in x or '"image"' not in x: continue
+            try:r=json.loads(x)
+            except:continue
+            if r.get('season')=='C7S4': rec.append(r)
+          print('C7S4_COUNT',len(rec))
+          for r in rec:
+            print('REC',json.dumps(r,separators=(',',':'),ensure_ascii=False))
+          print('BIRTHDAY',sum('birthday' in str(r.get('name','')).lower() or 'birthday' in str(r.get('family','')).lower() for r in rec))
+          print('MORGANA',sum('morgana' in str(r.get('name','')).lower() or 'morgana' in str(r.get('family','')).lower() for r in rec))
+          print('BOUNTY',sum(r.get('variantKey')=='Bounty' for r in rec))
+          print('REMOTE_IMAGES',sum(str(r.get('image','')).startswith(('http://','https://','//')) for r in rec))
           PY
-          npm init -y >/dev/null 2>&1
-          npm install playwright@1.55.0 >/dev/null 2>&1
-          npx playwright install --with-deps chromium >/dev/null 2>&1
-          cat > qa.js <<'JS'
-          const{chromium}=require('playwright'),path=require('path');const u='file://'+path.join(process.cwd(),'index.html');async function clk(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(300)}async function st(p){return p.evaluate(()=>{let t=document.querySelector('.variantTable'),l=document.querySelector('.variantLegend'),r=document.querySelector('.familyRow'),c=x=>getComputedStyle(x);return{to:c(t).overflowX,ld:c(l).display,ro:c(r).overflowX,bw:document.body.scrollWidth,hw:document.documentElement.scrollWidth,vw:innerWidth,tw:t.scrollWidth,tc:t.clientWidth,rw:r.scrollWidth,rc:r.clientWidth}})};(async()=>{let b=await chromium.launch({headless:true});for(let v of [[360,800,'portrait-small'],[393,852,'portrait'],[412,915,'portrait-wide'],[760,900,'mobile-max'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){let p=await b.newPage({viewport:{width:v[0],height:v[1]}});await p.goto(u);await clk(p,'C7S4');let a=await st(p);if(v[0]<=760&&(a.ld!=='none'||!['auto','scroll'].includes(a.ro)||a.bw>a.vw+1||a.hw>a.vw+1||a.tc>a.vw))throw Error(v[2]+' S4 '+JSON.stringify(a));await p.screenshot({path:'qa-c7s4-native-'+v[2]+'.png',fullPage:true});console.log('PASS S4',v[2],a);await clk(p,'C7S3');let z=await st(p);console.log('OBSERVE S3 UNTOUCHED',v[2],z);await p.close()}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
-          JS
-          node qa.js
-          rm -rf node_modules package.json package-lock.json qa.js
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add index.html v2.0.28.html qa-c7s4-native-*.png
-          git commit -m 'fix: restore native C7S4 portrait row scrolling'
-          git push origin HEAD:main
