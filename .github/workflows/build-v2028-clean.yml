@@ -15,8 +15,7 @@ jobs:
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
-          import re,json,shutil,hashlib
-
+          import re,json,shutil
           OBJ=re.compile(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}')
           def records(s,season=None):
             out=[]
@@ -27,110 +26,64 @@ jobs:
               except:continue
               if season is None or r.get('season')==season: out.append((m,r))
             return out
-
-          base=Path('index.html').read_text(encoding='utf-8')
-          s3_before=[m.group(0) for m,r in records(base,'C7S3')]
-          research=[]
-          live_asset_moves=set()
-
+          base=Path('index.html').read_text(encoding='utf-8');s3_before=[m.group(0) for m,r in records(base,'C7S3')];research=[];live_asset_moves=set()
           def transform(s):
-            nonlocal_research=[]
-            edits=[]
+            removed=[];edits=[]
             for m,r in records(s,'C7S4'):
-              if r.get('family')=='Birthday':
-                nonlocal_research.append(r)
-                edits.append((m.start(),m.end(),None))
-                continue
-              r['releaseState']='released'
-              r['status']='Collectible'
-              r['preview']=False
-              r['countsTowardCollection']=True
+              if r.get('family')=='Birthday': removed.append(r);edits.append((m.start(),m.end(),None));continue
+              r.update(releaseState='released',status='Collectible',preview=False,countsTowardCollection=True)
               if r.get('variantKey')=='Bounty':
-                r['spriteChestChance']='Not published'
-                r['effect']='Chance to find Sprites when eliminating opponents. Only gains Sprite XP from eliminations, unless Sprite has special XP rules.'
-              if r.get('family')=='Crash Bandicoot' and r.get('variantKey')=='Bounty':
-                r['name']='Bounty Hunter Body Slam'
+                r['spriteChestChance']='Not published';r['effect']='Chance to find Sprites when eliminating opponents. Only gains Sprite XP from eliminations, unless Sprite has special XP rules.'
+              if r.get('family')=='Crash Bandicoot' and r.get('variantKey')=='Bounty': r['name']='Bounty Hunter Body Slam'
               if r.get('family')=='Morgana':
-                r['description']='Increases the effectiveness of healing items.'
-                r['levelUp']='Healing effectiveness increases with each Level Up!'
+                r['description']='Increases the effectiveness of healing items.';r['levelUp']='Healing effectiveness increases with each Level Up!'
                 if r.get('variantKey')=='Base': r['effect']='Increases the effectiveness of healing items.'
               img=str(r.get('image',''))
               if img.startswith('assets/preview-v2028/'):
-                src=Path(img); dst=Path('assets/embedded')/src.name
+                src=Path(img);dst=Path('assets/embedded')/src.name
                 if not src.is_file(): raise SystemExit('missing local live asset '+img)
                 if dst.exists() and dst.read_bytes()!=src.read_bytes(): raise SystemExit('asset collision '+str(dst))
                 if not dst.exists(): shutil.copy2(src,dst)
-                live_asset_moves.add(str(dst))
-                r['image']=str(dst).replace('\\','/')
+                live_asset_moves.add(str(dst));r['image']=str(dst).replace('\\','/')
               edits.append((m.start(),m.end(),json.dumps(r,separators=(',',':'),ensure_ascii=False)))
             for a,b,repl in reversed(edits):
               if repl is None:
-                # Remove the object and exactly one adjacent array comma.
                 if b<len(s) and s[b]==',': b+=1
                 elif a>0 and s[a-1]==',': a-=1
                 s=s[:a]+s[b:]
               else:s=s[:a]+repl+s[b:]
-            return s,nonlocal_research
-
+            return s,removed
           for name in ('index.html','v2.0.28.html'):
             p=Path(name)
-            if not p.exists(): continue
-            old=p.read_text(encoding='utf-8')
-            new,removed=transform(old)
-            if name=='index.html': research=removed
-            new=new.replace('Sprite Collection Locker — v2.0.28','Sprite Collection Locker — v2.0.29')
-            new=new.replace('v2.0.28','v2.0.29')
+            if not p.exists():continue
+            new,removed=transform(p.read_text(encoding='utf-8'))
+            if name=='index.html':research=removed
+            new=new.replace('Sprite Collection Locker — v2.0.28','Sprite Collection Locker — v2.0.29').replace('v2.0.28','v2.0.29')
             p.write_text(new,encoding='utf-8')
-          # Canonical release copy.
           Path('v2.0.29.html').write_text(Path('index.html').read_text(encoding='utf-8'),encoding='utf-8')
-
-          Path('research').mkdir(exist_ok=True)
-          Path('research/c7s4-unreleased.json').write_text(json.dumps({'asOf':'2026-09-26T03:21:00-04:00','rule':'Research only; never render until collectible in-game.','records':research},indent=2,ensure_ascii=False),encoding='utf-8')
-
-          # Keep manifest local and complete; never point production at third-party art.
+          Path('research').mkdir(exist_ok=True);Path('research/c7s4-unreleased.json').write_text(json.dumps({'asOf':'2026-09-26T03:21:00-04:00','rule':'Research only; never render until collectible in-game.','records':research},indent=2,ensure_ascii=False),encoding='utf-8')
           mp=Path('asset-manifest.json')
           if mp.exists():
-            man=json.loads(mp.read_text(encoding='utf-8'));man['version']='2.0.29'
-            aset=set(man.get('assets',[]));aset.update(live_asset_moves);man['assets']=sorted(aset)
-            mp.write_text(json.dumps(man,separators=(',',':')),encoding='utf-8')
+            man=json.loads(mp.read_text());man['version']='2.0.29';man['assets']=sorted(set(man.get('assets',[]))|live_asset_moves);mp.write_text(json.dumps(man,separators=(',',':')))
           wm=Path('manifest.webmanifest')
           if wm.exists():
-            man=json.loads(wm.read_text(encoding='utf-8'));man['id']='./sprite-collection-locker-v2.0.29';man['start_url']='./index.html?v=2.0.29'
-            wm.write_text(json.dumps(man,indent=2)+'\n',encoding='utf-8')
-
-          final=Path('index.html').read_text(encoding='utf-8')
-          rr=[r for m,r in records(final,'C7S4')]
-          assert len(rr)==96, len(rr)
-          assert len({r['family'] for r in rr})==20
-          assert sum(r['variantKey']=='Base' for r in rr)==20
-          assert sum(r['variantKey']=='Gold' for r in rr)==19
-          assert sum(r['variantKey']=='Cheat' for r in rr)==19
-          assert sum(r['variantKey']=='Hacker' for r in rr)==19
-          assert sum(r['variantKey']=='Bounty' for r in rr)==19
-          assert not any(r['family']=='Birthday' for r in rr)
-          assert sum(r['family']=='Morgana' for r in rr)==5
-          assert not any(r.get('releaseState')!='released' or r.get('preview') or not r.get('countsTowardCollection') for r in rr)
-          assert not any(str(r.get('image','')).startswith(('http://','https://','//')) for r in rr)
-          assert not any('preview-v2028' in str(r.get('image','')) for r in rr)
-          assert all(Path(r['image']).is_file() for r in rr)
-          assert [m.group(0) for m,r in records(final,'C7S3')]==s3_before, 'C7S3 DATA CHANGED'
-          assert len(research)==5 and all(r.get('family')=='Birthday' for r in research)
-          assert any(r.get('name')=='Bounty Hunter Body Slam' for r in rr)
-          print('PASS DATA: 96 records / 20 families / 19 Bounty / Morgana x5 / Birthday x0 / all local assets / C7S3 data untouched')
+            man=json.loads(wm.read_text());man['id']='./sprite-collection-locker-v2.0.29';man['start_url']='./index.html?v=2.0.29';wm.write_text(json.dumps(man,indent=2)+'\n')
+          final=Path('index.html').read_text();rr=[r for m,r in records(final,'C7S4')]
+          assert len(rr)==96 and len({r['family'] for r in rr})==20
+          assert {k:sum(r['variantKey']==k for r in rr) for k in ('Base','Gold','Cheat','Hacker','Bounty')}=={'Base':20,'Gold':19,'Cheat':19,'Hacker':19,'Bounty':19}
+          assert not any(r['family']=='Birthday' for r in rr) and sum(r['family']=='Morgana' for r in rr)==5
+          assert all(r.get('releaseState')=='released' and not r.get('preview') and r.get('countsTowardCollection') for r in rr)
+          assert all(not str(r.get('image','')).startswith(('http://','https://','//')) and 'preview-v2028' not in str(r.get('image','')) and Path(r['image']).is_file() for r in rr)
+          assert [m.group(0) for m,r in records(final,'C7S3')]==s3_before
+          assert len(research)==5 and any(r.get('name')=='Bounty Hunter Body Slam' for r in rr)
+          print('PASS DATA 96 / 20 / 19x4 variants / Birthday 0 / Morgana 5 / local assets / C7S3 untouched')
           PY
-
-          npm init -y >/dev/null 2>&1
-          npm install playwright@1.55.0 >/dev/null 2>&1
-          npx playwright install --with-deps chromium >/dev/null 2>&1
+          npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
           cat > qa.js <<'JS'
-          const{chromium}=require('playwright'),path=require('path');const u='file://'+path.join(process.cwd(),'index.html');
-          async function click(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(350)}
-          (async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[360,800,'phone-small'],[393,852,'phone'],[412,915,'phone-wide'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}});await p.goto(u);await click(p,'C7S4');const q=await p.evaluate(()=>({text:document.body.innerText,bw:document.body.scrollWidth,hw:document.documentElement.scrollWidth,vw:innerWidth,imgs:[...document.images].filter(x=>x.offsetParent!==null).map(x=>({src:x.getAttribute('src'),ok:x.complete&&x.naturalWidth>0}))}));if(/Birthday Sprite|Coming|Soon|PREVIEW/i.test(q.text))throw Error(n+' unreleased/preview UI leak');if(!/96\s*SPRITES/i.test(q.text.replace(/\n/g,' ')))throw Error(n+' total not 96');if(!/Morgana/i.test(q.text))throw Error(n+' Morgana missing');if(q.imgs.some(x=>!x.ok||/^https?:|^\/\//.test(x.src||'')))throw Error(n+' broken/remote visible image');if(w<=760&&(q.bw>q.vw+1||q.hw>q.vw+1))throw Error(n+' viewport overflow '+JSON.stringify(q));await p.screenshot({path:'qa-v2029-'+n+'.png',fullPage:true});await click(p,'C7S3');if(/Birthday Sprite/i.test(await p.locator('body').innerText()))throw Error(n+' cross-season leak');await p.close();console.log('PASS UI',n)}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
+          const{chromium}=require('playwright'),path=require('path');const u='file://'+path.join(process.cwd(),'index.html');async function click(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(350)};(async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[360,800,'phone-small'],[393,852,'phone'],[412,915,'phone-wide'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}});await p.goto(u);await click(p,'C7S4');const q=await p.evaluate(()=>{const t=document.querySelector('.variantTable');return{text:t?.innerText||'',previewCells:t?.querySelectorAll('.spriteCell.preview,.previewBadge').length||0,bw:document.body.scrollWidth,hw:document.documentElement.scrollWidth,vw:innerWidth,imgs:[...t.querySelectorAll('img')].filter(x=>x.offsetParent!==null).map(x=>({src:x.getAttribute('src'),ok:x.complete&&x.naturalWidth>0}))}});if(/Birthday Sprite|\bComing\b|\bSoon\b/i.test(q.text)||q.previewCells)throw Error(n+' unreleased collection cell leak');const body=(await p.locator('body').innerText()).replace(/\n/g,' ');if(!/96\s*SPRITES/i.test(body))throw Error(n+' total not 96');if(!/Morgana/i.test(q.text))throw Error(n+' Morgana missing');if(q.imgs.some(x=>!x.ok||/^https?:|^\/\//.test(x.src||'')))throw Error(n+' broken/remote image');if(w<=760&&(q.bw>q.vw+1||q.hw>q.vw+1))throw Error(n+' viewport overflow');await p.screenshot({path:'qa-v2029-'+n+'.png',fullPage:true});await click(p,'C7S3');await p.close();console.log('PASS UI',n)}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
           JS
           node qa.js
           rm -rf node_modules package.json package-lock.json qa.js
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git config user.name github-actions[bot];git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add index.html v2.0.29.html asset-manifest.json manifest.webmanifest research/c7s4-unreleased.json assets/embedded qa-v2029-*.png
-          git commit -m 'release: v2.0.29 live-only C7S4 96 collection'
-          git push origin HEAD:main
+          git commit -m 'release: v2.0.29 live-only C7S4 96 collection';git push origin HEAD:main
