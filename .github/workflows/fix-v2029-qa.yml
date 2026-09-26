@@ -1,0 +1,28 @@
+name: Fix v2.0.29 QA assertion
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-v2029-qa.yml']
+permissions: {contents: write}
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/build-v2028-clean.yml');s=p.read_text()
+          old="const body=(await p.locator('body').innerText()).replace(/\\n/g,' ');if(!/96\\s*SPRITES/i.test(body))throw Error(n+' total not 96');"
+          new="const nums=await p.locator('.sumNum').allInnerTexts();if(!nums.some(x=>x.trim()==='96'))throw Error(n+' total not 96 '+JSON.stringify(nums));"
+          if old not in s: raise SystemExit('target QA assertion not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .github/workflows/build-v2028-clean.yml
+          git commit -m 'qa: read C7S4 total from summary value across responsive layouts'
+          git push origin HEAD:main
