@@ -1,5 +1,5 @@
 {
-  "version": "2.0.27",
-  "published": "2026-09-10",
-  "notes": "Portrait-only UI repair: increased the internal family artwork/name clearance so large family art no longer overlaps labels. Landscape geometry and all Sprite data/artwork/release states are unchanged; all 15 Loot Hacker variants remain live."
+  "version": "2.0.29",
+  "published": "2026-09-28",
+  "notes": "Production cleanup and full QA; live C7S4 96-Sprite release."
 }
