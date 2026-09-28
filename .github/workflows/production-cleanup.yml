@@ -1,0 +1,57 @@
+name: Production cleanup final
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/production-cleanup.yml']
+permissions: {contents: write}
+jobs:
+  clean:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,re
+          V='2.0.29'; p=Path('index.html'); old=p.read_text(); s=old.replace('v2.0.28-preview','v'+V).replace('2.0.28-preview',V).replace('Sprite Collection Locker — v2.0.28','Sprite Collection Locker — v'+V)
+          assert '2.0.28-preview' not in s and 'Sprite Collection Locker — v'+V in s
+          p.write_text(s); Path('v'+V+'.html').write_text(s)
+          Path('version.json').write_text(json.dumps({'version':V,'published':'2026-09-28','notes':'Production cleanup and full QA; live C7S4 96-Sprite release.'},indent=2)+'\n')
+          q=Path('manifest.webmanifest'); j=json.loads(q.read_text()); j['id']='./sprite-collection-locker-v'+V; j['start_url']='./index.html?v='+V; q.write_text(json.dumps(j,indent=2)+'\n')
+          q=Path('asset-manifest.json'); j=json.loads(q.read_text()); j['version']=V; q.write_text(json.dumps(j,separators=(',',':')))
+          q=Path('service-worker.js'); x=re.sub(r"const APP_VERSION = '[^']+'","const APP_VERSION = '"+V+"'",q.read_text()); x=x if "'./index.html'," in x else x.replace('const APP_SHELL = [',"const APP_SHELL = [\n  './index.html',",1); q.write_text(x)
+          Path('404.html').write_text('<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=/"><script>location.replace("/"+location.search+location.hash)</script><a href="/">Sprite Collection Locker</a>\n')
+          R=re.compile(r'\{[^{}]*"id"\s*:\s*\d+[^{}]*\}')
+          def rec(t,season):
+            z=[]
+            for m in R.finditer(t):
+              a=m.group(0)
+              if '"variantKey"' not in a or '"image"' not in a: continue
+              try:r=json.loads(a)
+              except:continue
+              if r.get('season')==season:z.append(r)
+            return z
+          a=rec(s,'C7S4'); assert len(a)==96 and len({r['family'] for r in a})==20 and sum(r['family']=='Morgana' for r in a)==5 and not any(r['family']=='Birthday' for r in a)
+          assert {k:sum(r['variantKey']==k for r in a) for k in ('Base','Gold','Cheat','Hacker','Bounty')}=={'Base':20,'Gold':19,'Cheat':19,'Hacker':19,'Bounty':19}
+          assert all(r.get('releaseState')=='released' and not r.get('preview') and r.get('countsTowardCollection') and Path(r['image']).is_file() for r in a)
+          assert rec(old,'C7S3')==rec(s,'C7S3') and rec(s,'C7S3')
+          j=json.loads(Path('asset-manifest.json').read_text()); assert not [f for f in j['assets'] if not Path(f).is_file()]
+          assert json.loads(Path('version.json').read_text())['version']==V and "APP_VERSION = '2.0.29'" in Path('service-worker.js').read_text()
+          print('PASS STATIC')
+          PY
+          mkdir -p archive/releases/v2.0.28 archive/qa-pre-v2.0.29 archive/workflows
+          for f in v2.0.28.html v2.0.28-preview.html v2.0.28-preview-manifest.json; do [ ! -e "$f" ] || git mv "$f" archive/releases/v2.0.28/; done
+          for f in audit-c7s3-*.png audit-c7s3-visible-bounds.json qa-c7s4-native-*.png qa-landscape.png qa-portrait.png qa-v2028-*.png qa-v2029-*.png; do [ ! -e "$f" ] || git mv "$f" archive/qa-pre-v2.0.29/; done
+          for f in .github/workflows/*.yml; do [ "$f" = '.github/workflows/production-cleanup.yml' ] && continue; git mv "$f" archive/workflows/$(basename "$f"); done
+          npm init -y >/dev/null 2>&1; npm install playwright@1.55.0 >/dev/null 2>&1; npx playwright install --with-deps chromium >/dev/null 2>&1
+          python3 -m http.server 4173 >/tmp/http.log 2>&1 & S=$!; trap 'kill $S 2>/dev/null || true' EXIT; sleep 1
+          cat > qa.js <<'JS'
+          const{chromium}=require('playwright');(async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[360,800,'small'],[393,852,'phone'],[412,915,'wide'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}}),e=[];p.on('pageerror',x=>e.push(x.message));p.on('requestfailed',r=>e.push(r.url()));let r=await p.goto('http://127.0.0.1:4173/?q='+Date.now(),{waitUntil:'networkidle'});if(!r.ok()||!/v2\.0\.29/.test(await p.title()))throw Error(n+' load/title');let x=p.getByRole('button',{name:'C7S4',exact:true});await x.click();await p.waitForTimeout(200);let q=await p.evaluate(()=>({t:document.querySelector('.variantTable')?.innerText||'',n:[...document.querySelectorAll('.sumNum')].map(x=>x.textContent.trim()),bad:document.querySelectorAll('.spriteCell.preview,.previewBadge').length,imgs:[...document.images].filter(x=>x.offsetParent!==null).every(x=>x.complete&&x.naturalWidth>0),bw:document.body.scrollWidth,vw:innerWidth,body:document.body.innerText}));if(!q.n.includes('96')||q.bad||!/Morgana/i.test(q.t)||/Birthday Sprite|\bComing\b|\bSoon\b/i.test(q.t)||!q.imgs||/2\.0\.28-preview/.test(q.body)||!/v2\.0\.29/.test(q.body)||(w<=760&&q.bw>q.vw+1)||e.length)throw Error(n+' QA '+JSON.stringify(q)+' '+e);await p.getByRole('button',{name:'C7S3',exact:true}).click();if(!(await p.locator('.variantTable').innerText()).trim())throw Error(n+' C7S3');await p.close();console.log('PASS UI '+n)}const p=await b.newPage({viewport:{width:393,height:852}});await p.goto('http://127.0.0.1:4173/?proof=1',{waitUntil:'networkidle'});const v=p.getByText(/v2\.0\.29/).last();await v.scrollIntoViewIfNeeded();let z=await v.boundingBox();if(!z)throw Error('version proof');await p.screenshot({path:'qa-v2029-version-proof.png',clip:{x:Math.max(0,z.x-16),y:Math.max(0,z.y-16),width:Math.min(393-Math.max(0,z.x-16),Math.max(220,z.width+32)),height:Math.max(70,z.height+32)}});await b.close()})().catch(e=>{console.error(e);process.exit(1)})
+          JS
+          node qa.js
+          rm -rf node_modules package.json package-lock.json qa.js
+          git config user.name github-actions[bot]; git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A; git diff --cached --check; git commit -m 'maintenance: clean production tree and verify v2.0.29'; git push origin HEAD:main
