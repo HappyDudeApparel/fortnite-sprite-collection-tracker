@@ -1,0 +1,45 @@
+name: Fix v2.0.30 C7S4 legend labels
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fix-v2030-legend.yml']
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          css='''<style id="v2030-c7s4-legend-fit">body.season-c7s4 .variantLegend .legendItem{min-width:0!important;width:100%!important;max-width:100%!important;justify-self:stretch!important;justify-content:center!important;white-space:normal!important;text-align:center!important;line-height:1.05!important;overflow-wrap:normal!important;word-break:normal!important;flex-wrap:wrap!important}body.season-c7s4 .variantLegend .dot{flex:0 0 12px!important}</style>'''
+          for name in ('index.html','v2.0.30.html'):
+              p=Path(name)
+              if not p.exists():
+                  continue
+              s=p.read_text(encoding='utf-8')
+              s=re.sub(r'<style id="v2030-c7s4-legend-fit">.*?</style>','',s,flags=re.S)
+              p.write_text(s.replace('</body>',css+'</body>',1),encoding='utf-8')
+          PY
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          cat > qa.js <<'JS'
+          const{chromium}=require('playwright'),path=require('path');
+          const u='file://'+path.join(process.cwd(),'index.html');
+          async function click(p,n){await p.getByRole('button',{name:n,exact:true}).click();await p.waitForTimeout(350)}
+          (async()=>{const b=await chromium.launch({headless:true});for(const [w,h,n] of [[768,1024,'tablet-portrait'],[852,393,'landscape'],[1024,768,'tablet'],[1440,900,'desktop']]){const p=await b.newPage({viewport:{width:w,height:h}});await p.goto(u);await click(p,'C7S4');const r=await p.evaluate(()=>{const L=[...document.querySelectorAll('.variantLegend')].find(x=>x.offsetParent!==null),R=[...document.querySelectorAll('.familyRow')].find(x=>x.offsetParent!==null);const items=[...L.querySelectorAll('.legendItem')],rect=x=>{const b=x.getBoundingClientRect();return{x:b.x,right:b.right,w:b.width}},cs=x=>getComputedStyle(x);return{font:items.map(x=>cs(x).fontSize),legendCols:cs(L).gridTemplateColumns,rowCols:cs(R).gridTemplateColumns,items:items.map(rect),texts:items.map(x=>x.textContent.trim())}});if(r.font.some(x=>x!=='13px'))throw Error(n+' font changed '+JSON.stringify(r.font));if(r.legendCols!==r.rowCols)throw Error(n+' legend/row columns differ');for(let i=0;i<r.items.length-1;i++){if(r.items[i].right>r.items[i+1].x+0.5)throw Error(n+' overlap '+r.texts[i]+' / '+r.texts[i+1]);}console.log('PASS',n,r.texts);await p.close()}await b.close()})().catch(e=>{console.error(e);process.exit(1)})
+          JS
+          node qa.js
+          rm -rf node_modules package.json package-lock.json qa.js
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          test -f v2.0.30.html && git add v2.0.30.html || true
+          git commit -m 'fix: keep C7S4 legend labels inside existing variant columns'
+          git push origin HEAD:main
