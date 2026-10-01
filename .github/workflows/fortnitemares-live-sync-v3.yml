@@ -1,0 +1,64 @@
+name: Fortnitemares 122 live roster
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/fortnitemares-live-sync-v3.yml']
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exact 122-entry production roster
+        run: |
+          python - <<'PY'
+          import json,re,hashlib,urllib.request,urllib.parse,pathlib
+          p=pathlib.Path('index.html'); s=p.read_text(); m=re.search(r'const SPRITES=(\[.*?\]);\s*\nconst BACKGROUNDS=',s,re.S); sprites=json.loads(m.group(1))
+          assert sum(x.get('season')=='C7S4' and x.get('countsTowardCollection') is not False and not x.get('preview') for x in sprites)==96
+          assert not any(x.get('family') in ('Birthday','Spooky Dash','Vampire','The Deer','Dumpster Dive') and x.get('season')=='C7S4' for x in sprites)
+          d=pathlib.Path('assets/embedded'); d.mkdir(exist_ok=True)
+          def art(token,suffix):
+            raw=f'https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_{token}{suffix}'
+            u='https://wsrv.nl/?url='+urllib.parse.quote(raw,safe='')+'&output=webp'; req=urllib.request.Request(u,headers={'User-Agent':'Mozilla/5.0'})
+            with urllib.request.urlopen(req,timeout=45) as r:b=r.read()
+            assert len(b)>1000,(raw,len(b)); n=hashlib.sha256(b).hexdigest()[:20]+'.webp'; (d/n).write_bytes(b); return 'assets/embedded/'+n
+          vars=[('Base','Base',0,'','_L.webp'),('Cheat','Cheat Master',1,'All Cheat Code inputs count as correct','_Cheatmaster_L.webp'),('Hacker','Loot Hacker',2,'Increases chances of spawning items from your Loot Hacks','_Hacker_L.webp'),('Gold','Gold',3,'Gain 3x bonus Sprite XP from eliminations','_Gold_L.webp'),('Bounty','Bounty Hunter',4,'Chance to find Sprites when eliminating opponents. Only gains Sprite XP from eliminations, unless Sprite has special XP rules.','_BountyHunter_L.webp')]
+          nid=max(x['id'] for x in sprites)+1; si=max(x.get('standardIndex',0) or 0 for x in sprites)+1
+          def family_records(fam,rarity,token,desc,level,location):
+            global nid,si
+            out=[]
+            for key,label,order,bonus,suf in vars:
+              out.append({'id':nid,'family':fam,'displayFamily':fam,'familyName':fam+' Sprite','variantKey':key,'variant':label,'variantOrder':order,'name':fam+' Sprite' if key=='Base' else label+' '+fam+' Sprite','description':desc,'location':location,'effect':bonus or desc,'rarity':rarity if key=='Base' else 'Special','image':art(token,suf),'releaseState':'released','summonCost':None,'spriteChestChance':'Not published','standardIndex':si,'status':'Collectible','preview':False,'countsTowardCollection':True,'levelUp':level,'season':'C7S4'}); nid+=1; si+=1
+            return out
+          birthday=family_records('Birthday','Rare','Birthday','Opening chests has a chance to spawn a piece of cake. Eliminations can spawn cake at max level.','Chance to spawn cake increases with each Level Up!','Spotted near high and mountainous areas')
+          pos=next(i for i,x in enumerate(sprites) if x.get('season')=='C7S4' and x.get('family')=='Morgana'); sprites[pos:pos]=birthday
+          for args in [
+            ('Spooky Dash','Mythic','PhaseDash','(Active - Jump In Air) Spooky Dash lets you phase through some objects. Gain charges over time.','Charge cooldown decreases with each Level Up!','Pumpkin Chests / current Fortnitemares Sprite ecosystem'),
+            ('Vampire','Legendary','HealthSiphon','Recover health when damaging an enemy.','Health recovered percent increases with each Level Up!','Pumpkin Chests / current Fortnitemares Sprite ecosystem'),
+            ('The Deer','Legendary','IncreasedMelee','Melee attacks deal more damage.','Melee attack damage increases with each Level Up!','Pumpkin Chests / current Fortnitemares Sprite ecosystem'),
+            ('Dumpster Dive','Epic','WinnerD','Food provides bonus healing. Find food when jumping out of hiding props, with a small chance when opening containers.','Find better food with each Level Up!','Pumpkin Chests / current Fortnitemares Sprite ecosystem')]: sprites.extend(family_records(*args))
+          crown=art('Crown','_TrickTreat_L.webp'); sprites.append({'id':nid,'family':'Crown','displayFamily':'Crown','familyName':'Crown Sprite','variantKey':'Trick','variant':'Trick or Treat','variantOrder':5,'name':'Trick or Treat Crown Sprite','description':'Only levels up by winning matches while equipped. Mastery with 1 win. New variants unlocked after mastering!','location':'Unlocked by mastering Bounty Hunter Crown with a Victory Royale while equipped','effect':'Mastery with 1 win','rarity':'Special','image':crown,'releaseState':'released','summonCost':None,'spriteChestChance':'Not published','standardIndex':si,'status':'Collectible','preview':False,'countsTowardCollection':True,'levelUp':'Only levels up by winning matches while equipped; mastery with 1 win.','season':'C7S4'})
+          block=json.dumps(sprites,separators=(',',':'),ensure_ascii=False); s=s[:m.start(1)]+block+s[m.end(1):]
+          assert "const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty'];" in s; s=s.replace("const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty'];","const C7S4_VARIANTS=['Base','Cheat','Hacker','Gold','Bounty','Trick'];",1)
+          old='function variantLabelHtml(v){return `<div class="legendItem"><span class="dot v-${v}"></span><span>${v}</span></div>`}'; new='function variantLabelHtml(v){const label=v===\'Cheat\'?\'Cheat Master\':v===\'Hacker\'?\'Loot Hacker\':v===\'Bounty\'?\'Bounty Hunter\':v===\'Trick\'?\'Trick or Treat\':v;return `<div class="legendItem"><span class="dot v-${v}"></span><span>${label}</span></div>`}'; assert old in s; s=s.replace(old,new,1)
+          old2="function silhouetteCell(base,fam,variant){if(!base||BASE_ONLY_FAMILIES.includes(fam)||(fam==='Llama'&&variant==='Holofoil'))return '<div class=\"emptyCell\"></div>';"; new2="function silhouetteCell(base,fam,variant){if(!base||variant==='Trick'||BASE_ONLY_FAMILIES.includes(fam)||(fam==='Llama'&&variant==='Holofoil'))return '<div class=\"emptyCell\"></div>';"; assert old2 in s; s=s.replace(old2,new2,1)
+          s=s.replace("const APP_VERSION='2.0.29'","const APP_VERSION='2.0.30'",1).replace('Sprite Collection Locker — v2.0.29','Sprite Collection Locker — v2.0.30',1)
+          s=s.replace('<style id="v2028-production-layout">','<style id="v2030-fortnitemares">.v-Trick{color:#ff8a2a}.v-Trick.dot{background:radial-gradient(circle at 35% 30%,#ffd86b 0 24%,#ff7a1a 50%,#7d2b08 100%);box-shadow:0 0 12px #ff7a1a}</style><style id="v2028-production-layout">',1); p.write_text(s)
+          live=[x for x in sprites if x.get('season')=='C7S4' and x.get('countsTowardCollection') is not False and not x.get('preview') and x.get('status')!='Vaulted']; families=[]
+          for x in live:
+            if x['displayFamily'] not in families:families.append(x['displayFamily'])
+          counts={k:sum(x['variantKey']==k for x in live) for k in ['Base','Gold','Cheat','Hacker','Bounty','Trick']}
+          assert (len(live),len(families),counts)==(122,25,{'Base':25,'Gold':24,'Cheat':24,'Hacker':24,'Bounty':24,'Trick':1}),(len(live),len(families),counts)
+          assert [x['family'] for x in live if x['variantKey']=='Trick']==['Crown']; assert not any(x['family'] in ('Honey','Obsession') for x in live)
+          print('QA PASS — 122 live / 25 families',counts)
+          mp=pathlib.Path('asset-manifest.json'); am=json.loads(mp.read_text()); am['version']='2.0.30'; am['assets']=sorted(str(x).replace('\\','/') for x in d.iterdir() if x.is_file()); mp.write_text(json.dumps(am,separators=(',',':')))
+          wp=pathlib.Path('manifest.webmanifest'); wm=json.loads(wp.read_text()); wm['id']='./sprite-collection-locker-v2.0.30'; wm['start_url']='./index.html?v=2.0.30'; wp.write_text(json.dumps(wm,indent=2)+'\n')
+          PY
+      - name: Commit verified production update
+        run: |
+          git config user.name "HappyDudeApparel"
+          git config user.email "happydudeapparel@gmail.com"
+          git add index.html asset-manifest.json manifest.webmanifest assets/embedded
+          git commit -m "feat: v2.0.30 Fortnitemares 122 live Sprites"
+          git push
