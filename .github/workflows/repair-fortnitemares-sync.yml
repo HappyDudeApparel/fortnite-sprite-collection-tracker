@@ -1,0 +1,28 @@
+name: Repair Fortnitemares sync
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/repair-fortnitemares-sync.yml']
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch blocked artwork fetch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/fortnitemares-live-sync.yml')
+          s=p.read_text()
+          s=s.replace('import json,re,hashlib,urllib.request,pathlib','import json,re,hashlib,urllib.request,urllib.parse,pathlib')
+          s=s.replace("url=f'https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_{token}{suffix}'\n                  img=embed(url)","raw=f'https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_{token}{suffix}'\n                  url='https://wsrv.nl/?url='+urllib.parse.quote(raw,safe='')+'&output=webp'\n                  img=embed(url)")
+          s=s.replace("crown_url='https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Crown_TrickTreat_L.webp'\n          crown_img=embed(crown_url)","crown_raw='https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Crown_TrickTreat_L.webp'\n          crown_url='https://wsrv.nl/?url='+urllib.parse.quote(crown_raw,safe='')+'&output=webp'\n          crown_img=embed(crown_url)")
+          p.write_text(s)
+          PY
+          git config user.name "HappyDudeApparel"
+          git config user.email "happydudeapparel@gmail.com"
+          git add .github/workflows/fortnitemares-live-sync.yml
+          git commit -m "fix: unblock verified Fortnitemares artwork fetch"
+          git push
