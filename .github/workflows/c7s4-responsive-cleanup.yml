@@ -2,7 +2,8 @@ name: C7S4 responsive cleanup
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/c7s4-responsive-cleanup.yml']
+    paths:
+      - '.github/workflows/c7s4-responsive-cleanup.yml'
 permissions: {contents: write}
 jobs:
   fix:
