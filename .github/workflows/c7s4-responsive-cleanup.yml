@@ -4,7 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/c7s4-responsive-cleanup.yml'
-permissions: {contents: write}
+permissions:
+  contents: write
 jobs:
   fix:
     if: github.actor != 'github-actions[bot]'
