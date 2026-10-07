@@ -1,5 +1,5 @@
 {
-  "version": "2.0.31",
+  "version": "2.0.32",
   "published": "2026-10-07",
-  "notes": "Fortnitemares Trick or Treat collection: all 24 confirmed variants are live and trackable; C7S4 total 145."
+  "notes": "C7S4 responsive layout fix: variant header and all family rows now share one horizontal scroll surface; portrait labels remain visible and non-overlapping."
 }
