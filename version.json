@@ -1,5 +1,5 @@
 {
-  "version": "2.0.32",
+  "version": "2.0.33",
   "published": "2026-10-07",
-  "notes": "C7S4 responsive layout fix: variant header and all family rows now share one horizontal scroll surface; portrait labels remain visible and non-overlapping."
+  "notes": "Distinctive Loot Hacker and Bounty Hunter genre emblems added to the C7S4 Sprite Family bar."
 }
