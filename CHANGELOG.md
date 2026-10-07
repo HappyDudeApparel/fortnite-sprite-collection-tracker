@@ -1,3 +1,10 @@
+## 2.0.31 — 2026-10-07
+- Added all 23 remaining confirmed Trick or Treat Sprite variants as normal live, trackable C7S4 collectibles using the confirmed 512px Fortnite.GG Sprite artwork.
+- C7S4 collection total is now 145: 25 Base + 24 Gold + 24 Cheat Master + 24 Loot Hacker + 24 Bounty Hunter + 24 Trick or Treat.
+- No preview, coming-soon, or unreleased treatment is used for confirmed Sprite artwork.
+- Unknown Trick or Treat summon/drop values display as TBD rather than invented values.
+- Added Trick or Treat/Bounty Hunter export labels, bonuses, and variant colors; enabled CORS-aware loading for confirmed remote Sprite artwork in export rendering.
+
 ## 2.0.27 — 2026-09-10
 - Fixed portrait-only family artwork/name overlap by increasing internal label clearance; landscape remains untouched.
 - Added an explicit non-regression rule: unrelated updates must not alter known-good layouts, orientations, data, artwork mappings, or interactions.
