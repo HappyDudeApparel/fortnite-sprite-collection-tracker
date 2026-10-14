@@ -1,0 +1,68 @@
+{
+  "asOf": "2026-10-14",
+  "releaseTarget": "2026-10-15",
+  "rule": "Research-only. Do not render unreleased entries in production Locker or count toward ownership/mastery. Never use generated or remotely hotlinked artwork.",
+  "verifiedCollectibleCount": 145,
+  "prospectiveReportedCount": 152,
+  "artworkPolicy": "Store promotional images locally only after authentic asset provenance and usable file are confirmed; do not present promotional art as verified in-game sprite render.",
+  "families": [
+    {
+      "family": "Honey",
+      "releaseState": "announced_not_collectible",
+      "power": "Sends bees after enemies who damage the player",
+      "rarity": "unverified",
+      "variants": [
+        {
+          "variant": "Base",
+          "evidence": "announced",
+          "image": null
+        },
+        {
+          "variant": "Gold",
+          "evidence": "reported_unverified",
+          "image": null
+        },
+        {
+          "variant": "Cheat Master",
+          "evidence": "reported_unverified",
+          "image": null
+        },
+        {
+          "variant": "Loot Hacker",
+          "evidence": "reported_unverified",
+          "image": null
+        },
+        {
+          "variant": "Bounty Hunter",
+          "evidence": "reported_unverified",
+          "image": null
+        },
+        {
+          "variant": "Trick or Treat",
+          "evidence": "reported_unverified",
+          "image": null
+        }
+      ]
+    },
+    {
+      "family": "Obsession / One Wish Willow",
+      "releaseState": "announced_not_collectible",
+      "power": "Helps players collect other Sprites; exact mechanism unverified",
+      "rarity": "unverified",
+      "variants": [
+        {
+          "variant": "Base",
+          "evidence": "announced",
+          "image": null
+        }
+      ]
+    }
+  ],
+  "activationChecks": [
+    "Confirm collectible in-game",
+    "Confirm each variant individually",
+    "Verify locally hosted authentic art",
+    "Confirm powers and rarity",
+    "Only then update production roster and denominator"
+  ]
+}
