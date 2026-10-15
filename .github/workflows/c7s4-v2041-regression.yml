@@ -1,9 +1,14 @@
-name: Sprite Locker v2.0.41 release regression QA
+name: Sprite Locker release regression QA
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/c7s4-v2041-regression.yml'
+      - 'index.html'
+      - 'version.json'
+      - 'service-worker.js'
+      - 'asset-manifest.json'
+      - 'manifest.webmanifest'
   workflow_dispatch:
 permissions:
   contents: read
@@ -38,7 +43,8 @@ jobs:
           assert len(c7s4)==162
           assert len(set(entry['id'] for entry in r))==len(r)
           assert len([entry for entry in c7s4 if entry.get('releaseState')=='released' and entry.get('countsTowardCollection',True)])==162
-          assert "const APP_VERSION='2.0.41'" in s
+          version=json.loads(pathlib.Path('version.json').read_text())['version']
+          assert "const APP_VERSION='"+version+"'" in s
           assert "'Base','Cheat','Hacker','Gold','Bounty','Trick','Quack'" in s
           assert 'serviceWorker.register' in s
           manifest=json.loads(pathlib.Path('research/c7s4-2026-10-15-verified-artwork.json').read_text())
@@ -54,9 +60,9 @@ jobs:
               im.verify()
             with Image.open(path) as im:
               assert im.size[0]>=300 and im.size[1]>=300
-          assert json.loads(pathlib.Path('version.json').read_text())['version']=='2.0.41'
-          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']=='2.0.41'
-          assert '2.0.41' in pathlib.Path('service-worker.js').read_text()
+          assert version.startswith('2.0.')
+          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']==version
+          assert "const APP_VERSION = '"+version+"'" in pathlib.Path('service-worker.js').read_text()
           print('PASS: C7S3 unchanged since v2.0.35, C7S4 162, 17 verified local WEBP files, PWA metadata')
           PY
       - name: Exercise mobile and desktop UI using Chromium
@@ -99,9 +105,9 @@ jobs:
               page.locator('button[data-season="C7S4"]').click()
               assert page.evaluate('countable().length')==162
               if device=='mobile':
-                page.screenshot(path='qa-mobile-v2041.png',full_page=False)
+                page.screenshot(path='qa-mobile-latest.png',full_page=False)
               else:
-                page.screenshot(path='qa-desktop-v2041.png',full_page=False)
+                page.screenshot(path='qa-desktop-latest.png',full_page=False)
               assert not errors,'Browser JavaScript exceptions: '+str(errors[:5])
               print('PASS:',device,'C7S4 162, C7S3 117, 17 local images decoded, Quack columns, no page errors')
               page.close()
@@ -111,6 +117,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: c7s4-v2041-qa-screenshots
-          path: qa-*-v2041.png
+          name: c7s4-current-release-qa-screenshots
+          path: qa-*-latest.png
           if-no-files-found: ignore
