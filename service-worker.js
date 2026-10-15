@@ -1,77 +1,55 @@
-const APP_VERSION = '2.0.40';
+// Sprite Collection Locker — v2.0.41. Cache conservatively on low-storage devices.
+const APP_VERSION = '2.0.41';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
-const APP_SHELL = [
-  './index.html',
-  './manifest.webmanifest',
-  './version.json',
-  './asset-manifest.json',
-  './assets/icons/favicon-32.png',
-  './assets/icons/apple-touch-icon.png',
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png',
-  './assets/icons/icon-maskable-512.png'
-];
+const APP_SHELL = ['./index.html','./manifest.webmanifest','./version.json'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
-    self.skipWaiting();
-    const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(APP_SHELL);
+    await self.skipWaiting();
+    // Avoid pre-caching hundreds of heavy images: low storage must not block activation.
     try {
-      const r = await fetch('./asset-manifest.json', { cache: 'no-store' });
-      if (r.ok) {
-        const m = await r.json();
-        const assets = Array.isArray(m.assets) ? m.assets : [];
-        for (let i = 0; i < assets.length; i += 40) {
-          await cache.addAll(assets.slice(i, i + 40).map(p => './' + p));
-        }
+      const cache = await caches.open(CACHE_NAME);
+      for (const path of APP_SHELL) {
+        try {
+          const response = await fetch(path, {cache:'reload'});
+          if (response.ok) await cache.put(path,response);
+        } catch(e) { console.warn('Optional offline cache skipped',path,e); }
       }
-    } catch (e) {
-      console.warn('Asset pre-cache deferred', e);
-    }
+    } catch(e) { console.warn('Low-storage mode: offline shell cache unavailable',e); }
   })());
 });
-
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)));
+    try {
+      for (const key of await caches.keys()) {
+        if (key.startsWith('sprites-tracker-') && key!==CACHE_NAME) {
+          try { await caches.delete(key); } catch(e) { console.warn('Old cache cleanup skipped',e); }
+        }
+      }
+    } catch(e) { console.warn('Cache cleanup unavailable',e); }
     await self.clients.claim();
   })());
 });
-
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting();
+self.addEventListener('message',event=>{
+  if(event.data && event.data.type==='SKIP_WAITING') self.skipWaiting();
 });
-
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
-
-  // HTML/navigation is always network-first. This prevents an old app shell
-  // from pinning users to a prior release after a successful deployment.
-  if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html') || url.pathname === '/') {
-    event.respondWith((async () => {
-      try {
-        return await fetch(event.request, { cache: 'no-store' });
-      } catch (e) {
-        const cached = await caches.match('./index.html');
-        if (cached) return cached;
-        throw e;
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(url.origin!==self.location.origin)return;
+  if(event.request.mode==='navigate'||url.pathname.endsWith('/index.html')||url.pathname==='/'){
+    event.respondWith((async()=>{
+      try { return await fetch(event.request,{cache:'no-store'}); }
+      catch(e) {
+        try { const old=await caches.match('./index.html',{ignoreSearch:true}); if(old)return old; }
+        catch(_){}
+        return Response.error();
       }
     })());
-    return;
+  } else {
+    // Images load from locally hosted verified assets; do not replicate them in phone storage.
+    event.respondWith(fetch(event.request).catch(async()=>{
+      try {return await caches.match(event.request)||Response.error();}catch(_){return Response.error();}
+    }));
   }
-
-  event.respondWith((async () => {
-    const cached = await caches.match(event.request);
-    if (cached) return cached;
-    const response = await fetch(event.request);
-    if (response && response.status === 200 && response.type === 'basic') {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-    }
-    return response;
-  })());
 });
