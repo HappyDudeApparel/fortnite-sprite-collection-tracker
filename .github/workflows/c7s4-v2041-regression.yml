@@ -1,0 +1,116 @@
+name: Sprite Locker v2.0.41 release regression QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c7s4-v2041-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install browser and image validators
+        run: |
+          python -m pip install --quiet playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Validate C7S3 historical integrity, image bytes, source mapping and PWA metadata
+        run: |
+          python - <<'PY'
+          import json,re,hashlib,subprocess,pathlib
+          from PIL import Image
+          s=pathlib.Path('index.html').read_text(encoding='utf-8')
+          old=subprocess.check_output(['git','show','0d7eb54db0c976edc54ab0dac3ef0ee7b6439c88:index.html'],text=True)
+          def roster(x):
+            a=x.index('const SPRITES=')+len('const SPRITES=');b=x.index(';\n',a);return json.loads(x[a:b])
+          r=roster(s);oldr=roster(old)
+          s3=lambda x:[entry for entry in x if entry.get('season')=='C7S3']
+          assert s3(r)==s3(oldr),'C7S3 historical record changed'
+          c7s4=[entry for entry in r if entry.get('season')=='C7S4']
+          assert len(c7s4)==162
+          assert len(set(entry['id'] for entry in r))==len(r)
+          assert len([entry for entry in c7s4 if entry.get('releaseState')=='released' and entry.get('countsTowardCollection',True)])==162
+          assert "const APP_VERSION='2.0.41'" in s
+          assert "'Base','Cheat','Hacker','Gold','Bounty','Trick','Quack'" in s
+          assert 'serviceWorker.register' in s
+          manifest=json.loads(pathlib.Path('research/c7s4-2026-10-15-verified-artwork.json').read_text())
+          assert len(manifest['entries'])==17 and manifest['localMirrorComplete']
+          for ent in manifest['entries']:
+            sprite=next(x for x in r if x['id']==ent['id'])
+            assert sprite['image']==ent['localPath'],(sprite['name'],sprite['image'])
+            path=pathlib.Path(ent['localPath'])
+            data=path.read_bytes()
+            assert data[:4]==b'RIFF' and data[8:12]==b'WEBP'
+            assert hashlib.sha256(data).hexdigest()==ent['sha256']
+            with Image.open(path) as im:
+              im.verify()
+            with Image.open(path) as im:
+              assert im.size[0]>=300 and im.size[1]>=300
+          assert json.loads(pathlib.Path('version.json').read_text())['version']=='2.0.41'
+          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']=='2.0.41'
+          assert '2.0.41' in pathlib.Path('service-worker.js').read_text()
+          print('PASS: C7S3 unchanged since v2.0.35, C7S4 162, 17 verified local WEBP files, PWA metadata')
+          PY
+      - name: Exercise mobile and desktop UI using Chromium
+        shell: bash
+        run: |
+          python - <<'PY'
+          import threading,http.server,re
+          from playwright.sync_api import sync_playwright
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',8765),http.server.SimpleHTTPRequestHandler)
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+            for device in ['mobile','desktop']:
+              page=browser.new_page(viewport={'width':390,'height':844} if device=='mobile' else {'width':1440,'height':900},device_scale_factor=1)
+              errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+              page.goto('http://127.0.0.1:8765/',wait_until='domcontentloaded',timeout=45000)
+              page.wait_for_selector('.familyRow[data-family="Honey"]',timeout=30000)
+              assert page.evaluate('countable().length')==162,'C7S4 count incorrect'
+              assert page.locator('#mainLegend .legendItem').count()==7,'C7S4 must have 7 variant columns'
+              for family,num in [('Honey',6),('One Wish Willow',6)]:
+                row=page.locator('.familyRow').filter(has=page.locator('.familyName',has_text=family)).first
+                assert row.count()==1,family+' row missing'
+                assert row.locator('.spriteCell img').count()==num,family+' individual variants not rendered'
+                for img in row.locator('.spriteCell img').all():
+                  img.scroll_into_view_if_needed()
+                  img.evaluate('(i)=>i.loading="eager"')
+                  img.evaluate('(i)=>i.decode()',timeout=30000)
+                  assert img.evaluate('(i)=>i.complete && i.naturalWidth>=300 && i.naturalHeight>=300'),family+' art missing'
+              for family in ['Jonesy','Adventure','Bush','Klombo','Spooky Dash']:
+                img=page.locator('.familyRow[data-family="'+family+'"] .spriteCell[data-variant="Quack"] img')
+                assert img.count()==1,'Quack cell missing for '+family
+                img.scroll_into_view_if_needed()
+                img.evaluate('(i)=>i.loading="eager"')
+                img.evaluate('(i)=>i.decode()',timeout=30000)
+                assert img.evaluate('(i)=>i.complete && i.naturalWidth>=300'),'Quack art missing: '+family
+              page.locator('button[data-season="C7S3"]').click()
+              page.wait_for_timeout(500)
+              assert page.evaluate('countable().length')==117,'C7S3 count changed'
+              assert page.locator('#mainLegend .legendItem').count()==8,'C7S3 variants changed'
+              page.locator('button[data-season="C7S4"]').click()
+              assert page.evaluate('countable().length')==162
+              if device=='mobile':
+                page.screenshot(path='qa-mobile-v2041.png',full_page=False)
+              else:
+                page.screenshot(path='qa-desktop-v2041.png',full_page=False)
+              assert not errors,'Browser JavaScript exceptions: '+str(errors[:5])
+              print('PASS:',device,'C7S4 162, C7S3 117, 17 local images decoded, Quack columns, no page errors')
+              page.close()
+            browser.close()
+          server.shutdown()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c7s4-v2041-qa-screenshots
+          path: qa-*-v2041.png
+          if-no-files-found: ignore
