@@ -1,5 +1,5 @@
 {
-  "version": "2.0.34",
+  "version": "2.0.40",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -305,6 +305,23 @@
     "assets/embedded/fd98d59fef651b42fbcf.webp",
     "assets/embedded/fe224fcece39c3804cfa.webp",
     "assets/embedded/ffdccdb1104a080293aa.webp",
-    "assets/embedded/ffe724abad5452023420.webp"
+    "assets/embedded/ffe724abad5452023420.webp",
+    "assets/sprites/c7s4/WinnerE_Base.webp",
+    "assets/sprites/c7s4/WinnerE_Cheat.webp",
+    "assets/sprites/c7s4/WinnerE_Gold.webp",
+    "assets/sprites/c7s4/WinnerE_Hacker.webp",
+    "assets/sprites/c7s4/WinnerE_Bounty.webp",
+    "assets/sprites/c7s4/WinnerE_Trick.webp",
+    "assets/sprites/c7s4/CargoLying_Base.webp",
+    "assets/sprites/c7s4/CargoLying_Cheat.webp",
+    "assets/sprites/c7s4/CargoLying_Gold.webp",
+    "assets/sprites/c7s4/CargoLying_Hacker.webp",
+    "assets/sprites/c7s4/CargoLying_Bounty.webp",
+    "assets/sprites/c7s4/CargoLying_Trick.webp",
+    "assets/sprites/c7s4/Jonesy_Quack.webp",
+    "assets/sprites/c7s4/Dwarf_Quack.webp",
+    "assets/sprites/c7s4/BushRanger_Quack.webp",
+    "assets/sprites/c7s4/Klombo_Quack.webp",
+    "assets/sprites/c7s4/PhaseDash_Quack.webp"
   ]
 }

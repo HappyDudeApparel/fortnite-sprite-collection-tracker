@@ -11,7 +11,14 @@
       "sourcePage": "https://fortnite.gg/sprites/267",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Base.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "b84271d97e3b8298745bf2fc9e24e8a2b9e379f3cdab77b6a78da0f1e719c2ff",
+      "bytes": 20790,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 352,
@@ -20,7 +27,14 @@
       "sourcePage": "https://fortnite.gg/sprites/268",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Cheatmaster_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Cheat.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "8f2fb52b32f257905c9167a8c473d924a2d861bf5a1fcfea0b7bec49a1784e2d",
+      "bytes": 24704,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 354,
@@ -29,7 +43,14 @@
       "sourcePage": "https://fortnite.gg/sprites/269",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Gold_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Gold.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "016f604e804a8b959682cea14266cfeace108f5144119607e780759dddf4fefe",
+      "bytes": 17692,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 353,
@@ -38,7 +59,14 @@
       "sourcePage": "https://fortnite.gg/sprites/270",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Hacker_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Hacker.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "150c0e1f340cfad1a7f2ead3f14ab9043ae5cf45078ab928a758fd9b508f61e0",
+      "bytes": 35782,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 355,
@@ -47,7 +75,14 @@
       "sourcePage": "https://fortnite.gg/sprites/271",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_BountyHunter_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Bounty.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "a39b5615844818d8b405a67791ff1578ff8856a1412ca7c181e9ca906c8afa33",
+      "bytes": 28074,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 356,
@@ -56,7 +91,14 @@
       "sourcePage": "https://fortnite.gg/sprites/272",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_TrickTreat_L.webp",
       "localPath": "assets/sprites/c7s4/WinnerE_Trick.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "302f903b163afda3b2b80af04116ee2c43f40ff94efb000412d2bf768e003146",
+      "bytes": 30874,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 357,
@@ -65,7 +107,14 @@
       "sourcePage": "https://fortnite.gg/sprites/273",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Base.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "2125bb9d820db55069058ab7c244b1ab53c2af1b59698a2c4283ff95912adf65",
+      "bytes": 22860,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 358,
@@ -74,7 +123,14 @@
       "sourcePage": "https://fortnite.gg/sprites/274",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Cheatmaster_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Cheat.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "e6e5e04923132babc51b3cb5ae4810a2142eb65790c9befbe8097c2910276f0b",
+      "bytes": 31518,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 360,
@@ -83,7 +139,14 @@
       "sourcePage": "https://fortnite.gg/sprites/275",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Gold_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Gold.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "e72c8082c79c580ef5bc83ba45ca88cd541915df9adda7d632b9cdc8b8fe8153",
+      "bytes": 27246,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 359,
@@ -92,7 +155,14 @@
       "sourcePage": "https://fortnite.gg/sprites/276",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Hacker_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Hacker.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "d5e5840101f2129abc58721a95bb73fed546cb6fbdf33cbc93206f90c25c87a0",
+      "bytes": 35792,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 361,
@@ -101,7 +171,14 @@
       "sourcePage": "https://fortnite.gg/sprites/277",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_BountyHunter_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Bounty.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "bd5f26c9f66a846765a255973ee4e2cc6814bed3af0840da2341ec2f0e2544e0",
+      "bytes": 27386,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 362,
@@ -110,7 +187,14 @@
       "sourcePage": "https://fortnite.gg/sprites/278",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_TrickTreat_L.webp",
       "localPath": "assets/sprites/c7s4/CargoLying_Trick.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "f4737892485e142edec2d963a8e6ea32dd126ff76737991b11855564507278d1",
+      "bytes": 30776,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 363,
@@ -119,7 +203,14 @@
       "sourcePage": "https://fortnite.gg/sprites/266",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Jonesy_Quack_L.webp",
       "localPath": "assets/sprites/c7s4/Jonesy_Quack.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "dfca0e28877985a9a522ac327d31bc65b95aec5b26d7bf4d051bfe02e8176adc",
+      "bytes": 31136,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 364,
@@ -128,7 +219,14 @@
       "sourcePage": "https://fortnite.gg/sprites/264",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Dwarf_Quack_L.webp",
       "localPath": "assets/sprites/c7s4/Dwarf_Quack.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "a177cbe2c3122a9423d93335a0d5ade4b12b3f36061ce73df68c94146ea55dd7",
+      "bytes": 36860,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 365,
@@ -137,7 +235,14 @@
       "sourcePage": "https://fortnite.gg/sprites/263",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BushRanger_Quack_L.webp",
       "localPath": "assets/sprites/c7s4/BushRanger_Quack.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "1167caacf2846f1064ef76e4da5c34bad3e0b5dc7f2dafc1c22cf80f981a35a4",
+      "bytes": 30332,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 366,
@@ -146,7 +251,14 @@
       "sourcePage": "https://fortnite.gg/sprites/265",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Klombo_Quack_L.webp",
       "localPath": "assets/sprites/c7s4/Klombo_Quack.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "2168a10cfe8790dccf6f878afafa486b71c4e4cf2d3bfb9ce780119182f9d427",
+      "bytes": 40864,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     },
     {
       "id": 367,
@@ -155,7 +267,15 @@
       "sourcePage": "https://fortnite.gg/sprites/279",
       "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PhaseDash_Quack_L.webp",
       "localPath": "assets/sprites/c7s4/PhaseDash_Quack.webp",
-      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked.",
+      "sha256": "fe1fe07b5a6f1ebec23bd9a0a29128b26edb083018a255c45aea6a53decfa8d8",
+      "bytes": 37662,
+      "dimensions": [
+        512,
+        512
+      ],
+      "localBinaryVerified": true
     }
-  ]
+  ],
+  "localMirrorComplete": true
 }
