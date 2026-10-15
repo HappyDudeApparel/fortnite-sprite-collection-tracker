@@ -1,0 +1,161 @@
+{
+  "version": "1.0",
+  "date": "2026-10-15",
+  "season": "C7S4",
+  "policy": "Source URLs individually retrieved by following the Image link on the matching Fortnite.GG sprite detail page. No generated images, duplicate art, or alternate variant substitution. Local mirroring requires independent binary validation before accepted assets are committed.",
+  "entries": [
+    {
+      "id": 351,
+      "family": "Honey",
+      "variant": "Base",
+      "sourcePage": "https://fortnite.gg/sprites/267",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Base.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 352,
+      "family": "Honey",
+      "variant": "Cheat",
+      "sourcePage": "https://fortnite.gg/sprites/268",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Cheatmaster_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Cheat.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 354,
+      "family": "Honey",
+      "variant": "Gold",
+      "sourcePage": "https://fortnite.gg/sprites/269",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Gold_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Gold.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 353,
+      "family": "Honey",
+      "variant": "Hacker",
+      "sourcePage": "https://fortnite.gg/sprites/270",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_Hacker_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Hacker.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 355,
+      "family": "Honey",
+      "variant": "Bounty",
+      "sourcePage": "https://fortnite.gg/sprites/271",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_BountyHunter_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Bounty.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 356,
+      "family": "Honey",
+      "variant": "Trick",
+      "sourcePage": "https://fortnite.gg/sprites/272",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerE_TrickTreat_L.webp",
+      "localPath": "assets/sprites/c7s4/WinnerE_Trick.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 357,
+      "family": "One Wish Willow",
+      "variant": "Base",
+      "sourcePage": "https://fortnite.gg/sprites/273",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Base.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 358,
+      "family": "One Wish Willow",
+      "variant": "Cheat",
+      "sourcePage": "https://fortnite.gg/sprites/274",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Cheatmaster_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Cheat.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 360,
+      "family": "One Wish Willow",
+      "variant": "Gold",
+      "sourcePage": "https://fortnite.gg/sprites/275",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Gold_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Gold.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 359,
+      "family": "One Wish Willow",
+      "variant": "Hacker",
+      "sourcePage": "https://fortnite.gg/sprites/276",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_Hacker_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Hacker.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 361,
+      "family": "One Wish Willow",
+      "variant": "Bounty",
+      "sourcePage": "https://fortnite.gg/sprites/277",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_BountyHunter_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Bounty.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 362,
+      "family": "One Wish Willow",
+      "variant": "Trick",
+      "sourcePage": "https://fortnite.gg/sprites/278",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CargoLying_TrickTreat_L.webp",
+      "localPath": "assets/sprites/c7s4/CargoLying_Trick.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 363,
+      "family": "Jonesy",
+      "variant": "Quack",
+      "sourcePage": "https://fortnite.gg/sprites/266",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Jonesy_Quack_L.webp",
+      "localPath": "assets/sprites/c7s4/Jonesy_Quack.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 364,
+      "family": "Adventure",
+      "variant": "Quack",
+      "sourcePage": "https://fortnite.gg/sprites/264",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Dwarf_Quack_L.webp",
+      "localPath": "assets/sprites/c7s4/Dwarf_Quack.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 365,
+      "family": "Bush",
+      "variant": "Quack",
+      "sourcePage": "https://fortnite.gg/sprites/263",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BushRanger_Quack_L.webp",
+      "localPath": "assets/sprites/c7s4/BushRanger_Quack.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 366,
+      "family": "Klombo",
+      "variant": "Quack",
+      "sourcePage": "https://fortnite.gg/sprites/265",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Klombo_Quack_L.webp",
+      "localPath": "assets/sprites/c7s4/Klombo_Quack.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    },
+    {
+      "id": 367,
+      "family": "Spooky Dash",
+      "variant": "Quack",
+      "sourcePage": "https://fortnite.gg/sprites/279",
+      "sourceImage": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PhaseDash_Quack_L.webp",
+      "localPath": "assets/sprites/c7s4/PhaseDash_Quack.webp",
+      "verification": "Direct image link followed from Fortnite.GG's named sprite-detail page on 2026-10-15; visual silhouette and variant appearance checked."
+    }
+  ]
+}
