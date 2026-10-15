@@ -1,0 +1,124 @@
+name: Mirror verified C7S4 October 15 sprite artwork
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c7s4-verified-artwork.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  mirror:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --quiet pillow
+      - name: Validate and mirror every individually verified source image
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib, json, hashlib, urllib.request, urllib.parse, time, tempfile, io, shutil
+          from PIL import Image
+          root=pathlib.Path('.')
+          manifest=root/'research/c7s4-2026-10-15-verified-artwork.json'
+          record=json.loads(manifest.read_text())
+          entries=record['entries']
+          assert len(entries)==17 and len({e['id'] for e in entries})==17
+          assert all(e['localPath'].startswith('assets/sprites/c7s4/') for e in entries)
+          def download(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0; +https://sprites.happydude.ca/)', 'Accept':'image/webp,image/*;q=0.9,*/*;q=0.5','Referer':'https://fortnite.gg/sprites'})
+              with urllib.request.urlopen(req,timeout=35) as resp:
+                  if resp.status!=200: raise ValueError('HTTP '+str(resp.status))
+                  return resp.read(1_000_000)
+          with tempfile.TemporaryDirectory() as tmp:
+              staged=[]
+              for e in entries:
+                  url=e['sourceImage']
+                  if not url.startswith('https://fortnite.gg/img/x/sprites/icons/'):raise RuntimeError('Invalid source')
+                  failures=[]
+                  raw=None
+                  candidates=[url,'https://wsrv.nl/?url='+urllib.parse.quote(url,safe='')+'&output=webp']
+                  for candidate in candidates:
+                    for attempt in range(2):
+                      try:
+                        raw=download(candidate)
+                        if not(raw[:4]==b'RIFF' and raw[8:12]==b'WEBP'): raise ValueError('Not WEBP')
+                        with Image.open(io.BytesIO(raw)) as im:
+                          im.verify()
+                        with Image.open(io.BytesIO(raw)) as im:
+                          width,height=im.size
+                          if width<300 or height<300 or width>1500 or height>1500:raise ValueError('Wrong dimensions '+str(im.size))
+                          if im.format!='WEBP':raise ValueError('Image format mismatch')
+                          rgba=im.convert('RGBA')
+                          if min(rgba.getchannel('A').getextrema())>0:raise ValueError('No transparent background')
+                        if len(raw)<5000:raise ValueError('Image unusually small')
+                        break
+                      except Exception as exc:
+                        failures.append(str(exc))
+                        raw=None
+                        time.sleep(1+attempt)
+                    if raw:break
+                  if not raw:
+                    raise RuntimeError('Cannot verify image: '+str(e['family'])+' '+str(e['variant'])+' : '+'; '.join(failures))
+                  sha=hashlib.sha256(raw).hexdigest()
+                  path=pathlib.Path(tmp)/pathlib.Path(e['localPath']).name
+                  path.write_bytes(raw)
+                  e['sha256']=sha;e['bytes']=len(raw);e['dimensions']=[width,height];e['localBinaryVerified']=True
+                  staged.append((path,root/e['localPath']))
+                  print(f"VALID {e['family']} {e['variant']} {width}x{height} {len(raw)} bytes sha256={sha[:16]}",flush=True)
+              # Do not write ANY approved assets unless ALL 17 pass validation.
+              htmlpath=root/'index.html'
+              html=htmlpath.read_text(encoding='utf-8')
+              marker='const SPRITES=';a=html.index(marker)+len(marker);b=html.index(';\n',a)
+              sprites=json.loads(html[a:b])
+              archive=json.dumps([s for s in sprites if s.get('season')=='C7S3'],sort_keys=True)
+              byid={s['id']:s for s in sprites}
+              for e in entries:
+                  sprite=byid[e['id']]
+                  assert sprite['season']=='C7S4' and sprite['family']==e['family'] and sprite['variantKey']==e['variant']
+                  assert sprite['image']==e['sourceImage'],(sprite['name'],sprite['image'],e['sourceImage'])
+                  sprite['image']=e['localPath']
+                  sprite['artworkStatus']='source-verified-and-local-binary-validated'
+              assert json.dumps([s for s in sprites if s.get('season')=='C7S3'],sort_keys=True)==archive
+              assert len([s for s in sprites if s.get('season')=='C7S4'])==162
+              assert html.count("const APP_VERSION='2.0.39'")==1
+              html=html[:a]+json.dumps(sprites,ensure_ascii=False,separators=(',',':'))+html[b:]
+              html=html.replace("const APP_VERSION='2.0.39'","const APP_VERSION='2.0.40'",1)
+              html=html.replace("Sprite Collection Locker — v2.0.39","Sprite Collection Locker — v2.0.40",1)
+              for src,dest in staged:
+                  dest.parent.mkdir(parents=True,exist_ok=True)
+                  shutil.copyfile(src,dest)
+              htmlpath.write_text(html,encoding='utf-8')
+              record['localMirrorComplete']=True
+              manifest.write_text(json.dumps(record,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+              p=root/'asset-manifest.json';assets=json.loads(p.read_text())
+              assets['version']='2.0.40'
+              assets['assets']=list(dict.fromkeys(assets['assets']+[e['localPath'] for e in entries]))
+              p.write_text(json.dumps(assets,indent=2)+'\n')
+              p=root/'version.json';p.write_text(json.dumps({'version':'2.0.40','published':'2026-10-15','notes':'17 verified C7S4 Sprite renders hosted locally; C7S3 retained unchanged; 162 C7S4 collectibles.'},indent=2)+'\n')
+              p=root/'manifest.webmanifest';manifestdata=json.loads(p.read_text())
+              # Preserve installed-app identity so existing PWA installs don't split.
+              manifestdata['start_url']='./index.html?v=2.0.40'
+              p.write_text(json.dumps(manifestdata,indent=2)+'\n')
+              p=root/'service-worker.js';sw=p.read_text()
+              sw=sw.replace("const APP_VERSION = '2.0.34'","const APP_VERSION = '2.0.40'")
+              p.write_text(sw)
+              print('ALL 17 VALID; LOCAL ASSETS AND VERSION METADATA STAGED')
+          PY
+      - name: Commit locally hosted images and updated catalogue
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/sprites/c7s4 index.html research/c7s4-2026-10-15-verified-artwork.json asset-manifest.json version.json manifest.webmanifest service-worker.js
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          git commit -m "assets: v2.0.40 preserve all 17 verified C7S4 renders locally"
+          git push origin HEAD:main
