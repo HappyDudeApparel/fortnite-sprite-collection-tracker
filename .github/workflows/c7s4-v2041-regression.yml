@@ -114,6 +114,44 @@ jobs:
             browser.close()
           server.shutdown()
           PY
+      - name: Verify published production version and all 17 real image responses
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import pathlib,json,hashlib,urllib.request,urllib.error,time
+          version=json.loads(pathlib.Path('version.json').read_text())['version']
+          records=json.loads(pathlib.Path('research/c7s4-2026-10-15-verified-artwork.json').read_text())['entries']
+          host='https://sprites.happydude.ca/'
+          def grab(url):
+            request=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 Sprite Collection Locker QA','Cache-Control':'no-cache'})
+            with urllib.request.urlopen(request,timeout=22) as response:
+              assert response.status==200,(response.status,url)
+              return response.read(2_000_000)
+          last=None
+          for attempt in range(14):
+            try:
+              payload=grab(host+'version.json?release-qa='+version)
+              remote=json.loads(payload)
+              if remote.get('version')==version:
+                page=grab(host+'index.html?release-qa='+version).decode('utf-8')
+                assert "const APP_VERSION='"+version+"'" in page,'Live HTML has wrong version'
+                break
+              last='Live version '+str(remote.get('version'))+' not '+version
+            except Exception as exc:
+              last=repr(exc)
+            print('Waiting for GitHub Pages current release',last,flush=True)
+            time.sleep(12)
+          else:
+            raise RuntimeError('Production domain did not publish '+version+': '+str(last))
+          for record in records:
+            url=host+record['localPath']+'?release-qa='+version
+            raw=grab(url)
+            assert raw[:4]==b'RIFF' and raw[8:12]==b'WEBP',('Invalid webp',record['localPath'])
+            sha=hashlib.sha256(raw).hexdigest()
+            assert sha==record['sha256'],('Wrong production image bytes',record['localPath'])
+          print('PASS: production domain deployed '+version+' and all 17 verified local Sprite images return byte-perfect WEBP content.',flush=True)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
