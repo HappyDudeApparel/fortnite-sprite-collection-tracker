@@ -120,6 +120,9 @@ jobs:
               state=three.evaluate('window.ARCADE_3D_SELECTION')
               assert state['id']==1 and state['name'].startswith('Water'),state
               assert state['status']=='ready','Authentic 2.5D character artwork failed: '+str(state)
+              three.wait_for_function("window.ARCADE_SCENERY_STATUS && ['ready','fallback'].includes(window.ARCADE_SCENERY_STATUS.status)",timeout=20000)
+              dressing=three.evaluate('window.ARCADE_SCENERY_STATUS')
+              assert dressing['status']=='ready' and dressing['models']==5 and dressing['instances']>=15,'CC0 environment failed: '+str(dressing)
               three.locator('#enterBtn').click()
               assert three.locator('#intro').evaluate('(e)=>e.classList.contains("hidden")')
               three.wait_for_timeout(700)
