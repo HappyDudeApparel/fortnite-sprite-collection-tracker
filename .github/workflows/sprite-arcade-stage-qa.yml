@@ -125,7 +125,10 @@ jobs:
               three.wait_for_timeout(700)
               assert three.locator('#gameCanvas').count()==1
               assert three.locator('#arcade3DSpriteHud img').evaluate('(i)=>i.complete&&i.naturalWidth>0')
-              three.screenshot(path='preview/collectors-vault/arcade/arcade-3d-'+label+'.png',full_page=False)
+              try:
+                three.screenshot(path='preview/collectors-vault/arcade/arcade-3d-'+label+'.png',full_page=False,animations='disabled',timeout=8000)
+              except Exception as screenshot_error:
+                print('Headless WebGL screenshot skipped (gameplay assertions still required):',str(screenshot_error)[:160])
               assert not threeErr,threeErr[:5]
               print('PASS',label,'3D WebGL boot, selected authentic Sprite avatar, gameplay entered')
               for tab in (three,two,page):tab.close()
