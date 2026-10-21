@@ -23,6 +23,19 @@ first one, **water**, end to end:
 - `tools/qa-tide-works.py` drives the real game in Chromium: real Aqua Lance bolts change the tide, and a small input
   bot finishes the drain route with an Earth Sprite.
 
+## Second field: heat (Steam Works, level 7)
+Direct test link: `/preview/collectors-vault/arcade-next/2d/?autostart=fire&level=7`
+
+Two fields now interact, and the rule lives in `fields.js`, not in the room:
+- The **furnace** is a 0/1 switch that only heat powers (Fire, Demon, Zero Point) can light at the brazier.
+- The **steam geyser** (a bounce pad) works only while the furnace is lit **and** the boiler holds water (level 1-2).
+- Flooding the boiler to level 3 **puts the furnace out** (`rules`); draining it stops the steam even though the furnace stays lit.
+- Routes: heat Sprites ride the geyser to the ledges; Water/Fishy flood the basin and ride the dock; every Sprite can drain it and walk the dry bed.
+- Fire and Demon are radial bursts (shots travel about 330 px) and can hit several devices at once, so where you stand matters: next to the brazier is fine, near the far-left valve also drains the boiler.
+
+The validator now has three Sprite classes (water, heat, other) and 14 mutation tests; it caught a real flaw while this room was
+being built (the first layout could be crossed with no devices at all).
+
 ## Changes to the known-good 2D engine
 `2d/index.html` is a copy of `../arcade/2d/index.html` with 25 changed lines (hooks for the field system, a separate
 preview save key `spriteArcade.next.2d.progress.v1`, and links back to the known-good hub). CI checks that this stays
@@ -30,13 +43,14 @@ small and that World 1's data is byte-identical.
 
 ## Known limits (spike)
 - The validator's device rule is approximate: a device is usable when a reached standing spot is within 340 px
-  horizontally and 120 px vertically; line of fire is not simulated. The browser QA covers the real behaviour.
+  horizontally and 120 px vertically; line of fire is not simulated, and radial powers that hit several devices at once are
+  treated one device at a time. The browser QA covers the real behaviour.
 - `tools/validate-levels.js` is a copy of the known-good validator plus the state search; it should be refactored
   into a shared module when the engine is split.
-- Only the water field exists. Heat, wind, charge, growth and echo are proposals.
+- Only water and heat exist. Wind, charge, growth and echo are proposals.
 
 ## Character viewer and pipeline rules (3D track)
-Direct link (staging): `/preview/collectors-vault/arcade-next/3d-viewer/?char=citrus&view=three&ref=1`
+Direct link (staging): `/preview/collectors-vault/arcade-next/3d-viewer/?char=citrus&view=three`
 
 - `3d-viewer/registry.json` lists each model with its tier (hero or enemy), the gameplay clip mapping and its
   provenance (status, licence, SHA-256). It mirrors `arcade/3d/js/roster.js`.
@@ -44,8 +58,9 @@ Direct link (staging): `/preview/collectors-vault/arcade-next/3d-viewer/?char=ci
   one skin; required clips present; scale; SHA-256 integrity; rights). It is pure JS, so Node CI and the browser agree.
 - The viewer shows any registered model from front, 3/4, side, back and top, with turntable, wireframe, skeleton,
   animation picker and scrubber, an optional "Game look" for Citrus (the game's own `look.js`), and the collection art
-  (`ref=<catalogue id>`) beside the model for comparison.
+  beside the model for comparison: each character's own reference shows by default (Dash = Locker Legacy tab #127),
+  and `ref=<Locker sprite id>` shows any other.
 - `tools/validate-characters.mjs` (+ `--mutate`) and `tools/qa-viewer.py` run in CI.
 - Models are read from the known-good `arcade/3d/assets/characters/`; nothing is copied or modified.
-- Rights are never silently passed: a model whose provenance is not "cleared" shows WARN. Citrus is WARN until its
+- Rights are never silently passed: a model whose provenance is not "cleared" shows WARN. Dash (model file `citrus.glb`) is WARN until its
   source files are recovered (see `docs/provenance/citrus.md`).

@@ -45,5 +45,48 @@
     tube: { x: 2250, y: GROUND - 105 },
   };
 
-  LEVELS.push(tideWorks);
+
+  // Steam Works. Two fields interact: the water level and the furnace.
+  //   The geyser on the left bank only works while the furnace is LIT and the boiler holds water (level 1-2).
+  //   HEAT route  (Fire / Demon / Zero Point): light the furnace, ride the geyser onto the ledges.
+  //   FLOOD route (Water / Fishy): fill the basin to 3 (this douses the furnace), ride the dock up to the ledges.
+  //   DRAIN route (any Sprite): open the valve and walk the dry bed.
+  const steamWorks = {
+    id: 'steam-works-demo',
+    name: 'Steam Works',
+    tagline: 'Fire needs water to make steam. Water puts fire out.',
+    worldW: 2400,
+    theme: LEVELS[0].theme,
+    tide: {
+      basins: [{ id: 'a', x: 620, w: 660, bed: 535, surfaces: [null, 470, 430, 380], start: 1 }],
+      switches: [{ id: 'f', start: 0 }],
+      rules: [{ if: { basin: 'a', min: 3 }, set: { f: 0 } }],   // a flooded boiler puts the furnace out
+    },
+    platforms: [
+      { x: 0, y: GROUND, w: 620, h: H - GROUND, type: 'ground' },
+      { x: 1280, y: GROUND, w: 1120, h: H - GROUND, type: 'ground' },
+      { x: 620, y: 535, w: 660, h: 5, type: 'stone-ground', when: when(undefined, 0) },
+      { x: 600, y: 250, w: 140, h: 26, type: 'rock' },                          // ledge A
+      { x: 960, y: 270, w: 160, h: 26, type: 'rock' },                          // ledge B
+      { x: 760, y: 470, w: 140, h: 24, type: 'log', float: { basin: 'a' } },    // dock
+    ],
+    objects: [
+      { type: 'device', device: 'valve', basin: 'a', x: 40, y: 400, w: 44, h: 70, hp: 1 },
+      { type: 'device', device: 'brazier', var: 'f', x: 470, y: 400, w: 44, h: 70, hp: 1 },
+      { type: 'device', device: 'inlet', basin: 'a', x: 330, y: 400, w: 44, h: 70, hp: 1 },
+    ],
+    hazards: [{ x: 700, y: 515, w: 50, h: 20, type: 'spikes', when: when(undefined, 0) }],
+    pads: [{ x: 540, y: GROUND - 14, w: 52, h: 14, power: 900, steam: true, when: [{ basin: 'f', min: 1 }, { basin: 'a', min: 1, max: 2 }] }],
+    gems: [
+      ...line(180, 420, 3, 44),
+      ...line(610, 205, 3, 44),             // ledge A
+      ...line(980, 225, 4, 40),             // ledge B
+    ],
+    checkpoints: [{ x: 200, y: GROUND - 58 }, { x: 1500, y: GROUND - 58 }],
+    enemies: [{ x: 1750, y: GROUND - 58, min: 1550, max: 1950 }],
+    spawn: { x: 200, y: 410 },
+    tube: { x: 2250, y: GROUND - 105 },
+  };
+
+  LEVELS.push(tideWorks, steamWorks);
 }(typeof window !== 'undefined' ? window : globalThis));
