@@ -26,11 +26,18 @@ jobs:
           python - <<'PY'
           import subprocess,pathlib,re,json
           base='16161c4e1b898308e6b26c811ebbc780acc0aecc'
-          roots=['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']
+          roots=['index.html','version.json','service-worker.js','asset-manifest.json']
           for path in roots:
             old=subprocess.check_output(['git','show',base+':'+path])
             current=pathlib.Path(path).read_bytes()
             assert old==current,'Production file changed: '+path
+          # Manifest: only start_url may differ from the release commit; the installed-app id must never change.
+          old_manifest=json.loads(subprocess.check_output(['git','show',base+':manifest.webmanifest']))
+          cur_manifest=json.loads(pathlib.Path('manifest.webmanifest').read_text(encoding='utf8'))
+          assert cur_manifest['id']==old_manifest['id']=='./sprite-collection-locker-v2.0.30','PWA id must stay stable'
+          assert cur_manifest.pop('start_url')=='./index.html?v=2.0.44','start_url must match APP_VERSION 2.0.44'
+          old_manifest.pop('start_url')
+          assert old_manifest==cur_manifest,'manifest changed beyond start_url'
           src=pathlib.Path('index.html').read_text(encoding='utf8')
           stage=pathlib.Path('preview/collectors-vault/index.html').read_text(encoding='utf8')
           assert '2.1.0-preview' in stage and "const APP_VERSION='2.0.44'" in src
