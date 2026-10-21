@@ -121,7 +121,8 @@ jobs:
               assert backup['levels'][str(chosen_id)]==5
               # Edit staging after export, then restore the file and verify the data returns.
               page.locator('button[data-season="C7S4"]').click()
-              page.locator('#vault-cards .vault-card').first.locator('[data-vault-act="expand-family"]').click()
+              expand=page.locator('#vault-cards .vault-card').first.locator('[data-vault-act="expand-family"]')
+              if expand.get_attribute('aria-expanded')!='true':expand.click()
               page.locator('.vault-card-detail:not([hidden]) .vault-detail-line').first.locator('[data-vault-act="toggle-owned"]').click()
               assert chosen_id not in page.evaluate("JSON.parse(localStorage.getItem('vault-stage-v1-favorites'))")
               page.locator('button[data-tab="vault"]').click()
