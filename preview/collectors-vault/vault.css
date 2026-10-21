@@ -169,3 +169,9 @@ body.vault-preview .summary{display:none!important}
 @media(max-width:390px){.vault-hero-art img{max-height:172px}.vault-card-variants{grid-template-columns:repeat(3,minmax(0,1fr))}.vault-hero-copy h1{font-size:27px}.vault-hero-copy p{font-size:10px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}body.vault-preview *,body.vault-preview *:before,body.vault-preview *:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 body.vault-preview.vault-motion-off *,body.vault-preview.vault-motion-off *:before,body.vault-preview.vault-motion-off *:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+/* Reviewer controls are visible before scrolling down through the museum. */
+.vault-banner-themes{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.vault-banner-themes button{border:1px solid #7289ad66;border-radius:999px;background:#172747;color:#c8d7f3;padding:6px 9px;font:900 10px system-ui;cursor:pointer}
+.vault-banner-themes button[aria-pressed="true"]{border-color:#79f8d8;background:#604dd2;color:white;box-shadow:0 0 14px #9b8aff5c}
+@media(max-width:760px){.vault-banner-themes{order:2;width:100%}.vault-banner-themes button{font-size:9px;padding:5px 9px}}
