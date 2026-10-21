@@ -100,7 +100,7 @@ jobs:
               assert page.locator('.vault-achievement').count()==8
               page.locator('button[data-vault-act="new-shelf"]').click()
               assert page.locator('.vault-shelf').count()==4
-              page.locator('button[data-vault-act="theme"][data-theme="arcade"]').click()
+              page.locator('.vault-banner-themes button[data-vault-act="theme"][data-theme="arcade"]').click()
               assert page.locator('body[data-vault-theme="arcade"]').count()==1
               page.locator('input[data-vault-check="motion"]').check()
               assert page.locator('body.vault-motion-off').count()==1
