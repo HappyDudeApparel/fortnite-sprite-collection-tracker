@@ -24,6 +24,7 @@ The same deployed GLB Git blobs are byte-identical to the files recovered into `
 ## Citrus / Dash (distinct issue — NOT CLEARED)
 
 - `citrus.glb`: byte-identical Git blob to `HappyDudeApparel/gamer-bros-game/pass1-v1/assets/recovered/characters/sprite_hero.glb`; Git blob SHA-1 `f37b43e04090c734d8cd4195aab527335bf47346`.
+- Lineage evidence (27-bone `SpriteHeroArmature`, six clips, Blender export) is recorded in [`docs/provenance/citrus.md`](/docs/provenance/citrus.md). It corroborates an August 2026 generator record but does **not** clear rights.
 - Procedural gummy/cape/eye styling in `js/look.js` is a later game change.
 - The original authored model's creator and redistribution permission **have not been established**. The Quaternius monster-pack CC0 does **not** extend to this separate asset.
 - Fortnite-associated Sprite artwork, characters and names also raise separate brand/copyright questions. Fan-made, not monetized, or an unofficial disclaimer does not itself grant rights.
