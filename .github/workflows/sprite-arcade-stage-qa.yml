@@ -68,8 +68,15 @@ jobs:
           assert 'Staging' not in (prod/'index.html').read_text() and 'Staging' not in (prod/'3d/index.html').read_text()
           # Production root: only the approved release files differ from the v2.0.44 release commit.
           base='16161c4e1b898308e6b26c811ebbc780acc0aecc'
-          for path in ['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']:
+          for path in ['index.html','version.json','service-worker.js','asset-manifest.json']:
             assert subprocess.check_output(['git','show',base+':'+path])==pathlib.Path(path).read_bytes(),path
+          # Manifest: only start_url may differ from the release commit; the installed-app id must never change.
+          old_manifest=json.loads(subprocess.check_output(['git','show',base+':manifest.webmanifest']))
+          cur_manifest=json.loads(pathlib.Path('manifest.webmanifest').read_text(encoding='utf8'))
+          assert cur_manifest['id']==old_manifest['id']=='./sprite-collection-locker-v2.0.30','PWA id must stay stable'
+          assert cur_manifest.pop('start_url')=='./index.html?v=2.0.44','start_url must match APP_VERSION 2.0.44'
+          old_manifest.pop('start_url')
+          assert old_manifest==cur_manifest,'manifest changed beyond start_url'
           match=re.search(r'<script>([\s\S]*?)</script>',game2d)
           assert match, 'Missing embedded 2D script'
           with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as tmp:
