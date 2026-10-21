@@ -166,7 +166,7 @@ export class Input {
 export class CameraRig {
   constructor(camera) {
     this.camera = camera;
-    this.yaw = 0; this.pitch = 0.42; this.dist = IS_MOBILE ? 12.5 : 11.5;
+    this.yaw = 0; this.pitch = 0.42; this.dist = IS_MOBILE ? 10.8 : 9.6;
     this.target = new THREE.Vector3();
     this.look = new THREE.Vector3();
     this.pos = new THREE.Vector3();

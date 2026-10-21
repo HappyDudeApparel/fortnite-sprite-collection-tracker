@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { instantiateCharacter } from './assets.js';
 import { PLAYABLE, ENEMIES } from './roster.js';
 import { groundY, P } from './sim.js';
+import { styleCitrus, getEnv } from './look.js';
 
 const TAU = Math.PI * 2;
 function dampAngle(a, b, lambda, dt) {
@@ -31,27 +32,6 @@ export class BlobShadows {
   dispose() { this.scene.remove(this.mesh); this.mesh.geometry.dispose(); this.mesh.material.dispose(); this.mesh.dispose(); }
 }
 
-/** Subtler, less glossy "jelly" look for the Citrus model: matte base + soft fresnel glow so it reads translucent. */
-function jellify(root) {
-  const mats = new Set();
-  root.traverse((o) => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => mats.add(m)); });
-  for (const m of mats) {
-    if (!m.isMeshStandardMaterial) continue;
-    m.roughness = 0.82; m.metalness = 0.0;
-    const base = m.color.clone();
-    m.emissive = base.clone().multiplyScalar(0.22);
-    m.onBeforeCompile = (shader) => {
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <opaque_fragment>',
-        `float rim = pow(1.0 - saturate(dot(normalize(vNormal), normalize(vViewPosition))), 2.2);
-         outgoingLight += mix(diffuseColor.rgb, vec3(1.0), 0.45) * rim * 0.75;
-         #include <opaque_fragment>`,
-      );
-    };
-    m.needsUpdate = true;
-  }
-}
-
 export class Player {
   constructor(scene, blobs) {
     this.scene = scene; this.blobs = blobs; this.blob = blobs.alloc();
@@ -66,7 +46,7 @@ export class Player {
     this.hp = 5; this.maxHp = 5;
     this.invuln = 0; this.hurtT = 0; this.attackT = 0; this.attackCd = 0; this.attackHit = false;
     this.win = false; this.dustT = 0; this.squash = 0;
-    this.def = null;
+    this.def = null; this.look = null;
   }
 
   async setSprite(choice) {
@@ -79,7 +59,7 @@ export class Player {
       const m = await instantiateCharacter(def.file);
       m.root.scale.setScalar(def.scale);
       m.root.position.y = 0;
-      if (def.jelly) jellify(m.root);
+      this.look = def.jelly ? styleCitrus(m.root, m, getEnv()) : null;
       m.root.traverse((o) => { if (o.isMesh || o.isSkinnedMesh) o.castShadow = true; });
       this.group.add(m.root);
       this.model = m; this.mixer = m.mixer; this.actions = m.actions;
@@ -144,6 +124,7 @@ export class Player {
       else if (speed > 0.7) { this.play('walk', 0.12); if (this.current) this.current.timeScale = Math.max(0.7, speed / 4.4); }
       else this.play('idle', 0.2);
       if (this.mixer) this.mixer.update(dt);
+      if (this.look) { this.look.uTime.value = performance.now() / 1000; this.look.uMove.value += (Math.min(1, speed / 8.5) - this.look.uMove.value) * (1 - Math.exp(-6 * dt)); }
       this.model.root.visible = this.invuln <= 0 || Math.floor(this.invuln * 14) % 2 === 0;
     } else if (this.billboard) {
       this.billboard.rotation.y = camYaw;

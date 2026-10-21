@@ -8,6 +8,7 @@ import { Player, createEnemies, BlobShadows } from './actors.js';
 import { Particles } from './fx.js';
 import { sfx, initAudio, setMuted, isMuted } from './audio.js';
 import { P, makePlayer, stepPlayer, applySprings, hazardHit } from './sim.js';
+import { initLook } from './look.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -394,8 +395,8 @@ function frame(now) {
     state.time += dt;
     state.player.update(dt, state.sim, rig.yaw, state.world.solids, fx);
     const a = state.time * 0.22;
-    camera.position.set(Math.sin(a) * 12, 5.2, Math.cos(a) * 12);
-    camera.lookAt(0, 2.6, 0);
+    camera.position.set(Math.sin(a) * 9, 4.2, Math.cos(a) * 9 + 2.6);
+    camera.lookAt(0, 2.3, 2.6);
     rig.target.set(0, 3, 0);
   }
 
@@ -456,6 +457,7 @@ async function boot() {
     rig = new CameraRig(camera); state.rig = rig;
     fx.dust = new Particles(260, false); fx.spark = new Particles(420, true);
     scene.add(fx.dust.points, fx.spark.points);
+    initLook(renderer);
     quality.apply();
     addEventListener('resize', () => quality.apply());
     addEventListener('pointerdown', initAudio, { once: true });
