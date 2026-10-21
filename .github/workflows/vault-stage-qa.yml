@@ -78,6 +78,17 @@ jobs:
               assert page.locator('body.vault-classic').count()==0
               # Staging storage must not overwrite the live production ownership.
               page.evaluate("localStorage.setItem('sprite-mobile-v33-favorites',JSON.stringify([1,2,3]))")
+              # Add and master an item through the collector-card controls, never affecting live storage.
+              family_card=page.locator('#vault-cards .vault-card').first
+              family_card.locator('[data-vault-act="expand-family"]').click()
+              first_level=page.locator('.vault-card-detail:not([hidden]) select[data-vault-level]').first
+              chosen_id=int(first_level.get_attribute('data-vault-level'))
+              first_line=page.locator('.vault-card-detail:not([hidden]) .vault-detail-line').first
+              first_line.locator('[data-vault-act="toggle-owned"]').click()
+              assert chosen_id in page.evaluate("JSON.parse(localStorage.getItem('vault-stage-v1-favorites'))")
+              page.locator('select[data-vault-level="'+str(chosen_id)+'"]').select_option('5')
+              assert page.evaluate('window.VaultStage.stats().mastered')>=1
+              assert page.evaluate("localStorage.getItem('sprite-mobile-v33-favorites')")=='[1,2,3]'
               page.locator('button[data-season="C7S3"]').click()
               assert page.evaluate('window.VaultStage.stats().total')==117,'C7S3 count'
               page.locator('button[data-season="C7S4"]').click()
@@ -103,6 +114,21 @@ jobs:
               with page.expect_download(timeout=10000) as dl:
                 page.locator('button[data-vault-act="backup"]').click()
               assert dl.value.suggested_filename.endswith('.json')
+              backup_path=dl.value.path()
+              backup=json.loads(pathlib.Path(backup_path).read_text())
+              assert backup['kind']=='sprite-collection-locker-vault-backup'
+              assert chosen_id in backup['favorites']
+              assert backup['levels'][str(chosen_id)]==5
+              # Edit staging after export, then restore the file and verify the data returns.
+              page.locator('button[data-season="C7S4"]').click()
+              page.locator('#vault-cards .vault-card').first.locator('[data-vault-act="expand-family"]').click()
+              page.locator('.vault-card-detail:not([hidden]) .vault-detail-line').first.locator('[data-vault-act="toggle-owned"]').click()
+              assert chosen_id not in page.evaluate("JSON.parse(localStorage.getItem('vault-stage-v1-favorites'))")
+              page.locator('button[data-tab="vault"]').click()
+              page.on('dialog',lambda dialog:dialog.accept())
+              page.locator('#vault-restore-file').set_input_files(backup_path)
+              page.wait_for_function("(id)=>JSON.parse(localStorage.getItem('vault-stage-v1-favorites')).includes(id)",arg=chosen_id,timeout=9000)
+              assert page.evaluate("localStorage.getItem('sprite-mobile-v33-favorites')")=='[1,2,3]'
               page.screenshot(path='preview/collectors-vault/qa-'+name+'.png',full_page=False)
               assert not errs,'Browser errors: '+str(errs[:8])
               print('PASS '+name+': dashboard, cards/classic, seasons, live-storage isolation, museum, themes, animation controls, card render, backup')
