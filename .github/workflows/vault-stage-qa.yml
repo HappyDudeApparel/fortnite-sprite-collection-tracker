@@ -149,7 +149,7 @@ jobs:
               req=urllib.request.Request(url+'?preview-qa=2.1.0',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
               with urllib.request.urlopen(req,timeout=18) as r:
                 html=r.read(700000).decode('utf-8')
-              if 'Collector’s Vault — Interactive STAGING Preview' in html and 'vault-stage-v1-' in html:
+              if '<title>Collector’s Vault' in html and 'Interactive STAGING</title>' in html and 'vault-stage-v1-' in html:
                 for f in ['vault.js','vault.css']:
                   req=urllib.request.Request('https://sprites.happydude.ca/preview/collectors-vault/'+f,headers={'Cache-Control':'no-cache'})
                   with urllib.request.urlopen(req,timeout=18) as r: data=r.read(100000)
