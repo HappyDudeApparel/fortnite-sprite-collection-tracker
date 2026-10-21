@@ -80,9 +80,13 @@ def main():
         page.click('#look'); page.wait_for_timeout(1500)
         check(page.evaluate("document.getElementById('look').getAttribute('aria-pressed')") == 'true', 'Game look applies the 3D game styling to Citrus')
         check(hashlib.md5(shot(page)).hexdigest() != base_img, 'Game look changes the rendered model')
-        # reference art
-        page.goto(BASE + '?char=citrus&ref=1', wait_until='load'); page.wait_for_function('VIEWER.ready'); page.wait_for_timeout(800)
-        check(page.evaluate("document.getElementById('refPane').style.display") == 'block' and page.evaluate("document.getElementById('refImg').naturalWidth") > 50, 'collection art shows beside the model')
+        # reference art: Dash shows his own Legacy-tab art by default; the box can show any other Locker sprite
+        page.goto(BASE + '?char=citrus', wait_until='load'); page.wait_for_function('VIEWER.ready'); page.wait_for_timeout(800)
+        ref = page.evaluate("({d: document.getElementById('refPane').style.display, n: document.getElementById('refImg').naturalWidth, t: document.getElementById('refName').textContent, v: document.getElementById('charSel').selectedOptions[0].textContent})")
+        check(ref['d'] == 'block' and ref['n'] > 50 and 'Dash Sprite' in ref['t'] and ref['t'].startswith('#127'), f'Dash shows his own reference art (Locker Legacy tab #127) {ref["t"]}')
+        check(ref['v'].startswith('Dash'), f'the character is listed as Dash ({ref["v"]})')
+        page.goto(BASE + '?char=ghost&ref=29', wait_until='load'); page.wait_for_function('VIEWER.ready'); page.wait_for_timeout(600)
+        check('Ghost Sprite' in page.evaluate("document.getElementById('refName').textContent"), 'any catalogue sprite can be shown as the reference (Art ref #)')
         # turntable
         page.goto(BASE + '?char=ghost&turn=1', wait_until='load'); page.wait_for_function('VIEWER.ready')
         a = page.evaluate('VIEWER.orbit.theta'); page.wait_for_timeout(500); b = page.evaluate('VIEWER.orbit.theta')
@@ -101,7 +105,7 @@ def main():
         check(not perr, f'no page errors on phone {perr[:3]}')
         ctx.close()
         ctx = browser.new_context(viewport={'width': 1200, 'height': 760}); page = ctx.new_page()
-        page.goto(BASE + '?char=citrus&view=three&ref=1', wait_until='load'); page.wait_for_function('VIEWER.ready'); page.wait_for_timeout(900)
+        page.goto(BASE + '?char=citrus&view=three', wait_until='load'); page.wait_for_function('VIEWER.ready'); page.wait_for_timeout(900)
         page.screenshot(path='preview/collectors-vault/arcade-next/qa-viewer-desktop.png')
         ctx.close(); browser.close()
     sys.exit(0 if ok else 1)
