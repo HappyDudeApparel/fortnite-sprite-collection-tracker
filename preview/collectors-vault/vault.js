@@ -47,6 +47,7 @@ function setDisplay(){
 function renderHome(){
  if(!stageReady)return;
  setDisplay();
+ for(const b of qsa('[data-vault-act="theme"]'))b.setAttribute('aria-pressed',String(b.dataset.theme===prefs.theme));
  const p=currentStats(),hero=chosenHero(),bg=BACKGROUNDS[bgIndex]||BACKGROUNDS[0];
  const next=QUACKS.find(q=>p.s4Mastered<q.need),unlock=QUACKS.filter(q=>p.s4Mastered>=q.need).length;
  const dash=qs('#vault-dashboard');
