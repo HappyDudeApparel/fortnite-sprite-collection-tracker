@@ -1,0 +1,143 @@
+name: Collector Vault isolated staging QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/collectors-vault/**'
+      - '.github/workflows/vault-stage-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preview-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install Chromium and validator dependencies
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify production files and C7S3 are untouched
+        run: |
+          python - <<'PY'
+          import subprocess,pathlib,re,json
+          base='45278cd967c230a1d97ec31cb7c2a00d11492139'
+          roots=['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']
+          for path in roots:
+            old=subprocess.check_output(['git','show',base+':'+path])
+            current=pathlib.Path(path).read_bytes()
+            assert old==current,'Production file changed: '+path
+          src=pathlib.Path('index.html').read_text(encoding='utf8')
+          stage=pathlib.Path('preview/collectors-vault/index.html').read_text(encoding='utf8')
+          assert '2.1.0-preview' in stage and "const APP_VERSION='2.0.43'" in src
+          def arr(s):
+            begin=s.index('const SPRITES=')+len('const SPRITES=')
+            end=s.index(';\n',begin)
+            return json.loads(s[begin:end])
+          live=arr(src);preview=arr(stage)
+          assert live==preview, 'Stage modified original Sprite catalogue'
+          assert len([x for x in preview if x['season']=='C7S4'])==162
+          assert len([x for x in preview if x['season']=='C7S3'])==119
+          assert 'navigator.serviceWorker.register' not in stage
+          assert '<base href="../../">' in stage
+          assert 'vault-stage-v1-favorites' in stage
+          assert 'sprite-mobile-v33-favorites' in stage, 'Read-only production snapshot keys should remain'
+          assert pathlib.Path('preview/collectors-vault/vault.css').stat().st_size>10000
+          assert pathlib.Path('preview/collectors-vault/vault.js').stat().st_size>20000
+          print('PASS: all production files byte-identical, stage dataset unmodified, no SW staging registration.')
+          PY
+      - name: Chromium interactive staging tests (phone/tablet/desktop)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import http.server,threading,json,pathlib
+          from playwright.sync_api import sync_playwright
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',8871),http.server.SimpleHTTPRequestHandler)
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+            for name,viewport in [('mobile',{'width':390,'height':844}),('tablet',{'width':768,'height':1024}),('desktop',{'width':1440,'height':900})]:
+              page=browser.new_page(viewport=viewport,device_scale_factor=1,accept_downloads=True)
+              errs=[]
+              page.on('pageerror',lambda err: errs.append(str(err)))
+              page.goto('http://127.0.0.1:8871/preview/collectors-vault/',wait_until='load',timeout=60000)
+              page.wait_for_selector('body[data-vault-ready="true"]',timeout=30000)
+              assert page.locator('#vault-dashboard .vault-hero').count()==1
+              assert page.locator('#vault-cards .vault-card').count()>=10
+              assert page.locator('#mainLegend .legendItem').count()==7
+              assert page.evaluate('currentStats().total')==162, 'C7S4 count'
+              assert page.locator('.vault-hero-art img').evaluate('(i)=>i.complete&&i.naturalWidth>0'),'hero image missing'
+              page.locator('[data-vault-act="classic"]').click()
+              assert page.locator('body.vault-classic').count()==1
+              assert page.locator('.familyRow').count()>10
+              page.locator('[data-vault-act="cards"]').click()
+              assert page.locator('body.vault-classic').count()==0
+              # Staging storage must not overwrite the live production ownership.
+              page.evaluate("localStorage.setItem('sprite-mobile-v33-favorites',JSON.stringify([1,2,3]))")
+              page.locator('button[data-season="C7S3"]').click()
+              assert page.evaluate('currentStats().total')==117,'C7S3 count'
+              page.locator('button[data-season="C7S4"]').click()
+              assert page.evaluate('currentStats().total')==162
+              page.locator('button[data-tab="vault"]').click()
+              page.wait_for_selector('#vault-museum-content .vault-shelf')
+              assert page.locator('.vault-shelf').count()==3
+              assert page.locator('.vault-milestone').count()==5
+              assert page.locator('.vault-achievement').count()==8
+              page.locator('button[data-vault-act="new-shelf"]').click()
+              assert page.locator('.vault-shelf').count()==4
+              page.locator('button[data-vault-act="theme"][data-theme="arcade"]').click()
+              assert page.locator('body[data-vault-theme="arcade"]').count()==1
+              page.locator('input[data-vault-check="motion"]').check()
+              assert page.locator('body.vault-motion-off').count()==1
+              assert page.evaluate("localStorage.getItem('sprite-mobile-v33-favorites')")=='[1,2,3]','Production ownership changed'
+              page.wait_for_timeout(550)
+              canvas=page.locator('#vault-share-canvas')
+              assert canvas.evaluate('(c)=>c.width==1080&&c.height==1350')
+              page.locator('#vault-share-format').select_option('certificate')
+              page.wait_for_timeout(300)
+              assert canvas.evaluate('(c)=>c.width==1600&&c.height==1000')
+              page.locator('button[data-vault-act="backup"]').click()
+              with page.expect_download(timeout=10000) as dl:
+                page.locator('button[data-vault-act="backup"]').click()
+              assert dl.value.suggested_filename.endswith('.json')
+              page.screenshot(path='preview/collectors-vault/qa-'+name+'.png',full_page=False)
+              assert not errs,'Browser errors: '+str(errs[:8])
+              print('PASS '+name+': dashboard, cards/classic, seasons, live-storage isolation, museum, themes, animation controls, card render, backup')
+              page.close()
+            browser.close()
+          server.shutdown()
+          PY
+      - name: Verify staging URL is served by GitHub Pages
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request,time
+          url='https://sprites.happydude.ca/preview/collectors-vault/index.html'
+          last=''
+          for i in range(15):
+            try:
+              req=urllib.request.Request(url+'?preview-qa=2.1.0',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
+              with urllib.request.urlopen(req,timeout=18) as r:
+                html=r.read(700000).decode('utf-8')
+              if 'Collector’s Vault — Interactive STAGING Preview' in html and 'vault-stage-v1-' in html:
+                for f in ['vault.js','vault.css']:
+                  req=urllib.request.Request('https://sprites.happydude.ca/preview/collectors-vault/'+f,headers={'Cache-Control':'no-cache'})
+                  with urllib.request.urlopen(req,timeout=18) as r: data=r.read(100000)
+                  assert len(data)>10000,'Short resource: '+f
+                print('PASS: live staging URL + assets publicly served, production application untouched.')
+                break
+              last='Stale GitHub Pages output'
+            except Exception as exc:last=str(exc)
+            print('Waiting for staging Pages deployment:',last,flush=True);time.sleep(12)
+          else:raise RuntimeError('Staging URL not updated: '+last)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: collector-vault-preview-screenshots
+          path: preview/collectors-vault/qa-*.png
+          if-no-files-found: ignore
