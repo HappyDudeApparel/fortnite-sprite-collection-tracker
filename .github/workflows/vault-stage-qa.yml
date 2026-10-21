@@ -69,7 +69,7 @@ jobs:
               assert page.locator('#vault-dashboard .vault-hero').count()==1
               assert page.locator('#vault-cards .vault-card').count()>=10
               assert page.locator('#mainLegend .legendItem').count()==7
-              assert page.evaluate('currentStats().total')==162, 'C7S4 count'
+              assert page.evaluate('window.VaultStage.stats().total')==162, 'C7S4 count'
               assert page.locator('.vault-hero-art img').evaluate('(i)=>i.complete&&i.naturalWidth>0'),'hero image missing'
               page.locator('[data-vault-act="classic"]').click()
               assert page.locator('body.vault-classic').count()==1
@@ -79,9 +79,9 @@ jobs:
               # Staging storage must not overwrite the live production ownership.
               page.evaluate("localStorage.setItem('sprite-mobile-v33-favorites',JSON.stringify([1,2,3]))")
               page.locator('button[data-season="C7S3"]').click()
-              assert page.evaluate('currentStats().total')==117,'C7S3 count'
+              assert page.evaluate('window.VaultStage.stats().total')==117,'C7S3 count'
               page.locator('button[data-season="C7S4"]').click()
-              assert page.evaluate('currentStats().total')==162
+              assert page.evaluate('window.VaultStage.stats().total')==162
               page.locator('button[data-tab="vault"]').click()
               page.wait_for_selector('#vault-museum-content .vault-shelf')
               assert page.locator('.vault-shelf').count()==3
@@ -100,7 +100,6 @@ jobs:
               page.locator('#vault-share-format').select_option('certificate')
               page.wait_for_timeout(300)
               assert canvas.evaluate('(c)=>c.width==1600&&c.height==1000')
-              page.locator('button[data-vault-act="backup"]').click()
               with page.expect_download(timeout=10000) as dl:
                 page.locator('button[data-vault-act="backup"]').click()
               assert dl.value.suggested_filename.endswith('.json')
