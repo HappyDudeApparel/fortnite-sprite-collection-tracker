@@ -61,10 +61,12 @@ jobs:
             with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as tmp:
               tmp.write(match.group(1));tmp.flush()
               subprocess.run(['node','--check',tmp.name],check=True)
-          for path in [root/'arcade.js',pathlib.Path('preview/collectors-vault/vault.js')]:
+          for path in [root/'arcade.js',pathlib.Path('preview/collectors-vault/vault.js'),root/'2d/levels.js',root/'2d/themes.js',root/'tools/validate-levels.js']:
             subprocess.run(['node','--check',str(path)],check=True)
           print('PASS: original character data and game archives preserved, all game JS parses, verified asset index, root production files protected')
           PY
+      - name: Prove every 2D level is completable (physics replay of tube + every gem)
+        run: node preview/collectors-vault/arcade/tools/validate-levels.js
       - name: Play test 2D and 3D from Arcade staging (mobile and desktop)
         shell: bash
         run: |
@@ -112,6 +114,18 @@ jobs:
               two.screenshot(path='preview/collectors-vault/arcade/arcade-2d-'+label+'.png',full_page=False)
               assert not gameErr,gameErr[:5]
               print('PASS',label,'2D artwork, Locker autostart, movement, articulated motion toggle')
+              lv=context.new_page();lvErr=[]
+              lv.on('pageerror',lambda e:lvErr.append(str(e)))
+              lv.goto('http://127.0.0.1:8899/preview/collectors-vault/arcade/2d/?autostart=water&level=4',wait_until='load',timeout=60000)
+              lv.wait_for_function("typeof mode!=='undefined'&&mode==='game'",timeout=30000)
+              assert lv.evaluate('game.level.id')=='cinder-works','Level query did not select Cinder Works'
+              assert lv.evaluate('game.platforms.some(p=>p.mover)&&game.gems.length>0')
+              lv.keyboard.press('Escape')
+              lv.wait_for_function("mode==='levels'",timeout=5000)
+              assert lv.locator('.level-card').count()==5
+              assert not lvErr,lvErr[:5]
+              print('PASS',label,'2D level pack: level select, Cinder Works start, Escape returns to levels')
+              lv.close()
               three=context.new_page();threeErr=[]
               three.on('pageerror',lambda e:threeErr.append(str(e)))
               three.goto('http://127.0.0.1:8899'+href3d,wait_until='domcontentloaded',timeout=60000)
@@ -145,7 +159,7 @@ jobs:
           python - <<'PY'
           import urllib.request,time
           root='https://sprites.happydude.ca/preview/collectors-vault/'
-          paths={'':'id="arcadeView"','arcade/2d/index.html':'drawPuppetSprite','arcade/3d/index.html':'ARCADE_3D_SELECTION','arcade/catalog.json':'"entries"','arcade/arcade.js':'SpriteArcadeStage'}
+          paths={'':'id="arcadeView"','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/2d/themes.js':'SPRITE_THEMES','arcade/3d/index.html':'ARCADE_3D_SELECTION','arcade/catalog.json':'"entries"','arcade/arcade.js':'SpriteArcadeStage'}
           last=''
           for attempt in range(16):
             try:
