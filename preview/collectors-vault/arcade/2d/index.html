@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#071521">
-<title>Sprite Platformer — Panorama Power Preview v0.3</title>
+<title>Sprite Arcade — 2D Platformer v0.4 Staging</title>
 <style>
 :root {
   color-scheme: dark;
@@ -162,8 +162,17 @@ button { font: inherit; }
   #banner { top: 8px; }
 }
 </style>
+<style id="arcade-2d-staging-ui">
+#arcadeBack{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));z-index:180;color:#f1fdff;background:#0b1f34d9;border:1px solid #7ce5f7ad;padding:9px 12px;border-radius:999px;text-decoration:none;font:bold 11px system-ui;box-shadow:0 4px 16px #0007}
+#arcadeMove{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:180;color:#dcfaff;background:#0b1f34c9;border:1px solid #7ce5f777;padding:9px 12px;border-radius:999px;font:bold 11px system-ui;cursor:pointer}
+#arcadeNote{position:fixed;z-index:190;bottom:6px;left:50%;transform:translateX(-50%);background:#0a182ad9;border:1px solid #88ddfa73;border-radius:12px;padding:7px 10px;color:#d7edfa;font:700 10px system-ui;max-width:78vw;text-align:center;pointer-events:none}
+@media (max-width:700px){#arcadeBack,#arcadeMove{font-size:10px;padding:7px}#arcadeNote{font-size:8px;padding:5px}}
+</style>
 </head>
 <body>
+<a id="arcadeBack" href="../../#arcade" aria-label="Return to Sprite Arcade staging">← Arcade</a>
+<button id="arcadeMove" type="button" aria-pressed="true" title="Toggle articulated Sprite motion">Motion: ON</button>
+<div id="arcadeNote" hidden role="status"></div>
 <div id="shell">
   <canvas id="game" width="960" height="540" aria-label="Sprite Platformer game"></canvas>
 
@@ -2937,6 +2946,41 @@ function drawTubeFront(cameraX) {
   ctx.restore();
 }
 
+
+let arcadePuppetMotion=true;
+function drawPuppetSprite(img, entity, size){
+  const sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height;
+  if(!sw||!sh){ctx.drawImage(img,-size/2,-size/2,size,size);return}
+  const time=game?game.time:performance.now()/1000;
+  const velocity=Math.min(1,Math.abs(entity.vx||0)/130);
+  const airborne=entity.isPlayer?!entity.grounded:Math.abs(entity.vy||0)>45;
+  const gait=Math.sin(time*13+(entity.isPlayer?0:entity.x*.04))*(airborne?.1:velocity);
+  const power=entity.isPlayer&&(entity.special||entity.cooldown>.05);
+  const act=power?1:0;
+  const toXY=(u,v)=>[(u-.5)*size,(v-.5)*size];
+  function piece(x,y,w,h,px,py,angle){
+    const sx=Math.round(x*sw),sy=Math.round(y*sh);
+    const ex=Math.min(sw,Math.round((x+w)*sw)),ey=Math.min(sh,Math.round((y+h)*sh));
+    if(ex<=sx||ey<=sy)return;
+    const pivot=toXY(px,py);
+    ctx.save();ctx.translate(pivot[0],pivot[1]);ctx.rotate(angle);ctx.translate(-pivot[0],-pivot[1]);
+    const xy=toXY(sx/sw,sy/sh);
+    ctx.drawImage(img,sx,sy,ex-sx,ey-sy,xy[0],xy[1],(ex-sx)*size/sw,(ey-sy)*size/sh);
+    ctx.restore();
+  }
+  ctx.save();
+  const bob=Math.abs(Math.sin(time*13))*velocity*1.6;
+  ctx.translate(0,-bob);
+  if(act)ctx.rotate(Math.sin(time*17)*.018);
+  piece(0,0,1,.38,.5,.5,0);
+  piece(.20,.38,.60,.42,.5,.57,Math.sin(time*8)*.014*velocity);
+  piece(0,.38,.20,.42,.22,.45,-gait*.25-act*.16);
+  piece(.80,.38,.20,.42,.78,.45,gait*.25+act*.16);
+  piece(0,.80,.50,.20,.30,.79,gait*.23+(airborne?-.10:0));
+  piece(.50,.80,.50,.20,.70,.79,-gait*.23+(airborne?.10:0));
+  ctx.restore();
+}
+
 function drawSprite(entity, cameraX, options = {}) {
   if (!entity.alive) return;
   const image = imageMap.get(entity.characterId);
@@ -2952,7 +2996,8 @@ function drawSprite(entity, cameraX, options = {}) {
   if ((entity.facing || 1) < 0) ctx.scale(-1, 1);
   if (entity.flash > 0 && Math.floor(game.time * 28) % 2 === 0) ctx.globalAlpha *= 0.38;
   if (image) {
-    ctx.drawImage(image, -size / 2, -size / 2, size, size);
+    if(arcadePuppetMotion)drawPuppetSprite(image,entity,size);
+    else ctx.drawImage(image,-size/2,-size/2,size,size);
   } else {
     const ability = getAbility(entity.characterId);
     ctx.fillStyle = hexToCss(ability.color);
@@ -3435,7 +3480,37 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-startLoading();
+
+async function initSpriteArcade(){
+ const notes=document.getElementById('arcadeNote'),toggle=document.getElementById('arcadeMove');
+ function say(text){notes.hidden=false;notes.textContent=text;clearTimeout(say.timer);say.timer=setTimeout(()=>notes.hidden=true,5500)}
+ toggle.addEventListener('click',()=>{
+  arcadePuppetMotion=!arcadePuppetMotion;toggle.textContent='Motion: '+(arcadePuppetMotion?'ON':'OFF');
+  toggle.setAttribute('aria-pressed',String(arcadePuppetMotion));
+  say(arcadePuppetMotion?'Animated Sprite limbs enabled.':'Classic static artwork mode.');
+ });
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){arcadePuppetMotion=false;toggle.textContent='Motion: OFF';toggle.setAttribute('aria-pressed','false')}
+ const params=new URLSearchParams(location.search),id=Number(params.get('sprite'));
+ if(Number.isSafeInteger(id)&&id>0){
+  try{
+   const resp=await fetch('../catalog.json',{cache:'no-store'});
+   if(resp.ok){
+    const catalog=await resp.json(),record=catalog.entries.find(x=>x.id===id);
+    if(record&&record.player2d){
+      const character=CHARACTERS.find(x=>x.id===record.player2d);
+      if(character){
+       character.src=record.image;character.name=record.name;character.family=record.family;
+       const url=new URL(location.href);url.searchParams.set('autostart',record.player2d);history.replaceState(null,'',url);
+       window.ARCADE_LOCKER_SPRITE=Object.freeze({id:record.id,name:record.name,family:record.family,art:record.image});
+       say('Playing as '+record.name+' · original '+record.family+' prototype ability.');
+      }
+    }else if(record){say(record.name+' is not playable in the original 18-family 2D prototype yet. Select a supported Sprite.')}
+   }
+  }catch(e){console.warn('Arcade character mapping unavailable, showing the 18 original playable Sprites',e)}
+ }
+ startLoading();
+}
+initSpriteArcade();
 
 </script>
 </body>
