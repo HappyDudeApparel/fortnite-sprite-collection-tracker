@@ -1,11 +1,12 @@
-# Sprite Arcade — Collector’s Vault staging integration
+# Sprite Games — Collector's Vault staging
 
-**Current status:** Restored browser games with prototype enhancements, staged under:
-- `https://sprites.happydude.ca/preview/collectors-vault/#arcade`
-- `https://sprites.happydude.ca/preview/collectors-vault/arcade/2d/`
-- `https://sprites.happydude.ca/preview/collectors-vault/arcade/3d/`
+**Entry point:** the staging page (`/preview/collectors-vault/`) keeps its original look and has a single **🎮 Play Sprite Games** button. It opens the hub at `/preview/collectors-vault/arcade/` where you pick **2D** or **3D**.
 
-**Approval boundary:** All changes are isolated to `preview/collectors-vault/` (including staging-specific QA workflows). Production Sprite Collection Locker v2.0.43 remains untouched. GB GAMER BROS™ Adventure Mountain™ source, levels, enemies, characters and game mechanics are not modified or imported.
+- `arcade/index.html` — the 2D/3D chooser
+- `arcade/2d/` — Sprite Platformer (five levels)
+- `arcade/3d/` — Sprite Arena (three worlds, real 3D)
+
+**Approval boundary:** all changes are isolated to `preview/collectors-vault/` (plus the staging QA workflow). Production Sprite Collection Locker v2.0.43 remains untouched (the QA workflow verifies the root files by hash). GB GAMER BROS™ Adventure Mountain source, levels, enemies and mechanics are not modified or imported; the only things shared with the Gamer Bros repos are generic CC0 Kenney art and the recovered Sprite character models listed below.
 
 ## Restored originals — never overwritten
 - `source-original/Sprite-Game-Preview-v0.3.html` — recovered original 2D source from Drive.
@@ -39,37 +40,46 @@ Moving platforms (riders are carried), crumbling platforms (shake ~0.6 s, vanish
 - `node preview/collectors-vault/arcade/tools/validate-levels.js` replays the game's own physics (same constants and collision rules) from every standing spot, trying walking, jumps, double jumps, pads and moving platforms at random phases. It **fails the build** unless the tube and every gem are reachable from the spawn, and also checks that enemies, checkpoints, the tube, pads and hazards sit on real ground and that props don't overlap. `--struct` runs only the fast structural checks.
 - The validator treats bricks, boulders and crystals as passable because every power destroys them. It does not model enemy damage or timing-based mover alignment beyond random phase sampling, so a human playtest is still the final word on difficulty.
 
-## 3D playable v0.3
-- Original bundled Three.js/WebGL arena preserved with movement, touch joystick, jumping, charged prototype shockwave, opponents, destruction and tube objective.
-- `?sprite=<collection record id>` loads the selected Sprite’s exact catalogue art as a 2.5D camera-facing 3D-world avatar; opponent appearances use authentic Water/Earth/Fire Sprite images. Original generic lookalike meshes are hidden only after the approved art has loaded successfully.
-- Selected artwork is genuinely in the 3D world, **not merely a HUD portrait**. The original combat controller remains experimental and does not claim an official ability for all 281 catalogue variants.
-- Five real CC0 Kenney environment model meshes (pine tree, rocks, flowers, fence and grass-topped stone corner) and texture atlas were recovered from the **generic third-party asset pool** already included in the Adventure Mountain dev repository. These are independently reusable Kenney third-party environment props; **no GB franchise assets** are reused.
-- Props render as real Three.js BufferGeometry meshes with their original vertices, normals, UVs and Kenney-colour texture atlas. A reduced subset is used on touch-capable devices to keep mobile memory and GPU demands lower.
-- `props/kenney-environment.json` contains source repository/ref/blob provenance for each original Kenney asset. Original Kenney CC0 source: https://kenney.nl/assets/platformer-kit.
-- No level names, character designs or gameplay mechanics have been imported from Adventure Mountain.
+## 3D — Sprite Arena (rebuilt from scratch)
+The earlier 3D prototype lagged and glitched (a single 600 KB bundle with ~70 dynamic lights, physical materials and a flat 2.5D avatar). It is replaced by a performance-first rebuild; the old file is preserved at `source-original/Sprite-3D-Arena-Visual-Upgrade-v0.2.html`.
 
-## Arcade launcher and Locker entry
-- New **▶ Arcade** tab in Collector’s Vault staging.
-- New **▶ Play This Sprite** control on the featured Sprite panel of the existing **Locker**, launching the Arcade with the actual selected record/variant.
-- New full-collection Sprite selector and variant-specific game links. Playable 2D is restricted to the original 18 families while the current 3D 2.5D system can display any available released authentic Sprite art.
-- Dedicated full-window game pages allow browser back, minimizing PWA collector UI overhead; game state does not modify the collection tracker or Fortnite accounts.
+**Game:** third-person platformer. Run, jump, double jump, **Bite** rivals (or stomp them), collect shards ✦ and hearts ♥, ride springs, dodge saws and spikes, light checkpoint flags, and reach the glowing Collection Tube. Three worlds — Sunflower Isles, Frostline Heights (aurora night), Cinder Isles (lava) — each with ★ ratings (★ finish · ★★ 70% shards · ★★★ every shard), saved in the browser only. Keyboard, gamepad and touch (virtual stick, Jump, Bite, drag-to-look) are supported.
+
+**Characters**
+- **Citrus Sprite** — the recovered rigged 3D model (`assets/characters/citrus.glb`, from `gamer-bros-game/pass1-v1/assets/recovered/characters/sprite_hero.glb`) with a matte "jelly" material (soft fresnel glow instead of glossy plastic). Idle / Walk / Jump / Bite / Hit / Dance animations are used.
+- **Any other Sprite** from the collection catalogue can be chosen on the title screen (or via `?sprite=<id>`); until a rigged model exists for it, it plays as 2.5D collection art with squash-and-stretch and a real cast shadow.
+- Rivals use the recovered rigged monsters (`ghost`, `yeti`, `stump`, `cthulhu`, `alien`). **Their original author/licence is not recorded** — confirm before any public release. See `3d/assets/characters/README.md`.
+- To add another 3D Sprite: drop a rigged `.glb` into `3d/assets/characters/` and add it to `3d/js/roster.js`.
+
+**Performance design** (budgets measured on the real build; see `?debug=1` for a live readout)
+- ~65–72 draw calls and 68–86k triangles per world, ~0.4 ms of JS per frame, flat JS heap (no per-frame allocation).
+- One shadow-casting light that follows the player; everything repeated is instanced (terrain, trees, gems, flags, spikes, contact shadows); one palette-textured material for the whole Kenney kit; no post-processing.
+- **Adaptive quality governor**: a six-step ladder (resolution scale → pixel-ratio cap → shadow size → shadows off → fewer particles). It only steps down when the frame rate actually suffers. `?q=0..5` locks a level for testing.
+- Shaders are pre-compiled during loading, and the level-finish sequence is frame-driven (no timers).
+
+**Validation:** `node tools/validate-3d-levels.mjs` replays the game's own physics (`3d/js/sim.js`, the same file the browser runs) from every standing spot — jumps, double jumps, springs, moving platforms — and fails unless the tube and every shard are reachable. It also checks that props sit on islands and that islands do not overlap. Monsters and saws are not simulated (timing/combat), so a human playtest is still the final word on difficulty.
+
+**Third-party assets:** three.js r180 (MIT, `3d/vendor/three/LICENSE`); Kenney Platformer Kit (CC0, `3d/assets/kenney/LICENSE.txt`).
+
+## Launcher
+The Collector's Vault staging page has one **Play Sprite Games** button → hub → 2D or 3D. (The earlier Arcade tab and Locker "Play This Sprite" button were removed to keep the staging page uncluttered.) `?sprite=<collection id>` still works on both game pages.
 
 ## Canon and intellectual-property gates
 - Fortnite Sprite names and character artwork reused only from the verified current collection-tracker record library.
 - Legacy fan-game special attacks and newly composed arenas/props are **fan-game design**, not falsely labelled as official Fortnite gameplay or locations.
 - New proposed levels must **not** reuse any names from GB Adventure Mountain or any of its approved level/location vocabulary.
-- No GB playable characters, stone enemies, cannon systems, bots, lore, mechanisms, proprietary concept art or world maps can enter the Sprite Arcade.
+- No Gamer Bros code, levels, names, bots, lore, mechanisms, concept art or maps are used. Two kinds of *assets* did come out of the Gamer Bros repos because that is where they were recovered: the generic CC0 Kenney kit, and the rigged Citrus Sprite / monster models (see 3D section for the open licence question on the monsters).
 - Public fan-content use needs a separate policy/licensing review before a permanent production game launch. The preview currently carries prototype/fan-made notices.
 
-## 3D model upgrade pipeline
-Higgsfield offers genuine 3D generation workflows beyond simple 2D pictures, including `sam_3_3d` (Meta single-image object→GLB), `image_to_3d` (Meshy single-image→GLB with optional rigging and animation) and `multi_image_to_3d` (Meshy 1–4 images→GLB). These models would be evaluated against exact authentic Sprite proportions, face, anatomy, arm/foot silhouettes, texture and polycount; model generation may incur credits and **was not started** without cost approval. Existing game-specific 2.5D billboards are the truthful fallback until 3D models pass visual comparison.
+## More 3D Sprites (open item)
+Only one rigged 3D Sprite exists in the repos or Drive (Citrus). A glassier, less plastic Citrus variant (possibly "citrus5" or a Superman Sprite) was remembered but is **not in any repo, commit or Drive folder searched**; if it turns up (or is generated through Higgsfield `image_to_3d` / `multi_image_to_3d`), drop the `.glb` into `3d/assets/characters/` and register it in `3d/js/roster.js`.
 
 ## Development priorities (not all complete)
-1. Finish automated browser and visual QA on mobile and desktop.
-2. Iteratively improve 2D puppet masks/joints/posed action animation from actual in-game captures, and give Sunflower Run the same layered parallax treatment as levels 2–5.
-3. Implement proper 3D rigging, animation, per-Sprite abilities and controller, with real models only after independent canon-accuracy checks.
-4. Human playtest of the five 2D levels for difficulty and feel (the validator proves completability, not fun); tune checkpoints, enemy counts and ice behaviour from that feedback. Then design the 3D arena levels the same way; **do not import GB locations or name vocabulary**.
+1. Human playtest of the five 2D levels and three 3D worlds for difficulty and feel (the validators prove completability, not fun); tune checkpoints, enemy counts, saw timing and ice behaviour.
+2. Real-device performance check of the 3D game (`?debug=1`) on a mid-range phone; adjust the quality ladder if needed.
+3. More rigged 3D Sprites and per-Sprite abilities; confirm the monster models' licence.
+4. Give 2D Sunflower Run the layered parallax treatment of levels 2–5; more 3D worlds.
 5. Review rightsholder fan-content permissions and get approval before promoting any game to production.
 
 ## Smoke test
-`.github/workflows/sprite-arcade-stage-qa.yml` verifies root production file hashes, archived original sources, game JavaScript syntax, 2D Locker autostart, actual movement and articulation toggle, 3D GPU startup and artwork/prop readiness, as well as public staging routes. Screenshots may be skipped in headless software WebGL if the browser stalls while capturing a continuously-rendered canvas; browser gameplay assertions remain required.
+`.github/workflows/sprite-arcade-stage-qa.yml` verifies root production file hashes, archived originals, the simplified staging page and hub, all game JavaScript syntax, both level validators (2D and 3D), a browser play test (hub → 2D → 3D, desktop and phone sizes), and that the public staging routes serve the new files.
