@@ -3,6 +3,12 @@
 **Status: lineage partly corroborated, rights NOT cleared.** This file records what the repositories prove and what they do not.
 It makes no claim about authorship, copyright ownership or licensing. The model file is unchanged.
 
+## Name and collection art
+The owner confirms the character is called **Dash** (the 3D game's label "Citrus Sprite" is a working name). His collection art is
+**Dash Sprite, id 127, rarity Legacy (C7S3)** in the Locker's Legacy tab (`assets/embedded/8654c402d75684a5af00.webp`); it is not in
+`arcade/catalog.json`. This also means Dash corresponds to a Fortnite sprite in the Locker, so the brand question below (item 4) applies
+to the character itself, separately from who built the mesh.
+
 ## The file
 
 | | |
