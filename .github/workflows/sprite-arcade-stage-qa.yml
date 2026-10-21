@@ -7,6 +7,9 @@ on:
       - 'preview/collectors-vault/index.html'
       - 'preview/collectors-vault/vault.js'
       - 'preview/collectors-vault/vault.css'
+      - 'games/**'
+      - 'index.html'
+      - 'version.json'
       - '.github/workflows/sprite-arcade-stage-qa.yml'
   workflow_dispatch:
 permissions:
@@ -35,7 +38,7 @@ jobs:
           root=pathlib.Path('preview/collectors-vault/arcade')
           stage=pathlib.Path('preview/collectors-vault/index.html').read_text()
           original=pathlib.Path('index.html').read_text()
-          assert "const APP_VERSION='2.0.43'" in original
+          assert "const APP_VERSION='2.0.44'" in original
           # Staging page: original look + exactly one entry point to the games.
           assert 'playGamesBtn' in stage and 'href="/preview/collectors-vault/arcade/"' in stage
           assert 'data-tab="arcade"' not in stage and 'id="arcadeView"' not in stage and 'lockerPlaySelected' not in stage
@@ -57,8 +60,14 @@ jobs:
           for f in (root/'3d/js').glob('*.js'):
             t=f.read_text()
             assert 'GB_RUMBLER' not in t and 'BP_GamerBro' not in t,f
-          # Root remains byte-for-byte unchanged since approved v2.0.43.
-          base='45278cd967c230a1d97ec31cb7c2a00d11492139'
+          # Production: Play Sprite Games button + self-contained games/ folder.
+          assert 'playGamesBtn' in original and 'href="/games/"' in original
+          prod=pathlib.Path('games')
+          for f in ['index.html','catalog.json','2d/index.html','2d/levels.js','3d/index.html','3d/js/main.js','3d/js/look.js','3d/assets/characters/citrus.glb','3d/vendor/three/three.module.min.js']:
+            assert (prod/f).exists(),'missing production file games/'+f
+          assert 'Staging' not in (prod/'index.html').read_text() and 'Staging' not in (prod/'3d/index.html').read_text()
+          # Production root: only the approved release files differ from the v2.0.44 release commit.
+          base='16161c4e1b898308e6b26c811ebbc780acc0aecc'
           for path in ['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']:
             assert subprocess.check_output(['git','show',base+':'+path])==pathlib.Path(path).read_bytes(),path
           match=re.search(r'<script>([\s\S]*?)</script>',game2d)
@@ -131,7 +140,18 @@ jobs:
               three.screenshot(path='preview/collectors-vault/arcade/qa-3d-'+label+'.png')
               assert not threeErr,threeErr[:5]
               print('PASS',label,'3D: world builds, player + enemies load, movement works, no errors')
-              for tab in (three,two,page):tab.close()
+              prod=context.new_page();perr=[];prod.on('pageerror',lambda e:perr.append(str(e)))
+              prod.goto(B+'/',wait_until='domcontentloaded',timeout=60000)
+              prod.wait_for_selector('.familyRow[data-family="Honey"]',timeout=30000)
+              assert prod.evaluate('countable().length')==162,'production collection changed'
+              prod.locator('a.playGamesBtn:visible').first.click()
+              prod.wait_for_url('**/games/',timeout=10000)
+              assert prod.locator('a.card').count()==2
+              prod.goto(B+'/games/3d/?autostart=1&level=2&q=2&nointro=1',wait_until='load',timeout=60000)
+              prod.wait_for_function("window.ARENA&&ARENA.mode==='play'&&ARENA.levelIndex===1",timeout=120000)
+              assert not perr,perr[:5]
+              print('PASS',label,'production: Locker (162 sprites) -> Play Sprite Games -> hub -> /games/3d/ plays')
+              for tab in (prod,three,two,page):tab.close()
               context.close()
             browser.close()
           server.shutdown()
@@ -141,16 +161,19 @@ jobs:
         run: |
           python - <<'PY'
           import urllib.request,time
-          root='https://sprites.happydude.ca/preview/collectors-vault/'
-          paths={'':'playGamesBtn','arcade/':'SPRITE <span>GAMES','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/3d/index.html':'js/main.js','arcade/3d/js/levels.js':'sunflower-isles','arcade/catalog.json':'"entries"'}
+          targets=[
+            ('https://sprites.happydude.ca/preview/collectors-vault/',{'':'playGamesBtn','arcade/':'SPRITE <span>GAMES','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/3d/index.html':'js/main.js','arcade/3d/js/levels.js':'sunflower-isles','arcade/catalog.json':'"entries"'}),
+            ('https://sprites.happydude.ca/',{'':'playGamesBtn','version.json':'"2.0.44"','games/':'SPRITE <span>GAMES','games/2d/levels.js':'SPRITE_LEVELS','games/3d/js/main.js':'ARENA','games/3d/js/look.js':'styleCitrus','games/catalog.json':'"entries"'}),
+          ]
           last=''
           for attempt in range(16):
             try:
-              for path,token in paths.items():
-                request=urllib.request.Request(root+path+'?arcade-stage-qa=1',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
-                with urllib.request.urlopen(request,timeout=23) as r:content=r.read(900000).decode('utf-8')
-                assert token in content,'Stale or missing '+path
-              print('PASS: staging page, hub, 2D, 3D and catalogue are publicly accessible')
+              for root,paths in targets:
+                for path,token in paths.items():
+                  request=urllib.request.Request(root+path+'?arcade-stage-qa=1',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(request,timeout=23) as r:content=r.read(900000).decode('utf-8')
+                  assert token in content,'Stale or missing '+root+path
+              print('PASS: staging and production pages, hubs, 2D, 3D and catalogues are publicly accessible')
               break
             except Exception as e:
               last=str(e);print('Waiting for GitHub Pages:',last,flush=True);time.sleep(10)

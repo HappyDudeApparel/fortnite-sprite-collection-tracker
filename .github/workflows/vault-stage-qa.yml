@@ -25,7 +25,7 @@ jobs:
         run: |
           python - <<'PY'
           import subprocess,pathlib,re,json
-          base='45278cd967c230a1d97ec31cb7c2a00d11492139'
+          base='16161c4e1b898308e6b26c811ebbc780acc0aecc'
           roots=['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']
           for path in roots:
             old=subprocess.check_output(['git','show',base+':'+path])
@@ -33,7 +33,7 @@ jobs:
             assert old==current,'Production file changed: '+path
           src=pathlib.Path('index.html').read_text(encoding='utf8')
           stage=pathlib.Path('preview/collectors-vault/index.html').read_text(encoding='utf8')
-          assert '2.1.0-preview' in stage and "const APP_VERSION='2.0.43'" in src
+          assert '2.1.0-preview' in stage and "const APP_VERSION='2.0.44'" in src
           def arr(s):
             begin=s.index('const SPRITES=')+len('const SPRITES=')
             end=s.index(';\n',begin)
