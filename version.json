@@ -1,5 +1,5 @@
 {
-  "version": "2.0.43",
+  "version": "2.0.44",
   "published": "2026-10-21",
-  "notes": "Quack Sprite Mastery reward descriptions finalized for records 363–367: Jonesy 40, Bush 45, Adventure 50, Spooky Dash 55, Klombo 60. Base powers and 50% shared XP retained; no changes to C7S3 or artwork."
+  "notes": "Added a Play Sprite Games button that opens a 2D / 3D game chooser (new /games/ folder). No changes to the collection, artwork, data or any existing layout."
 }

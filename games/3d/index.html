@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#071521">
+<title>Sprite Arena — 3D</title>
+<style>
+:root{color-scheme:dark;--glass:rgba(7,20,32,.72);--line:rgba(170,235,255,.34);--text:#f6fbff;--muted:#b4cedd;--accent:#7bf0ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#061019;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);touch-action:none;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+#game{position:fixed;inset:0;width:100%;height:100%;display:block}
+.overlay{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(8px);box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.btn{padding:12px 22px;border-radius:14px;border:1px solid var(--line);background:rgba(10,30,46,.8);font-weight:850;letter-spacing:.04em;font-size:14px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{border:0;color:#04121f;background:linear-gradient(135deg,#7bf0ff,#9e89ff);box-shadow:0 8px 24px rgba(110,160,255,.4)}
+.btn.small{padding:8px 12px;font-size:12px;border-radius:12px}
+
+/* loading */
+#loading{z-index:60;background:radial-gradient(700px 400px at 50% 40%,#1b3f58,#061019)}
+#loading .lcard{width:min(420px,88vw);padding:26px;text-align:center}
+#loading h2{margin:0 0 6px;font-size:22px;letter-spacing:.06em}
+#loading p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.bar{height:10px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7bf0ff,#b59bff);transition:width .15s}
+
+/* title */
+#title{align-content:space-between;justify-items:center;background:linear-gradient(180deg,rgba(4,10,18,.6),rgba(4,10,18,0) 38%,rgba(4,10,18,0) 62%,rgba(4,10,18,.72));padding:max(58px,calc(env(safe-area-inset-top) + 50px)) 16px max(14px,env(safe-area-inset-bottom))}
+#title .top{position:fixed;top:max(14px,env(safe-area-inset-top));left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
+#title .top > *{pointer-events:auto}
+#title h1{margin:0;font-size:clamp(34px,8vw,84px);line-height:.95;letter-spacing:.07em;font-weight:950;text-shadow:0 8px 34px rgba(0,0,0,.55)}
+#title h1 span{background:linear-gradient(90deg,#7bf0ff,#c4a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#title .tag{margin:6px 0 16px;color:#d8ecf7;font-size:clamp(12px,2vw,16px);text-shadow:0 2px 10px #000a}
+.hero{text-align:center}
+.strip{display:flex;gap:8px;overflow-x:auto;max-width:min(94vw,860px);padding:10px 6px;margin-top:16px;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;width:62px;height:62px;border-radius:16px;border:2px solid transparent;background:rgba(8,22,36,.72);padding:4px;display:grid;place-items:center;position:relative}
+.chip img{width:100%;height:100%;object-fit:contain}
+.chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 18px rgba(123,240,255,.5)}
+.chip .t3{position:absolute;bottom:-2px;right:-2px;font-size:9px;font-weight:900;background:#ffe27a;color:#3a2800;border-radius:6px;padding:1px 5px}
+.pickname{font-size:12px;color:var(--muted);margin-top:2px;min-height:16px}
+
+/* levels */
+#levels{background:rgba(4,12,20,.62);backdrop-filter:blur(4px);align-content:center}
+#levels h2{margin:0 0 4px;text-align:center;font-size:clamp(20px,4vw,32px);letter-spacing:.07em}
+#levels .sub{margin:0 0 14px;text-align:center;color:var(--muted);font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:min(960px,94vw)}
+@media (max-width:720px){.cards{grid-template-columns:1fr;gap:8px}}
+.card{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);text-align:left;padding:0;background:#0a1a28;display:flex;flex-direction:column;min-height:0}
+.card:hover:not(:disabled){border-color:#bff4ff;transform:translateY(-3px)}
+.card:disabled{filter:saturate(.3) brightness(.55);cursor:not-allowed}
+.card .art{height:clamp(70px,16vh,150px)}
+.card .body{padding:10px 14px 12px}
+.card .n{font-size:10px;letter-spacing:.14em;color:var(--accent);font-weight:900}
+.card h3{margin:2px 0 3px;font-size:18px}
+.card p{margin:0 0 6px;color:var(--muted);font-size:12px;line-height:1.35}
+.card .st{display:flex;justify-content:space-between;color:#ffe27a;font-weight:900;font-size:13px}
+.card .lock{position:absolute;inset:0;display:grid;place-items:center;background:rgba(4,10,18,.6);font-weight:900;font-size:13px;text-align:center;padding:10px}
+.row{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+
+/* HUD */
+#hud{position:fixed;z-index:20;top:max(10px,env(safe-area-inset-top));left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
+#hud > *{pointer-events:auto}
+.pill{padding:8px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-weight:900;display:flex;gap:12px;align-items:center;backdrop-filter:blur(6px)}
+#hearts{color:#ff6882;font-size:19px;letter-spacing:2px;text-shadow:0 2px 8px rgba(255,70,100,.4)}
+#gems{color:#ffe27a;font-size:16px}
+#lvl{color:var(--muted);font-size:12px;font-weight:800}
+#pauseBtn{width:42px;height:42px;border-radius:50%;background:var(--glass);border:1px solid var(--line);font-size:16px}
+#toast{position:fixed;z-index:25;left:50%;top:18%;transform:translateX(-50%);padding:10px 22px;border-radius:999px;background:var(--glass);border:1px solid var(--line);font-weight:900;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .25s}
+#toast.on{opacity:1}
+#banner{position:fixed;z-index:24;inset:auto 0 22% 0;text-align:center;pointer-events:none;text-shadow:0 6px 30px #000c}
+#banner h2{margin:0;font-size:clamp(26px,6vw,58px);letter-spacing:.08em;font-weight:950}
+#banner p{margin:4px 0 0;color:#d6eefb;font-size:clamp(12px,2vw,17px)}
+#dbg{position:fixed;z-index:70;left:8px;bottom:8px;font:11px/1.4 ui-monospace,monospace;background:#000a;padding:6px 8px;border-radius:8px;white-space:pre;pointer-events:none}
+
+/* touch */
+#touch{position:fixed;inset:0;z-index:15;pointer-events:none}
+#camZone{position:absolute;right:0;top:12%;width:55%;bottom:34%;pointer-events:auto;touch-action:none}
+#stick{position:absolute;left:max(18px,env(safe-area-inset-left));bottom:max(22px,env(safe-area-inset-bottom));width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(220,245,255,.4);pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:35px;top:35px;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.55),rgba(120,200,255,.35));border:2px solid rgba(230,250,255,.7)}
+.act{position:absolute;border-radius:50%;pointer-events:auto;touch-action:none;display:grid;place-items:center;font-weight:950;letter-spacing:.06em;border:2px solid rgba(255,255,255,.55);box-shadow:inset 0 0 20px rgba(160,230,255,.18),0 8px 20px rgba(0,0,0,.3)}
+#btnJump{right:max(22px,env(safe-area-inset-right));bottom:max(30px,env(safe-area-inset-bottom));width:88px;height:88px;background:radial-gradient(circle at 35% 28%,rgba(190,245,255,.45),rgba(20,90,130,.6));font-size:12px}
+#btnBite{right:max(122px,calc(env(safe-area-inset-right) + 112px));bottom:max(24px,env(safe-area-inset-bottom));width:72px;height:72px;background:radial-gradient(circle at 35% 28%,rgba(255,235,180,.45),rgba(190,70,30,.65));font-size:11px}
+#btnBite{margin-bottom:34px}
+
+/* pause / complete */
+.menu{padding:22px;text-align:center;width:min(380px,90vw)}
+.menu h2{margin:0 0 12px;letter-spacing:.08em}
+.menu .btn{display:block;width:100%;margin:8px 0}
+.stars{font-size:clamp(34px,8vw,56px);color:#ffe27a;letter-spacing:6px;text-shadow:0 4px 18px rgba(255,200,60,.5)}
+.menu p{color:var(--muted);line-height:1.6;font-size:14px;white-space:pre-line;margin:6px 0 10px}
+.back{display:inline-flex;gap:6px;align-items:center;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-weight:800;font-size:13px;text-decoration:none;color:inherit}
+#fail{max-width:480px;padding:22px;text-align:center}
+@media (max-height:520px){#touch #stick{width:108px;height:108px}#knob{left:26px;top:26px;width:56px;height:56px}#btnJump{width:76px;height:76px}.menu{padding:14px}}
+</style>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js","three/addons/":"./vendor/three/addons/"}}</script>
+</head>
+<body>
+<canvas id="game" aria-label="Sprite Arena 3D game"></canvas>
+
+<div id="hud" hidden>
+  <div class="pill"><span id="hearts"></span><span id="gems"></span><span id="lvl"></span></div>
+  <button id="pauseBtn" aria-label="Pause">⏸</button>
+</div>
+<div id="toast"></div>
+<div id="flash" style="position:fixed;inset:0;z-index:22;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,rgba(255,40,70,0) 45%,rgba(255,40,70,.55));transition:opacity .35s"></div>
+<div id="banner" hidden><h2></h2><p></p></div>
+<div id="dbg" hidden></div>
+
+<div id="touch" hidden>
+  <div id="camZone"></div>
+  <div id="stick"><div id="knob"></div></div>
+  <button id="btnBite" class="act" aria-label="Bite attack">BITE</button>
+  <button id="btnJump" class="act" aria-label="Jump">JUMP</button>
+</div>
+
+<section id="loading" class="overlay">
+  <div class="lcard glass"><h2 id="loadTitle">SPRITE ARENA</h2><p id="loadText">Loading…</p><div class="bar"><i id="loadBar"></i></div></div>
+</section>
+
+<section id="title" class="overlay" hidden>
+  <div class="top"><a class="back" href="../">← Sprite Games</a><button id="muteBtn" class="btn small">🔊 Sound</button></div>
+  <div class="hero">
+    <h1>SPRITE <span>ARENA</span></h1>
+    <p class="tag">Run, jump and bite your way through glowing 3D worlds.</p>
+    <button id="playBtn" class="btn primary" style="font-size:18px;padding:14px 38px">▶ PLAY</button>
+  </div>
+  <div class="hero">
+    <div class="strip" id="strip" aria-label="Choose your Sprite"></div>
+    <div class="pickname" id="pickName"></div>
+  </div>
+</section>
+
+<section id="levels" class="overlay" hidden>
+  <div>
+    <h2>CHOOSE A WORLD</h2>
+    <p class="sub">★ finish · ★★ 70% of shards · ★★★ every shard</p>
+    <div class="cards" id="cards"></div>
+    <div class="row"><button id="lvBack" class="btn small">← Back</button><button id="unlockAll" class="btn small" aria-pressed="false">Unlock all worlds</button></div>
+  </div>
+</section>
+
+<section id="pause" class="overlay" hidden>
+  <div class="menu glass">
+    <h2>PAUSED</h2>
+    <button id="resumeBtn" class="btn primary">Resume</button>
+    <button id="restartBtn" class="btn">Restart world</button>
+    <button id="levelsBtn" class="btn">Worlds</button>
+    <button id="pMute" class="btn">🔊 Sound on</button>
+    <a class="btn" href="../" style="text-decoration:none">← Sprite Games</a>
+    <p id="qNote" style="font-size:11px;margin:8px 0 0"></p>
+  </div>
+</section>
+
+<section id="complete" class="overlay" hidden>
+  <div class="menu glass">
+    <h2 id="cTitle">WORLD COMPLETE</h2>
+    <div class="stars" id="cStars"></div>
+    <p id="cStats"></p>
+    <button id="cNext" class="btn primary">Next world ▶</button>
+    <button id="cReplay" class="btn">Replay</button>
+    <button id="cLevels" class="btn">Worlds</button>
+  </div>
+</section>
+
+<section id="failure" class="overlay" hidden>
+  <div id="fail" class="glass"><h2>Sprite Arena couldn’t start</h2><p id="failText" style="color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere"></p><a class="btn" href="../" style="text-decoration:none;display:inline-block">← Back</a></div>
+</section>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
