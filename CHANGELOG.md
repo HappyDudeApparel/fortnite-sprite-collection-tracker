@@ -1,3 +1,9 @@
+## 2.0.44 — 2026-10-21
+- Added a **Play Sprite Games** button (top bar on desktop, its own row on phones) that opens a chooser for the 2D Sprite Platformer and the 3D Sprite Arena.
+- New self-contained `games/` folder; games never read or change collection data, and keep their own progress in separate browser storage.
+- No changes to the collection, Sprite records, artwork, layouts, Locker, exports or any existing interaction (non-regression rule honoured).
+- Updated PWA/service-worker version to 2.0.44.
+
 ## 2.0.31 — 2026-10-07
 - Added all 23 remaining confirmed Trick or Treat Sprite variants as normal live, trackable C7S4 collectibles using the confirmed 512px Fortnite.GG Sprite artwork.
 - C7S4 collection total is now 145: 25 Base + 24 Gold + 24 Cheat Master + 24 Loot Hacker + 24 Bounty Hunter + 24 Trick or Treat.

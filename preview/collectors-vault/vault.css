@@ -178,3 +178,9 @@ body.vault-preview.vault-motion-off *,body.vault-preview.vault-motion-off *:befo
 
 /* Do not invite visitors to install the staging clone as the live PWA. */
 body.vault-preview #installBtn{display:none!important}
+
+/* Single entry point to the Sprite Games hub (arcade/index.html). */
+.playGamesBtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 18px;border-radius:14px;font:800 14px/1 system-ui,sans-serif;letter-spacing:.02em;color:#04121f;text-decoration:none;white-space:nowrap;background:linear-gradient(135deg,#7bf0ff,#9e89ff);box-shadow:0 6px 18px rgba(110,160,255,.35)}
+.playGamesBtn:hover{filter:brightness(1.1)}
+.playGamesBtn.inbar{display:none}
+@media (max-width:1120px){.top-actions .playGamesBtn{display:none}.playGamesBtn.inbar{display:flex;grid-column:1/-1;order:5;width:100%}}

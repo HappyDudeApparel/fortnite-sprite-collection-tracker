@@ -6,6 +6,10 @@ on:
       - 'preview/collectors-vault/arcade/**'
       - 'preview/collectors-vault/index.html'
       - 'preview/collectors-vault/vault.js'
+      - 'preview/collectors-vault/vault.css'
+      - 'games/**'
+      - 'index.html'
+      - 'version.json'
       - '.github/workflows/sprite-arcade-stage-qa.yml'
   workflow_dispatch:
 permissions:
@@ -13,17 +17,19 @@ permissions:
 jobs:
   arcade:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
       - name: Install browser runner
         run: |
           python -m pip install --quiet playwright
           python -m playwright install --with-deps chromium
-      - name: Test source preservation, official game assets, script syntax and live app isolation
+      - name: Test source preservation, staging page, script syntax and live app isolation
         shell: bash
         run: |
           set -euo pipefail
@@ -32,142 +38,142 @@ jobs:
           root=pathlib.Path('preview/collectors-vault/arcade')
           stage=pathlib.Path('preview/collectors-vault/index.html').read_text()
           original=pathlib.Path('index.html').read_text()
-          assert "const APP_VERSION='2.0.43'" in original
-          assert 'id="arcadeView"' in stage and 'id="lockerPlaySelected"' in stage
-          assert 'arcade/arcade.js' in stage and 'arcade/arcade.css' in stage
+          assert "const APP_VERSION='2.0.44'" in original
+          # Staging page: original look + exactly one entry point to the games.
+          assert 'playGamesBtn' in stage and 'href="/preview/collectors-vault/arcade/"' in stage
+          assert 'data-tab="arcade"' not in stage and 'id="arcadeView"' not in stage and 'lockerPlaySelected' not in stage
           assert '2.1.0-preview' in stage and 'navigator.serviceWorker.register' not in stage
+          hub=(root/'index.html').read_text()
+          assert 'href="2d/"' in hub and 'href="3d/"' in hub
           game2d=(root/'2d/index.html').read_text()
-          game3d=(root/'3d/index.html').read_text()
           untouched2d=(root/'source-original/Sprite-Game-Preview-v0.3.html').read_text()
           untouched3d=(root/'source-original/Sprite-3D-Arena-Visual-Upgrade-v0.2.html').read_text()
           assert len(untouched2d)>280000 and len(untouched3d)>590000
           a=lambda s:s[s.index('const CHARACTERS = ')+len('const CHARACTERS = '):s.index(';',s.index('const CHARACTERS = '))]
           assert a(game2d)==a(untouched2d),'Original 18 playable character records changed'
-          assert 'function drawPuppetSprite' in game2d
-          assert "window.ARCADE_LOCKER_SPRITE" in game2d
-          assert 'window.ARCADE_3D_SELECTION' in game3d
-          assert 'root.add(portrait)' in game3d
-          assert "root.traverse(object=>" in game3d
-          assert "GB_RUMBLER" not in game3d and "BP_GamerBroBlue" not in game3d
+          assert 'function drawPuppetSprite' in game2d and 'window.ARCADE_LOCKER_SPRITE' in game2d
           catalog=json.loads((root/'catalog.json').read_text())
           assert len(catalog['entries'])==279 and len([x for x in catalog['entries'] if x['player2d']])==97
-          # Root remains byte-for-byte unchanged since approved v2.0.43.
-          base='45278cd967c230a1d97ec31cb7c2a00d11492139'
+          # 3D: required files, and no Gamer Bros code identifiers.
+          for f in ['index.html','js/main.js','js/sim.js','js/levels.js','js/world.js','js/actors.js','assets/characters/citrus.glb','assets/kenney/Textures/colormap.png','vendor/three/three.module.min.js']:
+            assert (root/'3d'/f).exists(),'missing 3D file '+f
+          for f in (root/'3d/js').glob('*.js'):
+            t=f.read_text()
+            assert 'GB_RUMBLER' not in t and 'BP_GamerBro' not in t,f
+          # Production: Play Sprite Games button + self-contained games/ folder.
+          assert 'playGamesBtn' in original and 'href="/games/"' in original
+          prod=pathlib.Path('games')
+          for f in ['index.html','catalog.json','2d/index.html','2d/levels.js','3d/index.html','3d/js/main.js','3d/js/look.js','3d/assets/characters/citrus.glb','3d/vendor/three/three.module.min.js']:
+            assert (prod/f).exists(),'missing production file games/'+f
+          assert 'Staging' not in (prod/'index.html').read_text() and 'Staging' not in (prod/'3d/index.html').read_text()
+          # Production root: only the approved release files differ from the v2.0.44 release commit.
+          base='16161c4e1b898308e6b26c811ebbc780acc0aecc'
           for path in ['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']:
             assert subprocess.check_output(['git','show',base+':'+path])==pathlib.Path(path).read_bytes(),path
-          for i,source in enumerate([game2d,game3d]):
-            match=re.search(r'<script>([\s\S]*?)</script>',source)
-            assert match, 'Missing embedded script'
-            with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as tmp:
-              tmp.write(match.group(1));tmp.flush()
-              subprocess.run(['node','--check',tmp.name],check=True)
-          for path in [root/'arcade.js',pathlib.Path('preview/collectors-vault/vault.js'),root/'2d/levels.js',root/'2d/themes.js',root/'tools/validate-levels.js']:
-            subprocess.run(['node','--check',str(path)],check=True)
-          print('PASS: original character data and game archives preserved, all game JS parses, verified asset index, root production files protected')
+          match=re.search(r'<script>([\s\S]*?)</script>',game2d)
+          assert match, 'Missing embedded 2D script'
+          with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as tmp:
+            tmp.write(match.group(1));tmp.flush()
+            subprocess.run(['node','--check',tmp.name],check=True)
+          files=[root/'2d/levels.js',root/'2d/themes.js',root/'tools/validate-levels.js',root/'tools/validate-3d-levels.mjs',pathlib.Path('preview/collectors-vault/vault.js')]+sorted((root/'3d/js').glob('*.js'))
+          for path in files: subprocess.run(['node','--check',str(path)],check=True)
+          print('PASS: originals preserved, staging page simplified, all game JS parses, root production files protected')
           PY
       - name: Prove every 2D level is completable (physics replay of tube + every gem)
         run: node preview/collectors-vault/arcade/tools/validate-levels.js
-      - name: Play test 2D and 3D from Arcade staging (mobile and desktop)
+      - name: Prove every 3D world is completable (same physics file the game runs)
+        run: node preview/collectors-vault/arcade/tools/validate-3d-levels.mjs
+      - name: Play test staging page, hub, 2D and 3D (mobile and desktop)
         shell: bash
         run: |
           python - <<'PY'
-          import threading,http.server,time,os
+          import threading,http.server
           from playwright.sync_api import sync_playwright
           server=http.server.ThreadingHTTPServer(('127.0.0.1',8899),http.server.SimpleHTTPRequestHandler)
           threading.Thread(target=server.serve_forever,daemon=True).start()
+          B='http://127.0.0.1:8899'
           with sync_playwright() as p:
-            browser=p.chromium.launch(headless=True,args=['--no-sandbox','--enable-webgl','--use-gl=angle','--use-angle=swiftshader'])
+            browser=p.chromium.launch(headless=True,args=['--no-sandbox','--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'])
             for label,size in [('desktop',{'width':1440,'height':900}),('phone',{'width':390,'height':844})]:
               context=browser.new_context(viewport=size,device_scale_factor=1)
               page=context.new_page();errs=[];page.on('pageerror',lambda e:errs.append(str(e)))
-              page.goto('http://127.0.0.1:8899/preview/collectors-vault/',wait_until='domcontentloaded',timeout=60000)
+              page.goto(B+'/preview/collectors-vault/',wait_until='domcontentloaded',timeout=60000)
               page.wait_for_selector('body[data-vault-ready="true"]',timeout=30000)
-              page.locator('button[data-tab="arcade"]').click()
-              page.wait_for_selector('#arcadeView.active #arcadeHub .arcade-play',timeout=10000)
-              assert page.locator('#arcadeView .arcade-tile').count()==2
-              page.locator('#arcade-select').select_option('1')
-              href2d=page.locator('#arcade2dLink').get_attribute('href')
-              href3d=page.locator('#arcade3dLink').get_attribute('href')
-              assert 'sprite=1' in href2d and 'autostart=water' in href2d
-              assert 'sprite=1' in href3d
-              page.locator('button[data-tab="locker"]').click()
-              page.wait_for_selector('#lockerView.active')
-              page.locator('#lockerPlaySelected').click()
-              page.wait_for_selector('#arcadeView.active')
-              page.screenshot(path='preview/collectors-vault/arcade/arcade-hub-'+label+'.png',full_page=False)
+              play=page.locator('a.playGamesBtn:visible').first
+              assert play.is_visible()
+              assert page.locator('button[data-tab="arcade"]').count()==0
+              play.click()
+              page.wait_for_url('**/arcade/',timeout=10000)
+              assert page.locator('a.card').count()==2
+              page.screenshot(path='preview/collectors-vault/arcade/qa-hub-'+label+'.png')
+              page.locator('a.card.d2').click()
+              page.wait_for_url('**/arcade/2d/',timeout=10000)
+              page.wait_for_function("typeof mode!=='undefined'&&mode==='select'",timeout=30000)
+              page.locator('#arcadeBack').click()
+              page.wait_for_url('**/arcade/',timeout=10000)
+              assert not errs,errs[:5]
+              print('PASS',label,'staging page -> Play Sprite Games -> hub -> 2D select -> back')
               two=context.new_page();gameErr=[]
               two.on('pageerror',lambda e:gameErr.append(str(e)))
-              two.goto('http://127.0.0.1:8899'+href2d,wait_until='load',timeout=60000)
+              two.goto(B+'/preview/collectors-vault/arcade/2d/?sprite=1&autostart=water&level=4',wait_until='load',timeout=60000)
               two.wait_for_function("window.ARCADE_LOCKER_SPRITE&&window.ARCADE_LOCKER_SPRITE.id===1",timeout=30000)
               two.wait_for_function("document.querySelector('#select')?.hidden===true",timeout=30000)
-              assert two.evaluate('game&&mode==="game"&&game.player.characterId==="water"')
+              assert two.evaluate('game&&mode==="game"&&game.player.characterId==="water"&&game.level.id==="cinder-works"')
               start=two.evaluate('game.player.x')
-              two.keyboard.down('ArrowRight')
-              two.wait_for_timeout(400)
-              two.keyboard.up('ArrowRight')
-              end=two.evaluate('game.player.x')
-              assert end>start+10,('2D right motion failed',start,end)
+              two.keyboard.down('ArrowRight');two.wait_for_timeout(400);two.keyboard.up('ArrowRight')
+              assert two.evaluate('game.player.x')>start+10
               two.locator('#arcadeMove').click()
               assert two.locator('#arcadeMove').get_attribute('aria-pressed')=='false'
-              two.locator('#arcadeMove').click()
-              assert two.locator('#arcadeMove').get_attribute('aria-pressed')=='true'
-              two.screenshot(path='preview/collectors-vault/arcade/arcade-2d-'+label+'.png',full_page=False)
+              two.keyboard.press('Escape')
+              two.wait_for_function("mode==='levels'",timeout=5000)
+              assert two.locator('.level-card').count()==5
               assert not gameErr,gameErr[:5]
-              print('PASS',label,'2D artwork, Locker autostart, movement, articulated motion toggle')
-              lv=context.new_page();lvErr=[]
-              lv.on('pageerror',lambda e:lvErr.append(str(e)))
-              lv.goto('http://127.0.0.1:8899/preview/collectors-vault/arcade/2d/?autostart=water&level=4',wait_until='load',timeout=60000)
-              lv.wait_for_function("typeof mode!=='undefined'&&mode==='game'",timeout=30000)
-              assert lv.evaluate('game.level.id')=='cinder-works','Level query did not select Cinder Works'
-              assert lv.evaluate('game.platforms.some(p=>p.mover)&&game.gems.length>0')
-              lv.keyboard.press('Escape')
-              lv.wait_for_function("mode==='levels'",timeout=5000)
-              assert lv.locator('.level-card').count()==5
-              assert not lvErr,lvErr[:5]
-              print('PASS',label,'2D level pack: level select, Cinder Works start, Escape returns to levels')
-              lv.close()
+              print('PASS',label,'2D: Locker autostart, level query, movement, motion toggle, level select')
               three=context.new_page();threeErr=[]
               three.on('pageerror',lambda e:threeErr.append(str(e)))
-              three.goto('http://127.0.0.1:8899'+href3d,wait_until='domcontentloaded',timeout=60000)
-              three.wait_for_selector('#enterBtn',timeout=30000)
-              three.wait_for_function("window.ARCADE_3D_SELECTION && ['ready','fallback'].includes(window.ARCADE_3D_SELECTION.status)",timeout=30000)
-              state=three.evaluate('window.ARCADE_3D_SELECTION')
-              assert state['id']==1 and state['name'].startswith('Water'),state
-              assert state['status']=='ready','Authentic 2.5D character artwork failed: '+str(state)
-              three.wait_for_function("window.ARCADE_SCENERY_STATUS && ['ready','fallback'].includes(window.ARCADE_SCENERY_STATUS.status)",timeout=20000)
-              dressing=three.evaluate('window.ARCADE_SCENERY_STATUS')
-              assert dressing['status']=='ready' and dressing['models']==5 and dressing['instances']>=15,'CC0 environment failed: '+str(dressing)
-              three.locator('#enterBtn').click()
-              assert three.locator('#intro').evaluate('(e)=>e.classList.contains("hidden")')
-              three.wait_for_timeout(700)
-              assert three.locator('#gameCanvas').count()==1
-              assert three.locator('#arcade3DSpriteHud img').evaluate('(i)=>i.complete&&i.naturalWidth>0')
-              try:
-                three.screenshot(path='preview/collectors-vault/arcade/arcade-3d-'+label+'.png',full_page=False,animations='disabled',timeout=8000)
-              except Exception as screenshot_error:
-                print('Headless WebGL screenshot skipped (gameplay assertions still required):',str(screenshot_error)[:160])
+              three.goto(B+'/preview/collectors-vault/arcade/3d/?autostart=1&level=1&q=2&nointro=1',wait_until='load',timeout=60000)
+              three.wait_for_function("window.ARENA&&ARENA.mode==='play'",timeout=120000)
+              assert three.evaluate('ARENA.world.gems.length>20&&ARENA.enemies.length>0&&ARENA.world.solids.length>5')
+              z0=three.evaluate('ARENA.sim.z')
+              three.keyboard.down('KeyW');three.wait_for_timeout(1500);three.keyboard.up('KeyW')
+              assert three.evaluate('ARENA.sim.z')<z0-0.5,'3D movement failed'
+              three.screenshot(path='preview/collectors-vault/arcade/qa-3d-'+label+'.png')
               assert not threeErr,threeErr[:5]
-              print('PASS',label,'3D WebGL boot, selected authentic Sprite avatar, gameplay entered')
-              for tab in (three,two,page):tab.close()
+              print('PASS',label,'3D: world builds, player + enemies load, movement works, no errors')
+              prod=context.new_page();perr=[];prod.on('pageerror',lambda e:perr.append(str(e)))
+              prod.goto(B+'/',wait_until='domcontentloaded',timeout=60000)
+              prod.wait_for_selector('.familyRow[data-family="Honey"]',timeout=30000)
+              assert prod.evaluate('countable().length')==162,'production collection changed'
+              prod.locator('a.playGamesBtn:visible').first.click()
+              prod.wait_for_url('**/games/',timeout=10000)
+              assert prod.locator('a.card').count()==2
+              prod.goto(B+'/games/3d/?autostart=1&level=2&q=2&nointro=1',wait_until='load',timeout=60000)
+              prod.wait_for_function("window.ARENA&&ARENA.mode==='play'&&ARENA.levelIndex===1",timeout=120000)
+              assert not perr,perr[:5]
+              print('PASS',label,'production: Locker (162 sprites) -> Play Sprite Games -> hub -> /games/3d/ plays')
+              for tab in (prod,three,two,page):tab.close()
               context.close()
             browser.close()
           server.shutdown()
           PY
-      - name: Verify publicly served staging game routes
+      - name: Verify publicly served staging routes
         shell: bash
         run: |
           python - <<'PY'
           import urllib.request,time
-          root='https://sprites.happydude.ca/preview/collectors-vault/'
-          paths={'':'id="arcadeView"','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/2d/themes.js':'SPRITE_THEMES','arcade/3d/index.html':'ARCADE_3D_SELECTION','arcade/catalog.json':'"entries"','arcade/arcade.js':'SpriteArcadeStage'}
+          targets=[
+            ('https://sprites.happydude.ca/preview/collectors-vault/',{'':'playGamesBtn','arcade/':'SPRITE <span>GAMES','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/3d/index.html':'js/main.js','arcade/3d/js/levels.js':'sunflower-isles','arcade/catalog.json':'"entries"'}),
+            ('https://sprites.happydude.ca/',{'':'playGamesBtn','version.json':'"2.0.44"','games/':'SPRITE <span>GAMES','games/2d/levels.js':'SPRITE_LEVELS','games/3d/js/main.js':'ARENA','games/3d/js/look.js':'styleCitrus','games/catalog.json':'"entries"'}),
+          ]
           last=''
           for attempt in range(16):
             try:
-              for path,token in paths.items():
-                request=urllib.request.Request(root+path+'?arcade-stage-qa=1',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
-                with urllib.request.urlopen(request,timeout=23) as r:content=r.read(800000).decode('utf-8')
-                assert token in content,'Stale or missing '+path
-              print('PASS: staging launcher, 2D, 3D, catalogue and launcher JS all publicly accessible')
+              for root,paths in targets:
+                for path,token in paths.items():
+                  request=urllib.request.Request(root+path+'?arcade-stage-qa=1',headers={'Cache-Control':'no-cache','User-Agent':'Mozilla/5.0'})
+                  with urllib.request.urlopen(request,timeout=23) as r:content=r.read(900000).decode('utf-8')
+                  assert token in content,'Stale or missing '+root+path
+              print('PASS: staging and production pages, hubs, 2D, 3D and catalogues are publicly accessible')
               break
             except Exception as e:
               last=str(e);print('Waiting for GitHub Pages:',last,flush=True);time.sleep(10)
@@ -177,5 +183,5 @@ jobs:
         if: always()
         with:
           name: sprite-arcade-staging-screenshots
-          path: preview/collectors-vault/arcade/arcade-*.png
+          path: preview/collectors-vault/arcade/qa-*.png
           if-no-files-found: ignore

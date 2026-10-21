@@ -1,0 +1,2797 @@
+{
+  "version": 1,
+  "catalogVersion": "2.0.43",
+  "purpose": "Read-only artwork and character mapping for isolated Sprite Arcade staging. The 2D game's canonical 18 original character moves are preserved; unsupported collection variants currently use their family prototype power when explicitly selected.",
+  "entries": [
+    {
+      "id": 1,
+      "name": "Water Sprite",
+      "family": "Water",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/505c05734453dd299488.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 2,
+      "name": "Gold Water Sprite",
+      "family": "Water",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/0072a448396462a0fbbc.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 3,
+      "name": "Gummy Water Sprite",
+      "family": "Water",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/4fb12385970e6d28f4fb.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 4,
+      "name": "Galaxy Water Sprite",
+      "family": "Water",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/f459c978cc344f3507a5.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 5,
+      "name": "Gem Water Sprite",
+      "family": "Water",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/450d6b8d489c3b8f6089.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 6,
+      "name": "Holofoil Water Sprite",
+      "family": "Water",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/97ee85a4601ada9c387a.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 8,
+      "name": "Earth Sprite",
+      "family": "Earth",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/b0ed851efd06db1bc414.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 9,
+      "name": "Gold Earth Sprite",
+      "family": "Earth",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/6ee6722150b5dffd20b9.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 10,
+      "name": "Gummy Earth Sprite",
+      "family": "Earth",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/453c5c53e50a94d1f58f.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 11,
+      "name": "Galaxy Earth Sprite",
+      "family": "Earth",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/02d2ceb926d7c3858876.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 12,
+      "name": "Gem Earth Sprite",
+      "family": "Earth",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/36feffbf6145aeb68ed8.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 14,
+      "name": "Cube Earth Sprite",
+      "family": "Earth",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/b1dbf83f54e39b46c2c9.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 15,
+      "name": "Fire Sprite",
+      "family": "Fire",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/f3c4f6b56045e47ff41a.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 16,
+      "name": "Gold Fire Sprite",
+      "family": "Fire",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/71b00cd3ce0b9772b097.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 17,
+      "name": "Gummy Fire Sprite",
+      "family": "Fire",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/c9428d3d1e270ecc79f2.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 18,
+      "name": "Galaxy Fire Sprite",
+      "family": "Fire",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/e3acb82c6caa2c5db3df.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 20,
+      "name": "Holofoil Fire Sprite",
+      "family": "Fire",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/06dcee4a2a0b688b312a.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 21,
+      "name": "Cube Fire Sprite",
+      "family": "Fire",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/3178ef0d834b7a299577.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 22,
+      "name": "Duck Sprite",
+      "family": "Duck",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/c340f6f546a5bacacddc.webp",
+      "player2d": "duck"
+    },
+    {
+      "id": 23,
+      "name": "Gold Duck Sprite",
+      "family": "Duck",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/37abe2c2c9801dba54a6.webp",
+      "player2d": "duck"
+    },
+    {
+      "id": 24,
+      "name": "Gummy Duck Sprite",
+      "family": "Duck",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a4b0ec29f15b63d346a4.webp",
+      "player2d": "duck"
+    },
+    {
+      "id": 25,
+      "name": "Galaxy Duck Sprite",
+      "family": "Duck",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a1c792de665fada9835e.webp",
+      "player2d": "duck"
+    },
+    {
+      "id": 26,
+      "name": "Gem Duck Sprite",
+      "family": "Duck",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/e97f18980abf236a8cc5.webp",
+      "player2d": "duck"
+    },
+    {
+      "id": 29,
+      "name": "Ghost Sprite",
+      "family": "Ghost",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/14dd2b9aeff06c3e2a83.webp",
+      "player2d": "ghost"
+    },
+    {
+      "id": 30,
+      "name": "Gold Ghost Sprite",
+      "family": "Ghost",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/42c7b4942062f68fe260.webp",
+      "player2d": "ghost"
+    },
+    {
+      "id": 31,
+      "name": "Gummy Ghost Sprite",
+      "family": "Ghost",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/9972c165316111215261.webp",
+      "player2d": "ghost"
+    },
+    {
+      "id": 32,
+      "name": "Galaxy Ghost Sprite",
+      "family": "Ghost",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/3d425c23f85734d723f4.webp",
+      "player2d": "ghost"
+    },
+    {
+      "id": 34,
+      "name": "Holofoil Ghost Sprite",
+      "family": "Ghost",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a8efe79c4d80ef360b36.webp",
+      "player2d": "ghost"
+    },
+    {
+      "id": 36,
+      "name": "Dream Sprite",
+      "family": "Dream",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/02aa4b6daa8fa5fed3cc.webp",
+      "player2d": "dream"
+    },
+    {
+      "id": 37,
+      "name": "Gold Dream Sprite",
+      "family": "Dream",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/49b6867127a41069a036.webp",
+      "player2d": "dream"
+    },
+    {
+      "id": 38,
+      "name": "Gummy Dream Sprite",
+      "family": "Dream",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/84e7e96160b2f81b12cd.webp",
+      "player2d": "dream"
+    },
+    {
+      "id": 39,
+      "name": "Galaxy Dream Sprite",
+      "family": "Dream",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/d705592315af2e517c79.webp",
+      "player2d": "dream"
+    },
+    {
+      "id": 42,
+      "name": "Cube Dream Sprite",
+      "family": "Dream",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/bdf3a182c1d3f8ce2684.webp",
+      "player2d": "dream"
+    },
+    {
+      "id": 43,
+      "name": "Demon Sprite",
+      "family": "Demon",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/932582e236b3bfa3a532.webp",
+      "player2d": "demon"
+    },
+    {
+      "id": 44,
+      "name": "Gold Demon Sprite",
+      "family": "Demon",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/c66f1971278c5a8ab172.webp",
+      "player2d": "demon"
+    },
+    {
+      "id": 45,
+      "name": "Gummy Demon Sprite",
+      "family": "Demon",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/37587dc67c81418c0de1.webp",
+      "player2d": "demon"
+    },
+    {
+      "id": 46,
+      "name": "Galaxy Demon Sprite",
+      "family": "Demon",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/56a31e8bb74c413157d9.webp",
+      "player2d": "demon"
+    },
+    {
+      "id": 47,
+      "name": "Gem Demon Sprite",
+      "family": "Demon",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/6ee6cf1f75a37cac2455.webp",
+      "player2d": "demon"
+    },
+    {
+      "id": 50,
+      "name": "Punk Sprite",
+      "family": "Punk",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/a62ff9862db509c3b99e.webp",
+      "player2d": "punk"
+    },
+    {
+      "id": 51,
+      "name": "Gold Punk Sprite",
+      "family": "Punk",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/8c8c35251a69d766ae3a.webp",
+      "player2d": "punk"
+    },
+    {
+      "id": 52,
+      "name": "Gummy Punk Sprite",
+      "family": "Punk",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/967998ff75a4b7c2ab1e.webp",
+      "player2d": "punk"
+    },
+    {
+      "id": 53,
+      "name": "Galaxy Punk Sprite",
+      "family": "Punk",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/09ed42ee7c6e614ff85e.webp",
+      "player2d": "punk"
+    },
+    {
+      "id": 56,
+      "name": "Cube Punk Sprite",
+      "family": "Punk",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/c253ad79aa9cb8b9b012.webp",
+      "player2d": "punk"
+    },
+    {
+      "id": 57,
+      "name": "King Sprite",
+      "family": "King",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/62840fc4f94c84e5df87.webp",
+      "player2d": "king"
+    },
+    {
+      "id": 58,
+      "name": "Gold King Sprite",
+      "family": "King",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/1d7a4b7e052d10d1b34b.webp",
+      "player2d": "king"
+    },
+    {
+      "id": 59,
+      "name": "Gummy King Sprite",
+      "family": "King",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/5573930328b997b09225.webp",
+      "player2d": "king"
+    },
+    {
+      "id": 60,
+      "name": "Galaxy King Sprite",
+      "family": "King",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/ce8362e502f629ffc0fa.webp",
+      "player2d": "king"
+    },
+    {
+      "id": 62,
+      "name": "Holofoil King Sprite",
+      "family": "King",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/7602b23fb507edc00fe8.webp",
+      "player2d": "king"
+    },
+    {
+      "id": 64,
+      "name": "Burnt Peanut",
+      "family": "Burnt Peanut",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/8c3aacaa5d2ec2d4f99c.webp",
+      "player2d": "burnt-peanut"
+    },
+    {
+      "id": 71,
+      "name": "Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/04fd4e3bb10a1c82649b.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 72,
+      "name": "Gold Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/23895e75c7b82bd9c374.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 73,
+      "name": "Gummy Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/0b86a163fd261fd49016.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 74,
+      "name": "Galaxy Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/dc2fdd2c9e0634f2ee5e.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 75,
+      "name": "Gem Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/119c06ac7fa0e38b1d68.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 76,
+      "name": "Holofoil Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/d133f3cef9be33b79f03.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 77,
+      "name": "Quack Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Quack",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/0a604369c49aa023aeb8.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 78,
+      "name": "Fishy Sprite",
+      "family": "Fishy",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/7a9b292fa46b742cb039.webp",
+      "player2d": "fishy"
+    },
+    {
+      "id": 79,
+      "name": "Gold Fishy Sprite",
+      "family": "Fishy",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/9fc7f7e1a16e77147671.webp",
+      "player2d": "fishy"
+    },
+    {
+      "id": 80,
+      "name": "Gummy Fishy Sprite",
+      "family": "Fishy",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/55c314d9dd9a551f7df4.webp",
+      "player2d": "fishy"
+    },
+    {
+      "id": 81,
+      "name": "Galaxy Fishy Sprite",
+      "family": "Fishy",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/fd98d59fef651b42fbcf.webp",
+      "player2d": "fishy"
+    },
+    {
+      "id": 85,
+      "name": "Striker Sprite",
+      "family": "Striker",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/4209dce332b0d5b1a853.webp",
+      "player2d": "striker"
+    },
+    {
+      "id": 86,
+      "name": "Gold Striker Sprite",
+      "family": "Striker",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a9d620c2de530902f076.webp",
+      "player2d": "striker"
+    },
+    {
+      "id": 87,
+      "name": "Gummy Striker Sprite",
+      "family": "Striker",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/81b74a8ee3fa1e90c57b.webp",
+      "player2d": "striker"
+    },
+    {
+      "id": 88,
+      "name": "Galaxy Striker Sprite",
+      "family": "Striker",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a962b3a1a91f82d9ecd8.webp",
+      "player2d": "striker"
+    },
+    {
+      "id": 90,
+      "name": "Holofoil Striker Sprite",
+      "family": "Striker",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/c70ea0acb22a8dc9e73c.webp",
+      "player2d": "striker"
+    },
+    {
+      "id": 92,
+      "name": "Aura Sprite",
+      "family": "Aura",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/19e8df2998070da5e451.webp",
+      "player2d": "aura"
+    },
+    {
+      "id": 93,
+      "name": "Gold Aura Sprite",
+      "family": "Aura",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/a0a151a1b6073e3df215.webp",
+      "player2d": "aura"
+    },
+    {
+      "id": 94,
+      "name": "Gummy Aura Sprite",
+      "family": "Aura",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/5721685fc7f048f8311e.webp",
+      "player2d": "aura"
+    },
+    {
+      "id": 95,
+      "name": "Galaxy Aura Sprite",
+      "family": "Aura",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/b42c23232c3704bb77ae.webp",
+      "player2d": "aura"
+    },
+    {
+      "id": 96,
+      "name": "Gem Aura Sprite",
+      "family": "Aura",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Epic",
+      "image": "/assets/embedded/39c194b66cb7b59c3185.webp",
+      "player2d": "aura"
+    },
+    {
+      "id": 99,
+      "name": "Boss Sprite",
+      "family": "Boss",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/9b6484b5cfcedbcbf873.webp",
+      "player2d": "boss"
+    },
+    {
+      "id": 100,
+      "name": "Gold Boss Sprite",
+      "family": "Boss",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/9c497e04210cadf5ec3a.webp",
+      "player2d": "boss"
+    },
+    {
+      "id": 101,
+      "name": "Gummy Boss Sprite",
+      "family": "Boss",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/c054b192a100e1f30490.webp",
+      "player2d": "boss"
+    },
+    {
+      "id": 102,
+      "name": "Galaxy Boss Sprite",
+      "family": "Boss",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/a418e7806acc0da7183f.webp",
+      "player2d": "boss"
+    },
+    {
+      "id": 106,
+      "name": "Grim Sprite",
+      "family": "Grim",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/c7872e6b4f258c97d6f9.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 107,
+      "name": "Gold Grim Sprite",
+      "family": "Grim",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/2ee7840e4e7ec4df2e70.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 108,
+      "name": "Gummy Grim Sprite",
+      "family": "Grim",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/73e05395d9abc7f6f5e6.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 109,
+      "name": "Galaxy Grim Sprite",
+      "family": "Grim",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/d3f2eff55342a84b43cc.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 113,
+      "name": "Air Sprite",
+      "family": "Air",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/ffdccdb1104a080293aa.webp",
+      "player2d": "air"
+    },
+    {
+      "id": 118,
+      "name": "Holofoil Air Sprite",
+      "family": "Air",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/d1d888f8210c8ee90cac.webp",
+      "player2d": "air"
+    },
+    {
+      "id": 120,
+      "name": "Seven Sprite",
+      "family": "Seven",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/5f6f57a8ffdfebc351ab.webp",
+      "player2d": "seven"
+    },
+    {
+      "id": 125,
+      "name": "Holofoil Seven Sprite",
+      "family": "Seven",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/7a3a69fb4dddf8c564ea.webp",
+      "player2d": "seven"
+    },
+    {
+      "id": 129,
+      "name": "Gold Seven Sprite",
+      "family": "Seven",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/858e25c77ee20eff448f.webp",
+      "player2d": "seven"
+    },
+    {
+      "id": 130,
+      "name": "Gummy Seven Sprite",
+      "family": "Seven",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/079aed071f9d6129cc8e.webp",
+      "player2d": "seven"
+    },
+    {
+      "id": 131,
+      "name": "Galaxy Seven Sprite",
+      "family": "Seven",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/d2e23a10c2a24d40175c.webp",
+      "player2d": "seven"
+    },
+    {
+      "id": 163,
+      "name": "Ironmouse Sprite",
+      "family": "Ironmouse",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/1fa67e51d6c22ecb6325.webp",
+      "player2d": null
+    },
+    {
+      "id": 132,
+      "name": "Gold Air Sprite",
+      "family": "Air",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/2eefc5591d6731c1cde2.webp",
+      "player2d": "air"
+    },
+    {
+      "id": 133,
+      "name": "Batman Sprite",
+      "family": "Batman",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/b3c5864443d8c0d59107.webp",
+      "player2d": null
+    },
+    {
+      "id": 134,
+      "name": "Gold Batman Sprite",
+      "family": "Batman",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/813a8f4459d9666421c1.webp",
+      "player2d": null
+    },
+    {
+      "id": 135,
+      "name": "Gummy Batman Sprite",
+      "family": "Batman",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/03bd10e8a31000db65a6.webp",
+      "player2d": null
+    },
+    {
+      "id": 136,
+      "name": "Galaxy Batman Sprite",
+      "family": "Batman",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/69da671a5ba097bbac00.webp",
+      "player2d": null
+    },
+    {
+      "id": 137,
+      "name": "Holofoil Batman Sprite",
+      "family": "Batman",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/3b90d0d4220966f98974.webp",
+      "player2d": null
+    },
+    {
+      "id": 138,
+      "name": "Cube Batman Sprite",
+      "family": "Batman",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/c7febc7f612aed55374c.webp",
+      "player2d": null
+    },
+    {
+      "id": 139,
+      "name": "Gummy Air Sprite",
+      "family": "Air",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/1e3e4deed50e47e79985.webp",
+      "player2d": "air"
+    },
+    {
+      "id": 140,
+      "name": "Galaxy Air Sprite",
+      "family": "Air",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/3d3e6096f30766ed2f22.webp",
+      "player2d": "air"
+    },
+    {
+      "id": 141,
+      "name": "John Wick Sprite",
+      "family": "John Wick",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/bf0e7774a14e5671b6d0.webp",
+      "player2d": null
+    },
+    {
+      "id": 142,
+      "name": "Pollo Sprite",
+      "family": "Pollo",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/ca3c1ae6878a3bfced8a.webp",
+      "player2d": null
+    },
+    {
+      "id": 143,
+      "name": "Vini Jr Sprite",
+      "family": "Vini Jr",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/e45029be2eabca02e317.webp",
+      "player2d": null
+    },
+    {
+      "id": 144,
+      "name": "Cube Fishy Sprite",
+      "family": "Fishy",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/48524833ff5c83bbe34d.webp",
+      "player2d": "fishy"
+    },
+    {
+      "id": 145,
+      "name": "Cube Boss Sprite",
+      "family": "Boss",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/3b7e802f140fee54435d.webp",
+      "player2d": "boss"
+    },
+    {
+      "id": 146,
+      "name": "Cube Grim Sprite",
+      "family": "Grim",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/bd60ecbb3df786154c0b.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 147,
+      "name": "Quack Water Sprite",
+      "family": "Water",
+      "variant": "Quack",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/a4f055e25e80a1937f90.webp",
+      "player2d": "water"
+    },
+    {
+      "id": 148,
+      "name": "Quack Earth Sprite",
+      "family": "Earth",
+      "variant": "Quack",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/8a6aae45b50163774132.webp",
+      "player2d": "earth"
+    },
+    {
+      "id": 149,
+      "name": "Quack Fire Sprite",
+      "family": "Fire",
+      "variant": "Quack",
+      "season": "C7S3",
+      "rarity": "Rare",
+      "image": "/assets/embedded/17d73f880dc4cbc12f4a.webp",
+      "player2d": "fire"
+    },
+    {
+      "id": 150,
+      "name": "Cube Zero Point Sprite",
+      "family": "Zero Point",
+      "variant": "Cube",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/534f839c86954dd4efae.webp",
+      "player2d": "zero-point"
+    },
+    {
+      "id": 151,
+      "name": "Holofoil Grim Sprite",
+      "family": "Grim",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/3c286e2fb0f1420a1f22.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 162,
+      "name": "Gem Grim Sprite",
+      "family": "Grim",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/d9854bc9b4b3262aede2.webp",
+      "player2d": "grim"
+    },
+    {
+      "id": 152,
+      "name": "Peely Sprite",
+      "family": "Peely",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/9a563025b4ad4c6ffbfb.webp",
+      "player2d": null
+    },
+    {
+      "id": 153,
+      "name": "Gold Peely Sprite",
+      "family": "Peely",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/74c776ac90055a083946.webp",
+      "player2d": null
+    },
+    {
+      "id": 154,
+      "name": "Gummy Peely Sprite",
+      "family": "Peely",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/642371583de7d4748f6c.webp",
+      "player2d": null
+    },
+    {
+      "id": 155,
+      "name": "Galaxy Peely Sprite",
+      "family": "Peely",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/13e9772654646ad0a66a.webp",
+      "player2d": null
+    },
+    {
+      "id": 156,
+      "name": "Holofoil Peely Sprite",
+      "family": "Peely",
+      "variant": "Holofoil",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/c37b6883612f7d11511c.webp",
+      "player2d": null
+    },
+    {
+      "id": 157,
+      "name": "Llama Sprite",
+      "family": "Llama",
+      "variant": "Base",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/c90ce40fc287cfe76b71.webp",
+      "player2d": null
+    },
+    {
+      "id": 158,
+      "name": "Gold Llama Sprite",
+      "family": "Llama",
+      "variant": "Gold",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/6d52c97c91340617496b.webp",
+      "player2d": null
+    },
+    {
+      "id": 159,
+      "name": "Gummy Llama Sprite",
+      "family": "Llama",
+      "variant": "Gummy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/f2097e767e18cc02a6a4.webp",
+      "player2d": null
+    },
+    {
+      "id": 160,
+      "name": "Galaxy Llama Sprite",
+      "family": "Llama",
+      "variant": "Galaxy",
+      "season": "C7S3",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/a15df2611c63bc9bf5bf.webp",
+      "player2d": null
+    },
+    {
+      "id": 161,
+      "name": "Gem Llama Sprite",
+      "family": "Llama",
+      "variant": "Gem",
+      "season": "C7S3",
+      "rarity": "Special",
+      "image": "/assets/embedded/7e3e7724d728be6a6a90.webp",
+      "player2d": null
+    },
+    {
+      "id": 201,
+      "name": "Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/df715e59ece9ee5c49db.webp",
+      "player2d": null
+    },
+    {
+      "id": 202,
+      "name": "Cheat Master Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/bcce159e97d846ee01a0.webp",
+      "player2d": null
+    },
+    {
+      "id": 203,
+      "name": "Gold Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/bd684f15f3ddfb63a147.webp",
+      "player2d": null
+    },
+    {
+      "id": 204,
+      "name": "Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/f5ea396dcc4c63cee5ae.webp",
+      "player2d": null
+    },
+    {
+      "id": 205,
+      "name": "Cheat Master Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/772b67abc65b4c8a52a2.webp",
+      "player2d": null
+    },
+    {
+      "id": 206,
+      "name": "Gold Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/d3c2e05c094ee8c54e42.webp",
+      "player2d": null
+    },
+    {
+      "id": 207,
+      "name": "Bush Sprite",
+      "family": "Bush",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/a14014ae0e379b3e18f4.webp",
+      "player2d": null
+    },
+    {
+      "id": 208,
+      "name": "Cheat Master Bush Sprite",
+      "family": "Bush",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/ebdb7044286191b68d1a.webp",
+      "player2d": null
+    },
+    {
+      "id": 209,
+      "name": "Gold Bush Sprite",
+      "family": "Bush",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/d025fcf0bf41ad515116.webp",
+      "player2d": null
+    },
+    {
+      "id": 210,
+      "name": "Tails Sprite",
+      "family": "Tails",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/051f5b32fe99053ef8fd.webp",
+      "player2d": null
+    },
+    {
+      "id": 211,
+      "name": "Cheat Master Tails Sprite",
+      "family": "Tails",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/f8aa22e673787331a2c1.webp",
+      "player2d": null
+    },
+    {
+      "id": 212,
+      "name": "Gold Tails Sprite",
+      "family": "Tails",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/409d1ba81d8db82ec502.webp",
+      "player2d": null
+    },
+    {
+      "id": 213,
+      "name": "Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/acb3eb35ade4dba6ea8d.webp",
+      "player2d": null
+    },
+    {
+      "id": 214,
+      "name": "Cheat Master Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/028b9cc9a10e68881bfc.webp",
+      "player2d": null
+    },
+    {
+      "id": 215,
+      "name": "Gold Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/2a65f8718f3eb30b8c4b.webp",
+      "player2d": null
+    },
+    {
+      "id": 216,
+      "name": "Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/67b9a306a08c830291cb.webp",
+      "player2d": null
+    },
+    {
+      "id": 217,
+      "name": "Cheat Master Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/7acac7a6c43d0e3bc9bd.webp",
+      "player2d": null
+    },
+    {
+      "id": 218,
+      "name": "Gold Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/4012264b56627037bc51.webp",
+      "player2d": null
+    },
+    {
+      "id": 219,
+      "name": "Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/958aa09e5fe1b4a1cc9f.webp",
+      "player2d": null
+    },
+    {
+      "id": 220,
+      "name": "Cheat Master Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/464c44f5e90d4cc02f5c.webp",
+      "player2d": null
+    },
+    {
+      "id": 221,
+      "name": "Gold Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/195e2ed329d22599b132.webp",
+      "player2d": null
+    },
+    {
+      "id": 222,
+      "name": "Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/19762a0e3eaa2c3d8094.webp",
+      "player2d": null
+    },
+    {
+      "id": 223,
+      "name": "Cheat Master Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/6b5a4670d98d186c6c6f.webp",
+      "player2d": null
+    },
+    {
+      "id": 224,
+      "name": "Gold Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/cd5267d9ebc27712f562.webp",
+      "player2d": null
+    },
+    {
+      "id": 225,
+      "name": "Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/e520a67f91ba05c20d7b.webp",
+      "player2d": null
+    },
+    {
+      "id": 226,
+      "name": "Cheat Master Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/c64b45dd350301ee2c15.webp",
+      "player2d": null
+    },
+    {
+      "id": 227,
+      "name": "Gold Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/9724ca9788400b659554.webp",
+      "player2d": null
+    },
+    {
+      "id": 228,
+      "name": "Crown Sprite",
+      "family": "Crown",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/bed6f6237880ecac58e3.webp",
+      "player2d": null
+    },
+    {
+      "id": 229,
+      "name": "Cheat Master Crown Sprite",
+      "family": "Crown",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/24afd78e0287f677ad7d.webp",
+      "player2d": null
+    },
+    {
+      "id": 230,
+      "name": "Gold Crown Sprite",
+      "family": "Crown",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/77daea160fdc86fd6f5b.webp",
+      "player2d": null
+    },
+    {
+      "id": 231,
+      "name": "8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/920c203ef000da39b332.webp",
+      "player2d": null
+    },
+    {
+      "id": 232,
+      "name": "Cheat Master 8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/5b40ac8e08cec29f7197.webp",
+      "player2d": null
+    },
+    {
+      "id": 233,
+      "name": "Gold 8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/75bbca2b4d61330593c2.webp",
+      "player2d": null
+    },
+    {
+      "id": 234,
+      "name": "Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/d2f0577934adfeee878e.webp",
+      "player2d": null
+    },
+    {
+      "id": 235,
+      "name": "Cheat Master Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/7b61b9f3f20d08a6478d.webp",
+      "player2d": null
+    },
+    {
+      "id": 236,
+      "name": "Gold Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/cff83ebe75ac46b39b71.webp",
+      "player2d": null
+    },
+    {
+      "id": 237,
+      "name": "Loot Hacker Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/b41df206afc3ec56654d.webp",
+      "player2d": null
+    },
+    {
+      "id": 238,
+      "name": "Loot Hacker Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/17fde464f226fb575cab.webp",
+      "player2d": null
+    },
+    {
+      "id": 239,
+      "name": "Loot Hacker Bushranger Sprite",
+      "family": "Bush",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/b57ec2bda9c03742014c.webp",
+      "player2d": null
+    },
+    {
+      "id": 240,
+      "name": "Loot Hacker Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/6ec1c21f6bb717a02fa6.webp",
+      "player2d": null
+    },
+    {
+      "id": 241,
+      "name": "Loot Hacker Tails Sprite",
+      "family": "Tails",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/93ac7eb536d88c83bf17.webp",
+      "player2d": null
+    },
+    {
+      "id": 242,
+      "name": "Loot Hacker Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/1202bbf48d57a5af1107.webp",
+      "player2d": null
+    },
+    {
+      "id": 243,
+      "name": "Loot Hacker 8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/ef5fc4ab6416aa3739f9.webp",
+      "player2d": null
+    },
+    {
+      "id": 244,
+      "name": "Loot Hacker Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/341df45758cb9c172558.webp",
+      "player2d": null
+    },
+    {
+      "id": 245,
+      "name": "Loot Hacker Crown Sprite",
+      "family": "Crown",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/e19be6528abd6ada6a8d.webp",
+      "player2d": null
+    },
+    {
+      "id": 246,
+      "name": "Loot Hacker Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/c676553aa854ea0aa9fa.webp",
+      "player2d": null
+    },
+    {
+      "id": 247,
+      "name": "Loot Hacker Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/c44378170ba8c72a2ebb.webp",
+      "player2d": null
+    },
+    {
+      "id": 248,
+      "name": "Loot Hacker Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/2efa1b79c932737a3eb4.webp",
+      "player2d": null
+    },
+    {
+      "id": 249,
+      "name": "Mega Man Sprite",
+      "family": "Mega Man",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/c89464f539e4810e1f43.webp",
+      "player2d": null
+    },
+    {
+      "id": 250,
+      "name": "Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/8be94a36aecd3eb9cce1.webp",
+      "player2d": null
+    },
+    {
+      "id": 251,
+      "name": "Cheat Master Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/f2fa227b28de42549c9f.webp",
+      "player2d": null
+    },
+    {
+      "id": 252,
+      "name": "Loot Hacker Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/da45fffcf7734fe9fb27.webp",
+      "player2d": null
+    },
+    {
+      "id": 253,
+      "name": "Gold Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/e5980945a905cd25dd53.webp",
+      "player2d": null
+    },
+    {
+      "id": 254,
+      "name": "X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/c01a446318f26509879e.webp",
+      "player2d": null
+    },
+    {
+      "id": 255,
+      "name": "Cheat Master X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/633334957e1b652cdaba.webp",
+      "player2d": null
+    },
+    {
+      "id": 256,
+      "name": "Loot Hacker X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/7d37270a593815035e47.webp",
+      "player2d": null
+    },
+    {
+      "id": 257,
+      "name": "Gold X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/67a6c872a5bbc902ad8e.webp",
+      "player2d": null
+    },
+    {
+      "id": 258,
+      "name": "Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/3045d5ec2926d2e7057d.webp",
+      "player2d": null
+    },
+    {
+      "id": 259,
+      "name": "Cheat Master Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/cfdab615dca9cde1b39a.webp",
+      "player2d": null
+    },
+    {
+      "id": 260,
+      "name": "Loot Hacker Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/6479c8da2f88a7aa6ac0.webp",
+      "player2d": null
+    },
+    {
+      "id": 261,
+      "name": "Gold Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/4e2fb642bd9a0066c306.webp",
+      "player2d": null
+    },
+    {
+      "id": 262,
+      "name": "Crash Bandicoot Sprite",
+      "family": "Crash Bandicoot",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/52b168542d6c607718e1.webp",
+      "player2d": null
+    },
+    {
+      "id": 263,
+      "name": "Cheat Master Crash Bandicoot Sprite",
+      "family": "Crash Bandicoot",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/4721ff5ab3b8dee79647.webp",
+      "player2d": null
+    },
+    {
+      "id": 264,
+      "name": "Loot Hacker Crash Bandicoot Sprite",
+      "family": "Crash Bandicoot",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/8fb9888219d595fcffcd.webp",
+      "player2d": null
+    },
+    {
+      "id": 265,
+      "name": "Gold Crash Bandicoot Sprite",
+      "family": "Crash Bandicoot",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/165bdaa193458e56be25.webp",
+      "player2d": null
+    },
+    {
+      "id": 266,
+      "name": "Bounty Hunter Body Slam",
+      "family": "Crash Bandicoot",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/e8221ca21584fbd5cf10.webp",
+      "player2d": null
+    },
+    {
+      "id": 267,
+      "name": "Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/2f2a322dac753dae48db.webp",
+      "player2d": null
+    },
+    {
+      "id": 268,
+      "name": "Cheat Master Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/ffe724abad5452023420.webp",
+      "player2d": null
+    },
+    {
+      "id": 269,
+      "name": "Loot Hacker Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/21ec900a2791ba5b9f5e.webp",
+      "player2d": null
+    },
+    {
+      "id": 270,
+      "name": "Gold Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/e6e33e257fa3973e986e.webp",
+      "player2d": null
+    },
+    {
+      "id": 271,
+      "name": "Bounty Hunter Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/5519e14513eeb18c37ff.webp",
+      "player2d": null
+    },
+    {
+      "id": 272,
+      "name": "Pond Sprite",
+      "family": "Pond",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/4def2cef8668861c4bf3.webp",
+      "player2d": null
+    },
+    {
+      "id": 273,
+      "name": "Cheat Master Pond Sprite",
+      "family": "Pond",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/75a6bf76d13acc7f0f21.webp",
+      "player2d": null
+    },
+    {
+      "id": 274,
+      "name": "Loot Hacker Pond Sprite",
+      "family": "Pond",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/8dc68d282f2f05ecebe4.webp",
+      "player2d": null
+    },
+    {
+      "id": 275,
+      "name": "Gold Pond Sprite",
+      "family": "Pond",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/7ee8146ce1c97a0389d1.webp",
+      "player2d": null
+    },
+    {
+      "id": 276,
+      "name": "Bounty Hunter Pond Sprite",
+      "family": "Pond",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/3caf6a17bdee884ccd4a.webp",
+      "player2d": null
+    },
+    {
+      "id": 302,
+      "name": "Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/embedded/c3fe78ca6624160c014e.webp",
+      "player2d": null
+    },
+    {
+      "id": 303,
+      "name": "Cheat Master Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/283a4e862ae628f277b7.webp",
+      "player2d": null
+    },
+    {
+      "id": 304,
+      "name": "Loot Hacker Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/2519e3dcd99b42803036.webp",
+      "player2d": null
+    },
+    {
+      "id": 305,
+      "name": "Gold Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/7948d9ba5235b9a3db28.webp",
+      "player2d": null
+    },
+    {
+      "id": 306,
+      "name": "Bounty Hunter Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/50eac47721f89ef2e9bb.webp",
+      "player2d": null
+    },
+    {
+      "id": 282,
+      "name": "Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/6b8c51ae791e9a4e152e.webp",
+      "player2d": null
+    },
+    {
+      "id": 283,
+      "name": "Cheat Master Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/3d3b37201c118a1be304.webp",
+      "player2d": null
+    },
+    {
+      "id": 284,
+      "name": "Loot Hacker Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/65032ccddb4f248cbde7.webp",
+      "player2d": null
+    },
+    {
+      "id": 285,
+      "name": "Gold Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/f2513bccceabceed15b9.webp",
+      "player2d": null
+    },
+    {
+      "id": 286,
+      "name": "Bounty Hunter Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/2185b937e62b2a6c7d36.webp",
+      "player2d": null
+    },
+    {
+      "id": 287,
+      "name": "Bounty Hunter 8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/c87af867ec784f42e8a0.webp",
+      "player2d": null
+    },
+    {
+      "id": 288,
+      "name": "Bounty Hunter Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/c756cf9e4663dd47d676.webp",
+      "player2d": null
+    },
+    {
+      "id": 289,
+      "name": "Bounty Hunter Bush Sprite",
+      "family": "Bush",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/bbb30b2b2aac35a9447b.webp",
+      "player2d": null
+    },
+    {
+      "id": 290,
+      "name": "Bounty Hunter Crown Sprite",
+      "family": "Crown",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/af71e8303e0b1d1250ca.webp",
+      "player2d": null
+    },
+    {
+      "id": 291,
+      "name": "Bounty Hunter Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/3a104a42b0b5f0d01af5.webp",
+      "player2d": null
+    },
+    {
+      "id": 292,
+      "name": "Bounty Hunter Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/b755d1d61c81e3042394.webp",
+      "player2d": null
+    },
+    {
+      "id": 293,
+      "name": "Bounty Hunter Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/37b12ad2915325acd788.webp",
+      "player2d": null
+    },
+    {
+      "id": 294,
+      "name": "Bounty Hunter Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/761bd1e51efd01d96418.webp",
+      "player2d": null
+    },
+    {
+      "id": 295,
+      "name": "Bounty Hunter Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/37d9eb1a737e8c44c8b6.webp",
+      "player2d": null
+    },
+    {
+      "id": 296,
+      "name": "Bounty Hunter Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/d730e1063c082dc307f6.webp",
+      "player2d": null
+    },
+    {
+      "id": 297,
+      "name": "Bounty Hunter Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/6f776b6466765e6bd12a.webp",
+      "player2d": null
+    },
+    {
+      "id": 298,
+      "name": "Bounty Hunter Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/04c33de720bea08cebc4.webp",
+      "player2d": null
+    },
+    {
+      "id": 299,
+      "name": "Bounty Hunter Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/903dfc90453c19d7eb52.webp",
+      "player2d": null
+    },
+    {
+      "id": 300,
+      "name": "Bounty Hunter Tails Sprite",
+      "family": "Tails",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/791e0670ba6e001ecc9e.webp",
+      "player2d": null
+    },
+    {
+      "id": 301,
+      "name": "Bounty Hunter X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/d12c9efbae30067effce.webp",
+      "player2d": null
+    },
+    {
+      "id": 307,
+      "name": "Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/embedded/cd683346c6708183b444.webp",
+      "player2d": null
+    },
+    {
+      "id": 308,
+      "name": "Cheat Master Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/dfa89cb696e65b4dbeea.webp",
+      "player2d": null
+    },
+    {
+      "id": 309,
+      "name": "Loot Hacker Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/83c2facf8b7a5204e81e.webp",
+      "player2d": null
+    },
+    {
+      "id": 310,
+      "name": "Gold Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/16c1d3015cf37f111560.webp",
+      "player2d": null
+    },
+    {
+      "id": 311,
+      "name": "Bounty Hunter Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/93a7cb7fe5b3b2531c57.webp",
+      "player2d": null
+    },
+    {
+      "id": 312,
+      "name": "Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/a57c5ffc0216e214b68b.webp",
+      "player2d": null
+    },
+    {
+      "id": 313,
+      "name": "Cheat Master Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/4cc2edc7790f9aa62a01.webp",
+      "player2d": null
+    },
+    {
+      "id": 314,
+      "name": "Loot Hacker Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/8eae7b48970c293d6ac4.webp",
+      "player2d": null
+    },
+    {
+      "id": 315,
+      "name": "Gold Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/005fd1b8eb54ef02b99a.webp",
+      "player2d": null
+    },
+    {
+      "id": 316,
+      "name": "Bounty Hunter Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/5db8a387d2f16d526227.webp",
+      "player2d": null
+    },
+    {
+      "id": 317,
+      "name": "The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Legendary",
+      "image": "/assets/embedded/acbbcfebaa16c9db9c8f.webp",
+      "player2d": null
+    },
+    {
+      "id": 318,
+      "name": "Cheat Master The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/10047fbf122d43d8c90b.webp",
+      "player2d": null
+    },
+    {
+      "id": 319,
+      "name": "Loot Hacker The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/94da083121379c4cc748.webp",
+      "player2d": null
+    },
+    {
+      "id": 320,
+      "name": "Gold The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/ccfce69d0fc2772310d0.webp",
+      "player2d": null
+    },
+    {
+      "id": 321,
+      "name": "Bounty Hunter The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/132c75ddfae4c4775f02.webp",
+      "player2d": null
+    },
+    {
+      "id": 322,
+      "name": "Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/embedded/285a3f6e727963c2fcdd.webp",
+      "player2d": null
+    },
+    {
+      "id": 323,
+      "name": "Cheat Master Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/f561f9684d237bfaae0e.webp",
+      "player2d": null
+    },
+    {
+      "id": 324,
+      "name": "Loot Hacker Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/54c704b17c2a1181f038.webp",
+      "player2d": null
+    },
+    {
+      "id": 325,
+      "name": "Gold Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/e0f4f019cee522495345.webp",
+      "player2d": null
+    },
+    {
+      "id": 326,
+      "name": "Bounty Hunter Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/1f4c132848b84ce15fe3.webp",
+      "player2d": null
+    },
+    {
+      "id": 327,
+      "name": "Trick or Treat Crown Sprite",
+      "family": "Crown",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "/assets/embedded/2fe40a1af5ca7a0b6ecc.webp",
+      "player2d": null
+    },
+    {
+      "id": 328,
+      "name": "Trick or Treat Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Jonesy_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 329,
+      "name": "Trick or Treat Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Dwarf_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 330,
+      "name": "Trick or Treat Bushranger Sprite",
+      "family": "Bush",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BushRanger_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 331,
+      "name": "Trick or Treat Sonic Sprite",
+      "family": "Sonic",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_NarrowFlea_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 332,
+      "name": "Trick or Treat Tails Sprite",
+      "family": "Tails",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_NarrowFleaMonkey_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 333,
+      "name": "Trick or Treat Shadow Sprite",
+      "family": "Shadow",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_ReloadOverTime_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 334,
+      "name": "Trick or Treat 8-Bit Sprite",
+      "family": "8-Bit",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_8BitBlaster_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 335,
+      "name": "Trick or Treat Jackrabbit Sprite",
+      "family": "Jackrabbit",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_DoubleJump_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 336,
+      "name": "Trick or Treat Killswitch Sprite",
+      "family": "Killswitch",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Killswitch_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 337,
+      "name": "Trick or Treat Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Klombo_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 338,
+      "name": "Trick or Treat Overshield Sprite",
+      "family": "Overshield",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Overshield_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 339,
+      "name": "Trick or Treat X-Ray Sprite",
+      "family": "X-Ray",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerB_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 340,
+      "name": "Trick or Treat Onigiri Sprite",
+      "family": "Onigiri",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerC_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 341,
+      "name": "Trick or Treat Storm Scout Sprite",
+      "family": "Storm Scout",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_StormScout_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 342,
+      "name": "Trick or Treat Blinky Sprite",
+      "family": "Blinky",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_GhostDamage_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 343,
+      "name": "Trick or Treat Birthday Sprite",
+      "family": "Birthday",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Birthday_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 344,
+      "name": "Trick or Treat Crash Bandicoot Sprite",
+      "family": "Crash Bandicoot",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BodySlam_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 345,
+      "name": "Trick or Treat Pond Sprite",
+      "family": "Pond",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerA_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 346,
+      "name": "Trick or Treat Morgana Sprite",
+      "family": "Morgana",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_IncreaseHeals_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 347,
+      "name": "Trick or Treat Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PhaseDash_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 348,
+      "name": "Trick or Treat Vampire Sprite",
+      "family": "Vampire",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_HealthSiphon_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 349,
+      "name": "Trick or Treat The Deer Sprite",
+      "family": "The Deer",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_IncreasedMelee_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 350,
+      "name": "Trick or Treat Dumpster Dive Sprite",
+      "family": "Dumpster Dive",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Special",
+      "image": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_WinnerD_TrickTreat_L.webp",
+      "player2d": null
+    },
+    {
+      "id": 351,
+      "name": "Honey Sprite",
+      "family": "Honey",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Base.webp",
+      "player2d": null
+    },
+    {
+      "id": 352,
+      "name": "Cheat Master Honey Sprite",
+      "family": "Honey",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Cheat.webp",
+      "player2d": null
+    },
+    {
+      "id": 353,
+      "name": "Loot Hacker Honey Sprite",
+      "family": "Honey",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Hacker.webp",
+      "player2d": null
+    },
+    {
+      "id": 354,
+      "name": "Gold Honey Sprite",
+      "family": "Honey",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Gold.webp",
+      "player2d": null
+    },
+    {
+      "id": 355,
+      "name": "Bounty Hunter Honey Sprite",
+      "family": "Honey",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Bounty.webp",
+      "player2d": null
+    },
+    {
+      "id": 356,
+      "name": "Trick or Treat Honey Sprite",
+      "family": "Honey",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Epic",
+      "image": "/assets/sprites/c7s4/WinnerE_Trick.webp",
+      "player2d": null
+    },
+    {
+      "id": 357,
+      "name": "One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Base",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Base.webp",
+      "player2d": null
+    },
+    {
+      "id": 358,
+      "name": "Cheat Master One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Cheat",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Cheat.webp",
+      "player2d": null
+    },
+    {
+      "id": 359,
+      "name": "Loot Hacker One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Hacker",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Hacker.webp",
+      "player2d": null
+    },
+    {
+      "id": 360,
+      "name": "Gold One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Gold",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Gold.webp",
+      "player2d": null
+    },
+    {
+      "id": 361,
+      "name": "Bounty Hunter One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Bounty",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Bounty.webp",
+      "player2d": null
+    },
+    {
+      "id": 362,
+      "name": "Trick or Treat One Wish Willow Sprite",
+      "family": "One Wish Willow",
+      "variant": "Trick",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/CargoLying_Trick.webp",
+      "player2d": null
+    },
+    {
+      "id": 363,
+      "name": "Quack Jonesy Sprite",
+      "family": "Jonesy",
+      "variant": "Quack",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/sprites/c7s4/Jonesy_Quack.webp",
+      "player2d": null
+    },
+    {
+      "id": 364,
+      "name": "Quack Adventure Sprite",
+      "family": "Adventure",
+      "variant": "Quack",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/sprites/c7s4/Dwarf_Quack.webp",
+      "player2d": null
+    },
+    {
+      "id": 365,
+      "name": "Quack Bush Sprite",
+      "family": "Bush",
+      "variant": "Quack",
+      "season": "C7S4",
+      "rarity": "Rare",
+      "image": "/assets/sprites/c7s4/BushRanger_Quack.webp",
+      "player2d": null
+    },
+    {
+      "id": 366,
+      "name": "Quack Klombo Sprite",
+      "family": "Klombo",
+      "variant": "Quack",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/Klombo_Quack.webp",
+      "player2d": null
+    },
+    {
+      "id": 367,
+      "name": "Quack Spooky Dash Sprite",
+      "family": "Spooky Dash",
+      "variant": "Quack",
+      "season": "C7S4",
+      "rarity": "Mythic",
+      "image": "/assets/sprites/c7s4/PhaseDash_Quack.webp",
+      "player2d": null
+    }
+  ]
+}
