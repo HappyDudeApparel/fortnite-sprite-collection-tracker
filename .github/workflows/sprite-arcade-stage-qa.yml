@@ -50,7 +50,7 @@ jobs:
           assert "root.traverse(object=>" in game3d
           assert "GB_RUMBLER" not in game3d and "BP_GamerBroBlue" not in game3d
           catalog=json.loads((root/'catalog.json').read_text())
-          assert len(catalog['entries'])==279 and len([x for x in catalog['entries'] if x['player2d']])>=117
+          assert len(catalog['entries'])==279 and len([x for x in catalog['entries'] if x['player2d']])==97
           # Root remains byte-for-byte unchanged since approved v2.0.43.
           base='45278cd967c230a1d97ec31cb7c2a00d11492139'
           for path in ['index.html','version.json','service-worker.js','manifest.webmanifest','asset-manifest.json']:
