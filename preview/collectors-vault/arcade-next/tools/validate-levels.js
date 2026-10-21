@@ -226,7 +226,7 @@ const DEVICE_RANGE_X = 340, DEVICE_RANGE_Y = 120;
 
 /** The level as it stands in one water state: gated platforms/hazards switched, floaters moved. */
 function deriveLevel(level, levels) {
-  return Object.assign({}, level, { platforms: Fields.platformsAt(level, levels), hazards: Fields.hazardsAt(level, levels) });
+  return Object.assign({}, level, { platforms: Fields.platformsAt(level, levels), hazards: Fields.hazardsAt(level, levels), pads: Fields.padsAt(level, levels) });
 }
 
 function deviceUsable(world, nodes, device) {
@@ -323,6 +323,41 @@ function mutationTests() {
     console.log(`${good ? 'PASS' : 'FAIL'} mutation: ${name}`);
     if (!good) failed = true;
   });
+  // ---- Steam Works: the heat x water combination -----------------------------------------------
+  const steamBase = LEVELS.find((l) => l.id === 'steam-works-demo');
+  const sclone = () => JSON.parse(JSON.stringify(steamBase));
+  const steamTests = [
+    ['steam room intact: every class finishes; Fire/Demon and Water reach the ledges, others do not', (l) => l, { raiser: [true, 10], heater: [true, 10], other: [true, 3] }],
+    ['furnace brazier removed: Fire loses the steam route (ledge gems gone)', (l) => { l.objects = l.objects.filter((o) => o.device !== 'brazier'); return l; }, { raiser: [true, 10], heater: [true, 3], other: [true, 3] }],
+    ['boiler starts dry: Fire cannot make steam without water', (l) => { l.tide.basins[0].start = 0; return l; }, { raiser: [true, 10], heater: [true, 3], other: [true, 3] }],
+    ['geyser too weak: steam no longer reaches the ledges', (l) => { l.pads[0].power = 450; return l; }, { raiser: [true, 10], heater: [true, 3], other: [true, 3] }],
+    ['no devices: nobody can change anything', (l) => { l.objects = []; return l; }, { raiser: [false, 3], heater: [false, 3], other: [false, 3] }],
+    ['valve moved out of reach: Fire and Earth lose the drain route (Fire keeps steam)', (l) => { l.objects.find((o) => o.device === 'valve').x = 2100; return l; }, { raiser: [true, 10], heater: [true, 10], other: [false, 3] }],
+  ];
+  steamTests.forEach(([name, fn, expect], i) => {
+    const level = fn(sclone());
+    const r = checkTideLevel(level, 200 + i, true);
+    let good = true;
+    for (const cls of Object.keys(expect)) {
+      const [tube, gems] = expect[cls];
+      if (!!r.results[cls].tube !== tube || r.results[cls].gems.size !== gems) good = false;
+    }
+    console.log(`${good ? 'PASS' : 'FAIL'} mutation: ${name}`);
+    if (!good) { failed = true; for (const cls of Object.keys(expect)) console.log(`      ${cls}: tube ${r.results[cls].tube}, gems ${r.results[cls].gems.size} (wanted ${expect[cls]})`); }
+  });
+  // Cause and effect is a rule, not a room: flooding the boiler must put the furnace out, and Earth must not light it.
+  {
+    const lv = sclone();
+    let st = Fields.initialLevels(lv);
+    const brazier = lv.objects.find((o) => o.device === 'brazier'), inlet = lv.objects.find((o) => o.device === 'inlet');
+    const earth = Fields.applyDevice(lv, st, brazier, 'earth');
+    st = Fields.applyDevice(lv, st, brazier, 'fire');
+    const lit = st.f === 1;
+    st = Fields.applyDevice(lv, st, inlet, 'water'); st = Fields.applyDevice(lv, st, inlet, 'water');
+    const good = earth.f === 0 && lit && st.a === 3 && st.f === 0;
+    console.log(`${good ? 'PASS' : 'FAIL'} rule: only heat Sprites light the furnace, and a flooded boiler puts it out`);
+    if (!good) failed = true;
+  }
   return !failed;
 }
 

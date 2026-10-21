@@ -1059,7 +1059,7 @@ function createGame(character, levelIndex = 0) {
   const level = LEVELS[levelIndex] || LEVELS[0];
   WORLD_W = level.worldW;
   const platforms = level.platforms.map(clonePlatform);
-  const objects = level.objects.map((o) => Object.assign(makeObject(o.type, o.x, o.y, o.w, o.h, o.hp, { special: o.special, solid: !o.device }), o.device ? { device: o.device, basin: o.basin } : {}));
+  const objects = level.objects.map((o) => Object.assign(makeObject(o.type, o.x, o.y, o.w, o.h, o.hp, { special: o.special, solid: !o.device }), o.device ? { device: o.device, basin: o.basin, var: o.var } : {}));
   const hazards = level.hazards.map((h) => Object.assign({}, h));
   const checkpoints = level.checkpoints.map((c) => Object.assign({}, c));
   const player = {
@@ -2352,7 +2352,7 @@ function updateCheckpoints() {
 function bouncePads(player) {
   const body = entityRect(player);
   for (const pad of game.pads) {
-    if (player.vy < 0 || !rects(body, { x: pad.x, y: pad.y - 4, w: pad.w, h: pad.h + 4 })) continue;
+    if (pad.active === false || player.vy < 0 || !rects(body, { x: pad.x, y: pad.y - 4, w: pad.w, h: pad.h + 4 })) continue;
     player.vy = -pad.power;
     player.grounded = false;
     player.standing = null;
@@ -3295,6 +3295,7 @@ function drawSkinnedPlatform(platform, skin, x) {
 }
 
 function drawPad(pad, cameraX) {
+  if (pad.active === false) return;
   const x = pad.x - cameraX;
   if (x + pad.w < -10 || x > W + 10) return;
   const squash = pad.squash > 0 ? Math.sin(pad.squash / 0.32 * Math.PI) : 0;
@@ -4006,6 +4007,7 @@ function drawWorld() {
   for (const hazard of game.hazards) drawHazard(hazard, cameraX);
   for (const object of game.objects) drawObject(object, cameraX);
   for (const pad of game.pads) drawPad(pad, cameraX);
+  if (game.fields) SPRITE_FIELDS.drawSteam(ctx, game, cameraX, time);
   for (const gem of game.gems) drawGem(gem, cameraX);
 
   drawTubeBack(cameraX);

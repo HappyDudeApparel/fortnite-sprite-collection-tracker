@@ -2,6 +2,7 @@
 
 Test A  Water Sprite, real Aqua Lance bolts: the FILL inlet raises the tide step by step, the dock rises, the
         player rides it, the DRAIN valve lowers it again, and gated platforms/hazards switch with the level.
+Test D  Steam Works: Fire lights the furnace, the geyser launches only while furnace AND water are present.
 Test B  Earth Sprite (cannot fill), a small input bot: opens the DRAIN valve with a real power, then walks the dry
         bed and tunnel to the Collection Tube. This is the end-to-end proof for the drain route.
 The two original-game checks: World 1 level 1 still loads and plays in this build, and the preview's save key
@@ -149,6 +150,56 @@ def main():
         check(done, f'Earth Sprite reaches the Collection Tube through the drained tunnel {s}')
         check(page.evaluate("game.fields.levels.a") == 0, 'tide stayed drained for the whole run')
         check(not errs, f'no page errors {errs[:3]}')
+        ctx.close()
+
+        # ---------------- Test D: Steam Works (heat x water) --------------------------------------------
+        def steam_state(pg):
+            return pg.evaluate("({ a: game.fields.levels.a, f: game.fields.levels.f, geyser: game.pads[0].active !== false, y: Math.round(game.player.y) })")
+
+        def apex_over_geyser(pg):
+            """Walk right across the geyser from the left bank and report the highest point reached (smaller y = higher)."""
+            pg.evaluate("game.player.x = 470; game.player.y = 410; game.player.vx = 0; game.player.vy = 0")
+            pg.wait_for_timeout(150)
+            pg.keyboard.down('ArrowRight')
+            best = 999
+            for _ in range(30):
+                pg.wait_for_timeout(50)
+                best = min(best, pg.evaluate("game.player.y"))
+            pg.keyboard.up('ArrowRight')
+            return best
+
+        ctx, page, errs = start(browser, 'fire', 7)
+        s = steam_state(page)
+        check(s['a'] == 1 and s['f'] == 0 and not s['geyser'], f'Steam Works starts with the furnace cold and the geyser dormant {s}')
+        # Fire is a radial burst (shots travel ~330 px): stand where it reaches the brazier but not the far-left valve.
+        page.evaluate("game.player.x = 440; game.player.y = 410; game.player.vy = 0")
+        face(page, 'ArrowRight'); page.evaluate("game.player.x = 440")
+        for _ in range(3):
+            fire(page); page.wait_for_timeout(1200)
+            if steam_state(page)['f'] == 1:
+                break
+        s = steam_state(page)
+        check(s['f'] == 1 and s['geyser'], f'Fire lights the furnace; with water in the boiler the geyser wakes {s}')
+        top = apex_over_geyser(page)
+        check(top < 215, f'the steam geyser launches the player above the ledges (highest centre y={top}; ledge A top is 250)')
+        page.evaluate("game.player.x = 150; game.player.y = 410; game.player.vy = 0")
+        face(page, 'ArrowLeft'); page.evaluate("game.player.x = 150")
+        for _ in range(3):
+            fire(page); page.wait_for_timeout(1000)
+            if steam_state(page)['a'] == 0:
+                break
+        s = steam_state(page)
+        check(s['a'] == 0 and s['f'] == 1 and not s['geyser'], f'draining the boiler stops the steam even though the furnace stays lit {s}')
+        low = apex_over_geyser(page)
+        check(low > 380, f'without steam the vent does not launch the player (highest centre y={low})')
+        check(not errs, f'no page errors {errs[:3]}')
+        ctx.close()
+
+        ctx, page, errs = start(browser, 'earth', 7)
+        page.evaluate("game.player.x = 200; game.player.y = 410; game.player.vy = 0")
+        face(page, 'ArrowRight'); page.evaluate("game.player.x = 200")
+        fire(page); page.wait_for_timeout(1500)
+        check(steam_state(page)['f'] == 0, 'Earth power cannot light the furnace')
         ctx.close()
 
         # ---------------- Test C: World 1 untouched + separate save --------------------------------

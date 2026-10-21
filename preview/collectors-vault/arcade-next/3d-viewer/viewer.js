@@ -186,13 +186,25 @@ async function toggleLook() {
   state.gameLook = true; $('look').setAttribute('aria-pressed', 'true');
 }
 
-async function showRef(id) {
+function refEntry(id) {
+  const key = String(id);
+  const own = registry.references && registry.references[key];
+  if (own) return own;
+  return catalog && catalog.entries.find((e) => e.id === Number(id));
+}
+
+/** Show a collection artwork beside the model. `id` is a Locker sprite id (catalogue or Legacy tab). */
+function showRef(id) {
   const pane = $('refPane');
-  const entry = catalog && catalog.entries.find((e) => e.id === Number(id));
+  const entry = id ? refEntry(id) : null;
   if (!entry) { pane.style.display = 'none'; resize(); return; }
-  $('refImg').src = entry.image; $('refName').textContent = `#${entry.id} ${entry.name}${entry.variant ? ' · ' + entry.variant : ''}`;
+  $('refImg').src = entry.image;
+  $('refName').textContent = `#${entry.id} ${entry.name}${entry.variant ? ' · ' + entry.variant : ''}`;
   pane.style.display = 'block'; resize();
 }
+
+/** A character's own reference art (registry `reference`) shows by default; the Art ref # box overrides it. */
+function useDefaultRef() { const id = V.record && V.record.reference; $('refId').value = id || ''; showRef(id || ''); }
 
 async function main() {
   try {
@@ -203,7 +215,7 @@ async function main() {
   const sel = $('charSel');
   registry.characters.forEach((c) => { const o = document.createElement('option'); o.value = c.id; o.textContent = `${c.name}${c.provenance.status === 'cleared' ? '' : ' (rights not cleared)'}`; sel.appendChild(o); });
   const want = params.get('char'); if (want && registry.characters.some((c) => c.id === want)) sel.value = want;
-  sel.addEventListener('change', () => { loadCharacter(sel.value); const u = new URL(location.href); u.searchParams.set('char', sel.value); history.replaceState(null, '', u); });
+  sel.addEventListener('change', async () => { await loadCharacter(sel.value); useDefaultRef();  const u = new URL(location.href); u.searchParams.set('char', sel.value); history.replaceState(null, '', u); });
   $('presets').addEventListener('click', (e) => { const b = e.target.closest('button[data-view]'); if (b) setView(b.dataset.view); });
   const toggle = (id, key, after) => $(id).addEventListener('click', () => { state[key] = !state[key]; $(id).setAttribute('aria-pressed', String(state[key])); if (after) after(); });
   toggle('turn', 'turntable'); toggle('wire', 'wire', applyWire); toggle('skel', 'skeleton', applySkeleton);
@@ -219,7 +231,7 @@ async function main() {
   const v = params.get('view'); if (v) setView(v);
   if (params.get('turn') === '1') { state.turntable = true; $('turn').setAttribute('aria-pressed', 'true'); }
   await loadCharacter(sel.value);
-  const ref = params.get('ref'); if (ref) { $('refId').value = ref; showRef(ref); }
+  const ref = params.get('ref'); if (ref) { $('refId').value = ref; showRef(ref); } else useDefaultRef();
   V.setView = setView; V.orbit = orbit; V.playClip = playClip; V.getAction = () => action; V.state = state;
 }
 main();

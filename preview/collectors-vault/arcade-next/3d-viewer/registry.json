@@ -5,7 +5,7 @@
   "characters": [
     {
       "id": "citrus",
-      "name": "Citrus Sprite",
+      "name": "Dash",
       "file": "citrus.glb",
       "tier": "hero",
       "role": "playable",
@@ -25,7 +25,14 @@
         "source": "unknown (Blender export, 27-bone SpriteHeroArmature)",
         "licence": "unknown",
         "sha256": "2947c5dd0ff1d2fe578192d0fe4a7e31b82d06ba5d0f399d7ab924d4af7efd14"
-      }
+      },
+      "aliases": [
+        "Citrus",
+        "Citrus Sprite",
+        "Sprite Hero"
+      ],
+      "note": "Model file is citrus.glb (the 3D game labels it \"Citrus Sprite\"). The owner confirms the character is called Dash; its collection art is Dash Sprite #127 in the Locker Legacy tab.",
+      "reference": 127
     },
     {
       "id": "ghost",
@@ -132,5 +139,23 @@
         "sha256": "f4b050ccf10c172e2884868913bd1d5715da6be9d43fc7867a6e6d217bd47e05"
       }
     }
-  ]
+  ],
+  "references": {
+    "127": {
+      "id": 127,
+      "name": "Dash Sprite",
+      "variant": "Legacy",
+      "season": "C7S3",
+      "image": "/assets/embedded/8654c402d75684a5af00.webp",
+      "source": "Locker, Legacy tab (not in arcade/catalog.json)"
+    },
+    "128": {
+      "id": 128,
+      "name": "Superman Sprite",
+      "variant": "Legacy",
+      "season": "C7S3",
+      "image": "/assets/embedded/164382eb3e6e3438269e.webp",
+      "source": "Locker, Legacy tab (not in arcade/catalog.json)"
+    }
+  }
 }
