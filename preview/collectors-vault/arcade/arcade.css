@@ -1,0 +1,57 @@
+
+/* Staging-only Sprite Arcade launcher. Native Tracker and Gamer Bros assets are unchanged. */
+.arcade-hub{max-width:1460px;margin:0 auto;padding:23px clamp(12px,3vw,28px) 65px;color:#f2f8ff}
+.arcade-hub *{box-sizing:border-box}
+.arcade-banner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px);background:radial-gradient(circle at 88% 36%,rgba(91,244,217,.17),transparent 50%),linear-gradient(125deg,#101a37,#18173b);border:1px solid #4c599080;border-radius:23px;padding:clamp(18px,3vw,34px);margin-bottom:15px;min-height:200px;overflow:hidden}
+.arcade-banner h1{font-size:clamp(30px,6vw,59px);line-height:1;margin:8px 0;letter-spacing:-.05em;color:#fff;font-weight:1000}
+.arcade-banner p{color:#c1cdea;max-width:640px;line-height:1.6;font-size:14px}
+.arcade-banner-arts{display:flex;justify-content:center;align-items:center;position:relative}
+.arcade-banner-arts img{max-width:48%;max-height:170px;filter:drop-shadow(0 12px 24px #0008);transform:rotate(-9deg)}
+.arcade-banner-arts img:last-child{transform:rotate(13deg);margin-left:-13px}
+.arcade-current{display:flex;align-items:center;flex-wrap:wrap;gap:12px;background:#101c34d9;border:1px solid #4c5b8d70;border-radius:16px;padding:12px 16px;margin:12px 0 16px}
+.arcade-current img{width:53px;height:58px;object-fit:contain;filter:drop-shadow(0 5px 9px #0007)}
+.arcade-current h2{font-size:15px;line-height:1.3;margin:2px 0;color:#fff}
+.arcade-current small{color:#9dbbd5;display:block;font-size:11px}
+.arcade-current select{flex:1;min-width:150px;max-width:350px;background:#0e1a31;border:1px solid #6287b2;border-radius:11px;color:#eaf9ff;padding:10px 12px;font:750 13px system-ui}
+.arcade-current .arcade-chip{margin-left:auto;background:#234061;border:1px solid #688ca78c;color:#bce7e1;padding:9px 11px;border-radius:12px;font-weight:900;font-size:11px;white-space:nowrap}
+.arcade-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:15px 0}
+.arcade-tile{border-radius:24px;background:linear-gradient(160deg,#142343,#0a122a);border:1px solid #5775a344;overflow:hidden;position:relative;display:flex;flex-direction:column;min-height:360px}
+.arcade-tile.three{background:linear-gradient(158deg,#162c40,#101931)}
+.arcade-tile-cover{height:190px;overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 80%,#3379aa90,transparent 65%),repeating-linear-gradient(130deg,#151d37,#151d37 13px,#142746 14px,#142746 26px);display:flex;align-items:center;justify-content:center;gap:20px}
+.arcade-tile.three .arcade-tile-cover{background:radial-gradient(ellipse at 40% 90%,#46836884,transparent 61%),linear-gradient(135deg,#182437,#233a5e)}
+.arcade-tile-cover img{width:110px;height:157px;object-fit:contain;filter:drop-shadow(0 10px 21px #000d)}
+.arcade-tile-cover img:nth-child(2){transform:translateY(22px) scale(.80)}
+.arcade-tile-cover::after{content:'';position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(transparent,#0a132bf0)}
+.arcade-tile-label{position:absolute;z-index:2;top:12px;left:13px;background:#071527df;border:1px solid #addaf263;border-radius:999px;padding:7px 10px;font-weight:950;font-size:10px;color:#cff9fa;letter-spacing:.09em}
+.arcade-tile-text{padding:18px 19px 12px;flex:1}
+.arcade-tile h2{font-size:clamp(22px,3vw,34px);margin:0 0 5px;color:#fff;letter-spacing:-.04em}
+.arcade-tile p{color:#b2c6e4;font-size:12px;line-height:1.65;margin:8px 0}
+.arcade-tile footer{display:flex;align-items:center;justify-content:space-between;gap:13px;border-top:1px solid #6085ab38;padding:13px 18px}
+.arcade-play{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:12px 18px;border:1px solid transparent;background:linear-gradient(135deg,#7d6cf5,#4479e1);color:#fff!important;text-decoration:none;border-radius:13px;font-weight:1000;font-size:13px;min-width:170px;cursor:pointer;transition:filter .18s,transform .18s}
+.arcade-play:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.arcade-play:focus-visible{outline:3px solid #65e2de;outline-offset:2px}
+.arcade-tile.three .arcade-play{background:linear-gradient(135deg,#258e92,#2e62b0)}
+.arcade-play-meta{font-weight:850;font-size:11px;color:#9bbada}
+.arcade-caution{color:#adbcd4;font-size:12px;line-height:1.6;border-left:3px solid #7e94d5;padding-left:12px;margin-top:17px}
+.arcade-future{background:#151e36;border:1px solid #4354807d;border-radius:18px;padding:17px 22px;margin-top:14px}
+.arcade-future h3{font-size:18px;margin:0 0 7px;color:#fff}
+.arcade-future p{font-size:12px;color:#aebed8;line-height:1.6;margin:0}
+.lockerPlayBtn{background:linear-gradient(135deg,#2d856e,#327ab3)!important;border:1px solid #83f4d7aa!important}
+@media(max-width:740px){
+ .arcade-hub{padding:13px 11px 45px}
+ .arcade-banner{grid-template-columns:minmax(0,1fr) 90px;min-height:185px;padding:17px}
+ .arcade-banner h1{font-size:32px}
+ .arcade-banner p{font-size:11px}
+ .arcade-banner-arts img{height:90px;width:60px}
+ .arcade-tiles{grid-template-columns:1fr;gap:11px}
+ .arcade-tile{min-height:unset}
+ .arcade-tile-cover{height:145px}
+ .arcade-tile-cover img{height:130px}
+ .arcade-current{gap:9px;padding:10px}
+ .arcade-current .arcade-chip{margin:0}
+ .arcade-tile h2{font-size:24px}
+ .arcade-tile-text{padding:13px 15px 8px}
+ .arcade-tile footer{padding:11px 14px}
+ .arcade-play{min-width:152px}
+}
+@media(max-width:390px){.arcade-current select{flex:1 1 100%;max-width:100%}.arcade-current .arcade-chip{margin-left:0}.arcade-tile-cover{height:125px}}
