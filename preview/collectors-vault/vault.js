@@ -42,6 +42,7 @@ function setDisplay(){
  document.body.dataset.vaultTheme=prefs.theme;
  document.body.classList.toggle('vault-classic',!!prefs.classic);
  document.body.classList.toggle('vault-motion-off',!!prefs.reducedMotion);
+ document.body.classList.toggle('vault-comfy',prefs.density==='comfy');
  if(!validThemes.includes(prefs.theme))prefs.theme='aurora';
 }
 function renderHome(){
@@ -71,7 +72,8 @@ function renderHome(){
  controls.innerHTML='<span class="vault-main-stats">Browse as</span><div class="vault-pills" role="group" aria-label="Collection display mode">'+
  '<button data-vault-act="cards" aria-pressed="'+(!prefs.classic)+'">Collector Cards</button>'+
  '<button data-vault-act="classic" aria-pressed="'+(!!prefs.classic)+'">Classic Grid</button></div>'+
- '<span class="vault-main-stats">'+allCurrent().length+' collectibles · '+(prefs.classic?'Detailed table':'Family cards')+'</span>';
+ '<div class="vault-pills vault-density-pills" role="group" aria-label="Card display density"><button data-vault-act="density-compact" aria-pressed="'+(prefs.density!=='comfy')+'">Compact</button><button data-vault-act="density-comfy" aria-pressed="'+(prefs.density==='comfy')+'">Comfortable</button></div>'+ 
+ '<span class="vault-main-stats">'+allCurrent().length+' collectibles · '+(prefs.classic?'Detailed table':'Tap cards to track levels')+'</span>';
  }
  renderFeaturedCard(hero);
  const cardHost=qs('#vault-cards');if(cardHost&&!prefs.classic)renderCards(cardHost);
@@ -400,6 +402,7 @@ function actions(event){
  event.preventDefault();event.stopPropagation();
  const act=button.dataset.vaultAct,id=Number(button.dataset.id);
  if(act==='cards'||act==='classic'){prefs.classic=act==='classic';savePrefs();renderHome();return}
+ if(act==='density-compact'||act==='density-comfy'){prefs.density=act==='density-compact'?'compact':'comfy';savePrefs();renderHome();return}
  if(act==='open-museum'){navigate('vault');return}
  if(act==='open-backup'){navigate('vault','#vault-settings');return}
  if(act==='quick-mastery'){navigate('vault','#vault-mastery');return}
@@ -434,6 +437,8 @@ function init(){
  if(typeof SPRITES==='undefined'||typeof renderMain!=='function')throw Error('Original Sprite Locker source must load before Vault Stage controller');
  document.body.classList.add('vault-preview');
  prefs=Object.assign({},DEFAULT,prefs);
+ // Earlier staging builds defaulted to roomy cards; use compact on first visit to this updated preview.
+ if(!prefs.cardDensityVersion){prefs.density='compact';prefs.cardDensityVersion=1;savePrefs()}
  shelves=normalizeShelves(shelves);
  setDisplay();
  const origMain=renderMain,origSetTab=setTab;
