@@ -34,3 +34,18 @@ small and that World 1's data is byte-identical.
 - `tools/validate-levels.js` is a copy of the known-good validator plus the state search; it should be refactored
   into a shared module when the engine is split.
 - Only the water field exists. Heat, wind, charge, growth and echo are proposals.
+
+## Character viewer and pipeline rules (3D track)
+Direct link (staging): `/preview/collectors-vault/arcade-next/3d-viewer/?char=citrus&view=three&ref=1`
+
+- `3d-viewer/registry.json` lists each model with its tier (hero or enemy), the gameplay clip mapping and its
+  provenance (status, licence, SHA-256). It mirrors `arcade/3d/js/roster.js`.
+- `3d-viewer/pipeline-rules.mjs` holds the rules (triangle, joint, material and file-size budgets per tier; exactly
+  one skin; required clips present; scale; SHA-256 integrity; rights). It is pure JS, so Node CI and the browser agree.
+- The viewer shows any registered model from front, 3/4, side, back and top, with turntable, wireframe, skeleton,
+  animation picker and scrubber, an optional "Game look" for Citrus (the game's own `look.js`), and the collection art
+  (`ref=<catalogue id>`) beside the model for comparison.
+- `tools/validate-characters.mjs` (+ `--mutate`) and `tools/qa-viewer.py` run in CI.
+- Models are read from the known-good `arcade/3d/assets/characters/`; nothing is copied or modified.
+- Rights are never silently passed: a model whose provenance is not "cleared" shows WARN. Citrus is WARN until its
+  source files are recovered (see `docs/provenance/citrus.md`).

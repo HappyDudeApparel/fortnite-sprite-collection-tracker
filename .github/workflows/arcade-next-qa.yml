@@ -35,17 +35,23 @@ jobs:
           assert 'spriteArcade.next.2d.progress.v1' in '\n'.join(b) and "'spriteArcade.2d.progress.v1'" not in '\n'.join(b),'preview must not share the real save key'
           print('PASS: levels.js/themes.js identical, engine diff', len(changed), 'lines, save key separate')
           PY
-          for f in preview/collectors-vault/arcade-next/2d/fields.js preview/collectors-vault/arcade-next/2d/levels-next.js preview/collectors-vault/arcade-next/tools/validate-levels.js; do node --check "$f"; done
+          for f in preview/collectors-vault/arcade-next/2d/fields.js preview/collectors-vault/arcade-next/2d/levels-next.js preview/collectors-vault/arcade-next/tools/validate-levels.js preview/collectors-vault/arcade-next/tools/validate-characters.mjs preview/collectors-vault/arcade-next/3d-viewer/viewer.js preview/collectors-vault/arcade-next/3d-viewer/pipeline-rules.mjs; do node --check "$f"; done
       - name: Validate all levels (World 1 physics replay plus Tide Works state search)
         run: node preview/collectors-vault/arcade-next/tools/validate-levels.js
       - name: Mutation tests (the validator must catch a broken room)
         run: node preview/collectors-vault/arcade-next/tools/validate-levels.js --mutate
+      - name: Character pipeline rules (every registered model) and mutation tests
+        run: |
+          node preview/collectors-vault/arcade-next/tools/validate-characters.mjs
+          node preview/collectors-vault/arcade-next/tools/validate-characters.mjs --mutate
       - name: Install browser runner
         run: |
           python -m pip install --quiet playwright
           python -m playwright install --with-deps chromium
       - name: Browser QA in the real game (water tide, dock, drain route end to end, World 1)
         run: python preview/collectors-vault/arcade-next/tools/qa-tide-works.py
+      - name: Browser QA of the character viewer (all models, views, clips, game look, phone)
+        run: python preview/collectors-vault/arcade-next/tools/qa-viewer.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

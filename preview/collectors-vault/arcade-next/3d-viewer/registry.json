@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "purpose": "Registry of 3D characters: tier, gameplay clip mapping and provenance. Mirrors js/roster.js; the viewer and tools/validate-characters.mjs read it.",
+  "basePath": "../../arcade/3d/assets/characters/",
+  "characters": [
+    {
+      "id": "citrus",
+      "name": "Citrus Sprite",
+      "file": "citrus.glb",
+      "tier": "hero",
+      "role": "playable",
+      "family": "Citrus",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walk",
+        "jump": "Jump",
+        "attack": "Bite_InPlace",
+        "hit": "HitRecieve",
+        "win": "Dance"
+      },
+      "gameLook": true,
+      "provenance": {
+        "status": "not-cleared",
+        "summary": "Creator and permissions not established; lineage partly corroborated by August 2026 records (docs/provenance/citrus.md). Not CC0.",
+        "source": "unknown (Blender export, 27-bone SpriteHeroArmature)",
+        "licence": "unknown",
+        "sha256": "2947c5dd0ff1d2fe578192d0fe4a7e31b82d06ba5d0f399d7ab924d4af7efd14"
+      }
+    },
+    {
+      "id": "ghost",
+      "name": "Ghost monster",
+      "file": "ghost.glb",
+      "tier": "enemy",
+      "role": "enemy",
+      "family": "Quaternius monsters",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walk",
+        "attack": "Bite_Front",
+        "hit": "HitRecieve"
+      },
+      "provenance": {
+        "status": "cleared",
+        "summary": "Quaternius 'Cute Animated Monsters Pack' (CC0). Structural and binary match to a public pack mirror; official archive cross-check still optional (see arcade/3d/assets/characters/README.md).",
+        "source": "Quaternius",
+        "licence": "CC0",
+        "sha256": "b676b65e7d87e8f2dade8ecf0afc80161fff0a5142ba1f65a3962cd0cb1b0dfc"
+      }
+    },
+    {
+      "id": "yeti",
+      "name": "Yeti monster",
+      "file": "yeti.glb",
+      "tier": "enemy",
+      "role": "enemy",
+      "family": "Quaternius monsters",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walk",
+        "attack": "Bite_Front",
+        "hit": "HitRecieve"
+      },
+      "provenance": {
+        "status": "cleared",
+        "summary": "Quaternius 'Cute Animated Monsters Pack' (CC0). Structural and binary match to a public pack mirror; official archive cross-check still optional (see arcade/3d/assets/characters/README.md).",
+        "source": "Quaternius",
+        "licence": "CC0",
+        "sha256": "efb56d6ea12501102af685e0649420186e4429294debeda9701bb089f8717d36"
+      }
+    },
+    {
+      "id": "stump",
+      "name": "Stump monster",
+      "file": "stump.glb",
+      "tier": "enemy",
+      "role": "enemy",
+      "family": "Quaternius monsters",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walk",
+        "attack": "Bite_Front",
+        "hit": "HitRecieve"
+      },
+      "provenance": {
+        "status": "cleared",
+        "summary": "Quaternius 'Cute Animated Monsters Pack' (CC0). Structural and binary match to a public pack mirror; official archive cross-check still optional (see arcade/3d/assets/characters/README.md).",
+        "source": "Quaternius",
+        "licence": "CC0",
+        "sha256": "40253b9fa4e4d1eee550b187a63fd5e97665cd00be74bcd005692617a0f66709"
+      }
+    },
+    {
+      "id": "cthulhu",
+      "name": "Cthulhu monster",
+      "file": "cthulhu.glb",
+      "tier": "enemy",
+      "role": "enemy",
+      "family": "Quaternius monsters",
+      "clips": {
+        "idle": "Flying",
+        "walk": "Flying",
+        "attack": "Bite_Front",
+        "hit": "HitRecieve"
+      },
+      "provenance": {
+        "status": "cleared",
+        "summary": "Quaternius 'Cute Animated Monsters Pack' (CC0). Structural and binary match to a public pack mirror; official archive cross-check still optional (see arcade/3d/assets/characters/README.md).",
+        "source": "Quaternius",
+        "licence": "CC0",
+        "sha256": "09657f589cfb6d9a5b81063515e1d878b73c852f493f52cf6fe9f9a042c3348a"
+      }
+    },
+    {
+      "id": "alien",
+      "name": "Alien monster",
+      "file": "alien.glb",
+      "tier": "enemy",
+      "role": "enemy",
+      "family": "Quaternius monsters",
+      "clips": {
+        "idle": "Idle",
+        "walk": "Walk",
+        "attack": "Bite_Front",
+        "hit": "HitRecieve"
+      },
+      "provenance": {
+        "status": "cleared",
+        "summary": "Quaternius 'Cute Animated Monsters Pack' (CC0). Structural and binary match to a public pack mirror; official archive cross-check still optional (see arcade/3d/assets/characters/README.md).",
+        "source": "Quaternius",
+        "licence": "CC0",
+        "sha256": "f4b050ccf10c172e2884868913bd1d5715da6be9d43fc7867a6e6d217bd47e05"
+      }
+    }
+  ]
+}
