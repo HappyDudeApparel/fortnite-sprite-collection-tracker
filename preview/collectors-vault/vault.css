@@ -175,3 +175,6 @@ body.vault-preview.vault-motion-off *,body.vault-preview.vault-motion-off *:befo
 .vault-banner-themes button{border:1px solid #7289ad66;border-radius:999px;background:#172747;color:#c8d7f3;padding:6px 9px;font:900 10px system-ui;cursor:pointer}
 .vault-banner-themes button[aria-pressed="true"]{border-color:#79f8d8;background:#604dd2;color:white;box-shadow:0 0 14px #9b8aff5c}
 @media(max-width:760px){.vault-banner-themes{order:2;width:100%}.vault-banner-themes button{font-size:9px;padding:5px 9px}}
+
+/* Do not invite visitors to install the staging clone as the live PWA. */
+body.vault-preview #installBtn{display:none!important}
