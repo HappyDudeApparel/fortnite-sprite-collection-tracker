@@ -21,7 +21,7 @@ const validThemes=['aurora','museum','arcade'],formats=['portrait','square','lan
 const qs=s=>document.querySelector(s),qsa=s=>Array.from(document.querySelectorAll(s));
 const el=(tag,cls)=>{const n=document.createElement(tag);if(cls)n.className=cls;return n};
 const safe=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const readJSON=(key,fallback)=>{try{const val=JSON.parse(localStorage.getItem(key));return val==null?JSON.parse(JSON.stringify(fallback)):val}catch(_){return fallback==null?null:JSON.parse(JSON.stringify(fallback))}};
+function readJSON(key,fallback){try{const val=JSON.parse(localStorage.getItem(key));return val==null?JSON.parse(JSON.stringify(fallback)):val}catch(_){return fallback==null?null:JSON.parse(JSON.stringify(fallback))}}
 const writeJSON=(key,data)=>{try{localStorage.setItem(key,JSON.stringify(data));return true}catch(err){toast('Storage full: export a backup before making more changes.');return false}};
 const sprite=id=>SPRITES.find(s=>s.id===Number(id));
 const art=s=>s&&s.image?new URL(s.image,document.baseURI).href:'';
