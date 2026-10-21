@@ -3,7 +3,7 @@
 (function(){
 'use strict';
 const PREFIX='vault-stage-v1-';
-const PREFS=PREFIX+'preferences',SHELVES=PREFIX+'shelves',SCHEMA='sprite-collection-locker-vault-backup',BUILD='2.1.0-STAGING';
+const PREFS=PREFIX+'preferences',SHELVES=PREFIX+'shelves',SCHEMA='sprite-collection-locker-vault-backup',BUILD='2.1.1-STAGING';
 const liveKeys={favorites:'sprite-mobile-v33-favorites',levels:'sprite-mobile-v33-levels',selected:'sprite-mobile-v33-selected',bg:'sprite-mobile-v33-bg',title:'sprite-mobile-v33-title',viewMode:'scl-clean-view-mode',exportName:'sprite-mobile-v34-export-name'};
 const stageKeys={favorites:PREFIX+'favorites',levels:PREFIX+'levels',selected:PREFIX+'selected',bg:PREFIX+'bg',title:PREFIX+'title',viewMode:PREFIX+'viewMode',exportName:PREFIX+'export-name'};
 const DEFAULT={theme:'aurora',classic:false,reducedMotion:false,sound:false,featured:null,shareSprite:null,shareFormat:'portrait',density:'comfy'};
@@ -73,7 +73,30 @@ function renderHome(){
  '<button data-vault-act="classic" aria-pressed="'+(!!prefs.classic)+'">Classic Grid</button></div>'+
  '<span class="vault-main-stats">'+allCurrent().length+' collectibles · '+(prefs.classic?'Detailed table':'Family cards')+'</span>';
  }
+ renderFeaturedCard(hero);
  const cardHost=qs('#vault-cards');if(cardHost&&!prefs.classic)renderCards(cardHost);
+}
+function fullVariantLabel(key){
+ return ({Cheat:'Cheat Master',Hacker:'Loot Hacker',Bounty:'Bounty Hunter',Trick:'Trick or Treat'})[key]||key;
+}
+function renderFeaturedCard(featured){
+ const host=qs('#vault-featured-preview');if(!host||!featured)return;
+ const s=featured,rarity=(s.rarity||'Collectible'),rarityToken=rarity.toLowerCase().replace(/[^a-z0-9_-]/g,'');
+ const power=s.effect||s.description||'Explore this Sprite’s original abilities and collectible variants.';
+ host.innerHTML='<div class="vault-featured-copy">'+
+ '<div class="vault-overline">FEATURED • COLLECTOR CARD CONCEPT</div>'+
+ '<h2 class="vault-featured-title">The collection deserves<br><em>a signature card.</em></h2>'+
+ '<p class="vault-intro">Authentic Sprite art, original variant emblems, recorded rarity, real powers and collector progress — without invented game statistics.</p>'+
+ '<p class="vault-intro" style="margin-top:9px">Tap variants in the compact family cards below to cycle <b>Missing → Lv. 1 → 2 → 3 → 4 → 5 → Missing</b>. Open Details separately.</p>'+
+ '<div class="vault-dashboard-actions"><button class="vault-button primary" data-vault-act="open-card-studio">Customize & Download Card ↗</button>'+
+ '<button class="vault-button slim" data-vault-act="featured-detail" data-id="'+s.id+'">View Sprite Details</button></div></div>'+
+ '<div class="vault-featured-artbox"><div class="vault-collectible-card rarity-'+safe(rarityToken)+'" aria-label="'+safe(s.name)+' premium collectible card">'+
+ '<span class="vault-collectible-eyebrow">✧ SPRITE COLLECTION LOCKER <span>● '+safe(s.season)+'</span></span>'+
+ '<div class="vault-collectible-art"><img src="'+safe(art(s))+'" alt="'+safe(s.name)+'"></div>'+
+ '<div class="vault-collectible-info"><span class="vault-collectible-variant"><span class="dot v-'+safe(s.variantKey)+'" aria-hidden="true"></span>'+safe(fullVariantLabel(s.variantKey))+'</span>'+
+ '<h3>'+safe(s.family)+'</h3><div class="vault-collectible-rarity">'+safe(rarity)+' · '+safe(s.season)+'</div>'+
+ '<p>'+safe(power.length>120?power.slice(0,117)+'…':power)+'</p></div>'+
+ '<div class="vault-collectible-foot"><span>FAN COLLECTION SHOWCASE</span><span>'+ (found(s)?'✓ LV '+levelOf(s):'◇ NOT OWNED')+'</span></div></div></div>';
 }
 function renderCards(host){
  const families=filteredFamilies().filter(f=>familyVisibleInMode(f));let html='';
@@ -85,18 +108,21 @@ function renderCards(host){
   html+='<article class="vault-card '+(met===records.length&&met>0?'mastered':'')+'" data-vault-family="'+safe(family)+'">'+
    '<div class="vault-card-header"><img class="vault-card-hero" src="'+safe(art(base))+'" alt="'+safe(base.name)+'" loading="lazy">'+
    '<div class="vault-card-info"><h3>'+safe(family)+'</h3><p>'+got+' / '+records.length+' collected · '+met+' mastered</p></div>'+
-   '<button class="vault-mini-button" data-vault-act="family-detail" data-id="'+base.id+'" aria-label="Open '+safe(family)+' details">Details ↗</button></div>'+
+   '<button class="vault-mini-button vault-card-details" data-vault-act="family-detail" data-id="'+base.id+'" aria-label="Open '+safe(family)+' details">Details ↗</button></div>'+
    '<div class="vault-card-progress"><span style="width:'+pct+'%"></span></div><div class="vault-card-variants">';
   for(const r of shown){
-    const state=found(r)?mastered(r)?'mastered':'found':'missing';
-    html+='<button class="vault-chip '+(found(r)?'found ':'')+(mastered(r)?'mastered':'')+'" data-vault-act="variant-detail" data-id="'+r.id+'" title="View '+safe(r.name)+'">'+
+    const interactive=isLevelInteractive(r),lv=found(r)?levelOf(r):0;
+    const action=interactive?'cycle-variant':'variant-detail';
+    const next=lv===0?'Level 1':lv===5?'not owned':'Level '+(lv+1);
+    const pips='<span class="vault-chip-pips" aria-hidden="true">'+[1,2,3,4,5].map(i=>'<i class="'+(i<=lv?'on':'')+'"></i>').join('')+'</span>';
+    html+='<button class="vault-chip '+(found(r)?'found ':'')+(mastered(r)?'mastered':'')+'" data-vault-act="'+action+'" data-id="'+r.id+'" title="'+safe(r.name)+' — '+(interactive?'Tap for '+next:'Open details')+'" aria-label="'+safe(r.name)+': '+(lv?'Level '+lv:'Not owned')+'. '+(interactive?'Tap to cycle to '+next:'Open details')+'">'+
     '<span class="dot v-'+safe(r.variantKey)+'" aria-hidden="true"></span>'+
     '<img src="'+safe(art(r))+'" alt="" loading="lazy">'+
-    '<span class="vault-chip-label">'+safe(r.variantKey==='Cheat'?'Cheat Master':r.variantKey==='Hacker'?'Loot Hacker':r.variantKey==='Bounty'?'Bounty Hunter':r.variantKey==='Trick'?'Trick or Treat':r.variantKey)+'</span>'+
-    '<span class="vault-chip-status">'+(found(r)?'Lv '+levelOf(r):state==='missing'?'Not owned':state)+'</span></button>';
+    '<span class="vault-chip-label">'+safe(fullVariantLabel(r.variantKey))+'</span>'+
+    '<span class="vault-chip-status">'+(lv?'LV '+lv:'—')+'</span>'+pips+'</button>';
   }
   html+='</div><div class="vault-card-actions"><span class="vault-main-stats">'+pct+'% complete</span>'+
-     '<button class="vault-mini-button" data-vault-act="expand-family" data-family="'+safe(family)+'" aria-expanded="'+(expandedFamilies.has(family)?'true':'false')+'">'+(expandedFamilies.has(family)?'Hide levels':'Manage levels')+' ↓</button></div>';
+     '<button class="vault-mini-button" data-vault-act="expand-family" data-family="'+safe(family)+'" aria-expanded="'+(expandedFamilies.has(family)?'true':'false')+'">'+(expandedFamilies.has(family)?'Hide level editor':'Level editor')+' ↓</button></div>';
   html+='<div class="vault-card-detail" '+(expandedFamilies.has(family)?'':'hidden')+'>';
   for(const r of records){
    const levelsHtml=[1,2,3,4,5].map(i=>'<option value="'+i+'"'+(i===levelOf(r)?' selected':'')+'>'+i+'</option>').join('');
@@ -109,6 +135,14 @@ function renderCards(host){
  host.innerHTML=html||'<div class="vault-panel" style="grid-column:1/-1;padding:26px;color:#aebfdb">No families match your current search or collection filter.</div>';
 }
 let expandedFamilies=new Set();
+function cycleCardVariant(id){
+ const x=sprite(id);if(!x||!isLevelInteractive(x))return;
+ const was=mastered(x);
+ // Exactly the same ownership and level transitions as the Classic Grid.
+ cycleSmall(x);
+ if(!was&&mastered(x))celebrate();
+ // Replace the card in-place through renderMain's existing synchronization.
+}
 function toggleOwned(id){
  const x=sprite(id);if(!x||!isCollectible(x))return;
  const was=mastered(x);
@@ -369,7 +403,9 @@ function actions(event){
  if(act==='open-museum'){navigate('vault');return}
  if(act==='open-backup'){navigate('vault','#vault-settings');return}
  if(act==='quick-mastery'){navigate('vault','#vault-mastery');return}
- if(act==='family-detail'||act==='variant-detail'){if(sprite(id))openDetail(id);return}
+ if(act==='cycle-variant'){cycleCardVariant(id);return}
+ if(act==='family-detail'||act==='variant-detail'||act==='featured-detail'){if(sprite(id))openDetail(id);return}
+ if(act==='open-card-studio'){prefs.shareSprite=chosenHero().id;prefs.shareFormat='portrait';savePrefs();navigate('vault','#vault-share');return}
  if(act==='expand-family'){const fam=button.dataset.family;if(expandedFamilies.has(fam))expandedFamilies.delete(fam);else expandedFamilies.add(fam);renderHome();return}
  if(act==='toggle-owned'){toggleOwned(id);return}
  if(act==='theme'){prefs.theme=button.dataset.theme;savePrefs();setDisplay();renderMuseum();renderHome();return}
