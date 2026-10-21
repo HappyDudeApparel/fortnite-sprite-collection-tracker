@@ -42,8 +42,8 @@
   '<div class="arcade-tiles"><article class="arcade-tile two"><div class="arcade-tile-cover">'+
   '<span class="arcade-tile-label">2D • CANVAS PLATFORMER</span>'+
   '<img src="'+escape(img('Water'))+'" alt=""><img src="'+escape(img('Earth'))+'" alt=""></div>'+
-  '<div class="arcade-tile-text"><div class="vault-overline">18 ORIGINAL PLAYABLE SPRITES</div><h2>Sprite Platformer</h2>'+
-  '<p>Side-scrolling gameplay with destructible bricks, hazards, enemies and unique prototype powers. New experimental arm-and-leg animation is enabled; switch it off to compare the untouched artwork.</p>'+
+  '<div class="arcade-tile-text"><div class="vault-overline">18 PLAYABLE SPRITES · 5 LEVELS</div><h2>Sprite Platformer</h2>'+
+  '<p>Five levels — meadow, crystal caverns, sky islands, a lava foundry and an icy pass — with gems, moving platforms, bounce pads, destructible bricks, enemies and unique prototype powers. Experimental arm-and-leg animation is on; switch it off to compare the untouched artwork.</p>'+
   (ok2?'<p><strong>✓ '+escape(x.name)+'</strong> is ready to play using the '+escape(x.family)+' family prototype move.</p>':
    '<p><strong>'+escape(x.name)+'</strong> is not one of the 18 original playable families yet. The game opens its original character-select screen instead.</p>')+
   '</div><footer><span class="arcade-play-meta">Touch + keyboard<br>Landscape recommended</span><a class="arcade-play" id="arcade2dLink" href="'+escape(gameHref('2d',x))+'">▶ '+(ok2?'PLAY 2D':'CHOOSE 2D SPRITE')+'</a></footer></article>'+

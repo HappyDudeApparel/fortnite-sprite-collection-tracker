@@ -13,12 +13,31 @@
 
 The playable staging versions are separate files. Preserve the archived copies for regression and fidelity checks.
 
-## 2D playable v0.4
-- Original 18 playable Sprite families and unique original prototype power definitions retained; one long scrollable platformer with enemies, hazards, destruction, checkpoints and tube objective.
-- Articulated image-piece animation now separately moves both side-arm regions and both lower-leg regions while preserving all artwork pixels. Gentle action response, walking gait, air pose, motion toggle and OS reduced-motion preference.
-- `?sprite=<collection record id>` selects a character through `arcade/catalog.json`, swaps in that record’s **authentic corresponding variant artwork** and auto-starts the matching original-family prototype move.
-- Unsupported Sprite families retain the original 18-family character-select screen; no imaginary "canonical" power has been invented. Abilities in this legacy prototype are original fan-game attacks, not an assertion of Epic’s official ability definitions.
+## 2D playable v0.5 — five-level pack
+- Original 18 playable Sprite families and unique original prototype power definitions retained. Choose a Sprite, then choose a level; clearing a level unlocks the next (a **testing** toggle on the level screen unlocks all). Progress, stars and best gem counts are saved in the browser only (`localStorage`); nothing touches the Locker or any account.
+- Articulated image-piece animation separately moves both side-arm regions and both lower-leg regions while preserving all artwork pixels. Motion toggle and OS reduced-motion preference retained.
+- `?sprite=<collection record id>` still selects a character through `arcade/catalog.json`, swaps in that record's **authentic corresponding variant artwork** and auto-starts the matching original-family prototype move. Add `&level=N` (1–5) to pick the level; the default is level 1.
+- Unsupported Sprite families retain the original 18-family character-select screen; no imaginary "canonical" power has been invented. Abilities in this legacy prototype are original fan-game attacks, not an assertion of Epic's official ability definitions.
 - Handheld touch controls and keyboard remain intact; landscape recommended.
+
+### The levels (original to Sprite Arcade; no Adventure Mountain names or layouts)
+| # | Level | Theme | New in this level |
+|---|---|---|---|
+| 1 | Sunflower Run | Meadow, river gorge, collection facility | The original July level, kept intact, plus gems |
+| 2 | Lumen Caverns | Glowing crystal cave | Ferry platform, crumbling crystal steps, bounce pads, pits |
+| 3 | Cloudspire Climb | Sky islands | No ground to fall back on: moving clouds, a lift cloud, crumbling clouds, pads |
+| 4 | Cinder Works | Lava foundry | Lava floor, girder ferries, a rising lift, crumbling grates |
+| 5 | Frostline Pass | Snow and ice | Slippery ice, icicle hazards, ferry floes, pad shortcut, finale gauntlet |
+
+Every level has parallax backdrops (static sky + three tiling depth layers), ambient particles (motes, clouds, embers or snow), themed platform and hazard skins, per-level checkpoints, and gems with a three-star rating (★ finish · ★★ at least 70% of gems · ★★★ every gem).
+
+### Mechanics added to the engine
+Moving platforms (riders are carried), crumbling platforms (shake ~0.6 s, vanish, return after ~2.6 s), bounce pads (a pad launch ignores the short-hop cut), lava, ice (slippery ground), collectible gems, level select, level-complete card, and a parallax/ambient renderer. Existing power, enemy, brick, boulder, crystal and tube logic is unchanged.
+
+### Authoring and validating levels
+- Levels are plain data in `2d/levels.js` (no DOM). Looks are in `2d/themes.js`.
+- `node preview/collectors-vault/arcade/tools/validate-levels.js` replays the game's own physics (same constants and collision rules) from every standing spot, trying walking, jumps, double jumps, pads and moving platforms at random phases. It **fails the build** unless the tube and every gem are reachable from the spawn, and also checks that enemies, checkpoints, the tube, pads and hazards sit on real ground and that props don't overlap. `--struct` runs only the fast structural checks.
+- The validator treats bricks, boulders and crystals as passable because every power destroys them. It does not model enemy damage or timing-based mover alignment beyond random phase sampling, so a human playtest is still the final word on difficulty.
 
 ## 3D playable v0.3
 - Original bundled Three.js/WebGL arena preserved with movement, touch joystick, jumping, charged prototype shockwave, opponents, destruction and tube objective.
@@ -47,9 +66,9 @@ Higgsfield offers genuine 3D generation workflows beyond simple 2D pictures, inc
 
 ## Development priorities (not all complete)
 1. Finish automated browser and visual QA on mobile and desktop.
-2. Iteratively improve 2D puppet masks/joints/posed action animation from actual in-game captures.
+2. Iteratively improve 2D puppet masks/joints/posed action animation from actual in-game captures, and give Sunflower Run the same layered parallax treatment as levels 2–5.
 3. Implement proper 3D rigging, animation, per-Sprite abilities and controller, with real models only after independent canon-accuracy checks.
-4. Design and playtest several distinct, compact Fortnite-inspired challenges; **do not import GB locations or name vocabulary**. Author navigation and hazard puzzles, verify reset/respawn, accessible route and sustained frame rate before expanding.
+4. Human playtest of the five 2D levels for difficulty and feel (the validator proves completability, not fun); tune checkpoints, enemy counts and ice behaviour from that feedback. Then design the 3D arena levels the same way; **do not import GB locations or name vocabulary**.
 5. Review rightsholder fan-content permissions and get approval before promoting any game to production.
 
 ## Smoke test

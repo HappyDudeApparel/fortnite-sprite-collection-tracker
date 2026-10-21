@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#071521">
-<title>Sprite Arcade — 2D Platformer v0.4 Staging</title>
+<title>Sprite Arcade — 2D Platformer v0.5 Staging</title>
 <style>
 :root {
   color-scheme: dark;
@@ -161,10 +161,49 @@ button { font: inherit; }
   #changeCharacter { top: 8px; right: 8px; }
   #banner { top: 8px; }
 }
+
+#menuButtons { position: absolute; z-index: 31; top: 12px; right: clamp(172px, 19vw, 244px); display: flex; gap: 8px; }
+#menuButtons button {
+  position: static; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; color: #eafaff;
+  background: var(--glass); font-weight: 850; font-size: clamp(9px, 1.35vw, 12px); cursor: pointer;
+}
+@media (max-height: 640px), (max-width: 1180px) { #banner { top: 112px; } }
+.hud-level { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: clamp(9px, 1.25vw, 11px); font-weight: 900; letter-spacing: .04em; color: #bfe9ff; }
+#gemCount { color: #ffe27a; }
+#levels, #complete { z-index: 42; }
+#levels { display: flex; flex-direction: column; gap: 10px; padding: clamp(12px, 2.2vh, 20px) clamp(14px, 2.5vw, 28px) clamp(10px, 2vh, 16px); background: linear-gradient(180deg, rgba(5,14,23,.46), rgba(5,14,23,.82)); backdrop-filter: blur(3px); }
+#levelGrid { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(6px, 1vw, 14px); align-items: stretch; align-content: center; }
+.level-card {
+  position: relative; min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 0; overflow: hidden; text-align: left; color: var(--text);
+  border: 1px solid var(--line); border-radius: clamp(10px, 1.3vw, 16px); cursor: pointer; background: rgba(8,22,35,.88);
+  box-shadow: 0 8px 22px rgba(0,0,0,.3); transition: transform .12s ease, border-color .12s ease;
+}
+.level-card:hover:not(:disabled) { transform: translateY(-3px); border-color: #9defff; }
+.level-card:disabled { cursor: not-allowed; filter: saturate(.25) brightness(.6); }
+.level-card canvas { width: 100%; flex: 0 0 auto; aspect-ratio: 5 / 6; display: block; }
+.level-copy { flex: 1 1 auto; align-content: start; padding: clamp(5px, .9vh, 9px) clamp(6px, .9vw, 11px) clamp(6px, 1vh, 10px); display: grid; gap: 2px; }
+.level-copy small.n { color: #8fdcff; font-weight: 900; font-size: clamp(8px, 1.2vh, 11px); letter-spacing: .08em; }
+.level-copy strong { font-size: clamp(11px, 1.9vh, 16px); line-height: 1.1; }
+.level-copy .tag { color: #b8d2df; font-size: clamp(8px, 1.3vh, 11px); line-height: 1.25; }
+.level-copy .stats { display: flex; justify-content: space-between; gap: 6px; font-size: clamp(9px, 1.5vh, 13px); font-weight: 900; color: #ffe27a; }
+.level-lock { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 4px; background: rgba(4,10,18,.55); font-weight: 900; font-size: clamp(9px, 1.5vh, 13px); text-align: center; padding: 8px; }
+.level-lock b { font-size: clamp(18px, 4vh, 34px); }
+.levels-footer { flex: 0 0 auto; display: flex; justify-content: space-between; gap: 10px; }
+.levels-footer button, .complete-buttons button {
+  padding: 9px 14px; border: 1px solid var(--line); border-radius: 12px; color: #eafaff; background: var(--glass); font-weight: 850; font-size: clamp(9px, 1.5vh, 13px); cursor: pointer;
+}
+.levels-footer button[aria-pressed="true"] { border-color: #ffe27a; color: #ffe27a; }
+#complete { display: grid; place-items: center; background: rgba(4,12,20,.62); backdrop-filter: blur(3px); }
+.complete-card { width: min(460px, 86%); padding: clamp(14px, 3vh, 28px); text-align: center; border-radius: 24px; background: rgba(7,18,29,.9); border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(0,0,0,.45); }
+.complete-card h2 { margin: 0; font-size: clamp(20px, 4vh, 32px); letter-spacing: .06em; }
+#completeStars { margin: 6px 0 2px; font-size: clamp(30px, 7vh, 54px); color: #ffe27a; text-shadow: 0 4px 18px rgba(255,200,60,.5); letter-spacing: 6px; }
+#completeStats { margin: 4px 0 12px; color: #cfe6f1; font-size: clamp(10px, 1.8vh, 14px); line-height: 1.6; }
+.complete-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.complete-buttons button#completeNext { border-color: #9defff; background: linear-gradient(145deg, #1c6f8c, #164e6a); }
 </style>
 <style id="arcade-2d-staging-ui">
 #arcadeBack{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));z-index:180;color:#f1fdff;background:#0b1f34d9;border:1px solid #7ce5f7ad;padding:9px 12px;border-radius:999px;text-decoration:none;font:bold 11px system-ui;box-shadow:0 4px 16px #0007}
-#arcadeMove{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:180;color:#dcfaff;background:#0b1f34c9;border:1px solid #7ce5f777;padding:9px 12px;border-radius:999px;font:bold 11px system-ui;cursor:pointer}
+#arcadeMove{position:fixed;top:max(8px,env(safe-area-inset-top));right:calc(max(8px,env(safe-area-inset-right)) + clamp(76px,8.6vw,112px));z-index:180;color:#dcfaff;background:#0b1f34c9;border:1px solid #7ce5f777;padding:9px 12px;border-radius:999px;font:bold 11px system-ui;cursor:pointer}
 #arcadeNote{position:fixed;z-index:190;bottom:6px;left:50%;transform:translateX(-50%);background:#0a182ad9;border:1px solid #88ddfa73;border-radius:12px;padding:7px 10px;color:#d7edfa;font:700 10px system-ui;max-width:78vw;text-align:center;pointer-events:none}
 @media (max-width:700px){#arcadeBack,#arcadeMove{font-size:10px;padding:7px}#arcadeNote{font-size:8px;padding:5px}}
 </style>
@@ -180,7 +219,7 @@ button { font: inherit; }
     <div class="boot-card">
       <div class="loader" aria-hidden="true"></div>
       <h1>Building the panorama…</h1>
-      <p>Loading 18 Sprites, their unique powers, enemies, and the collection-tube level.</p>
+      <p>Loading 18 Sprites, their unique powers, enemies, and the five-level Arcade pack.</p>
     </div>
   </section>
 
@@ -200,6 +239,31 @@ button { font: inherit; }
     <footer class="select-footer">Move: arrows or A/D · Jump: Z, W, Space, or ▲ · Power: X, J, K, or POWER</footer>
   </section>
 
+  <section id="levels" class="overlay" hidden>
+    <header class="select-heading">
+      <h1>CHOOSE A LEVEL</h1>
+      <p id="levelsSub"></p>
+    </header>
+    <div id="levelGrid"></div>
+    <footer class="levels-footer">
+      <button id="levelsBack" type="button">← Choose Sprite</button>
+      <button id="unlockAll" type="button" aria-pressed="false">Unlock all levels (testing)</button>
+    </footer>
+  </section>
+
+  <section id="complete" class="overlay" hidden>
+    <div class="complete-card">
+      <h2 id="completeTitle">LEVEL COMPLETE</h2>
+      <div id="completeStars" aria-label="Star rating"></div>
+      <p id="completeStats"></p>
+      <div class="complete-buttons">
+        <button id="completeNext" type="button">NEXT LEVEL ▶</button>
+        <button id="completeReplay" type="button">REPLAY</button>
+        <button id="completeLevels" type="button">LEVELS</button>
+      </div>
+    </div>
+  </section>
+
   <section id="hud" class="overlay" hidden>
     <div class="hud-card">
       <div class="hud-top"><span id="characterName"></span><span id="hearts"></span></div>
@@ -209,10 +273,14 @@ button { font: inherit; }
         <div class="cooldown-track"><div id="cooldownFill"></div></div>
         <span id="cooldownText">READY</span>
       </div>
+      <div class="hud-level"><span id="levelName"></span><span id="gemCount"></span></div>
     </div>
   </section>
 
-  <button id="changeCharacter" type="button" hidden>CHANGE SPRITE</button>
+  <div id="menuButtons">
+    <button id="levelsButton" type="button" hidden>LEVELS</button>
+    <button id="changeCharacter" type="button" hidden>CHANGE SPRITE</button>
+  </div>
   <div id="banner" hidden><span id="bannerText"></span></div>
 
   <section id="controls" class="overlay" hidden>
@@ -227,6 +295,8 @@ button { font: inherit; }
   </section>
 </div>
 <div id="rotateHint">Rotate to landscape for the full level view.</div>
+<script src="levels.js"></script>
+<script src="themes.js"></script>
 <script>
 'use strict';
 
@@ -237,7 +307,7 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
 const W = 960;
 const H = 540;
-const WORLD_W = 4096;
+let WORLD_W = 4096;
 const GRAVITY = 1420;
 const MAX_FALL = 780;
 const GROUND_Y = 470;
@@ -260,6 +330,19 @@ const ui = {
   change: document.getElementById('changeCharacter'),
   banner: document.getElementById('banner'),
   bannerText: document.getElementById('bannerText'),
+  levels: document.getElementById('levels'),
+  levelGrid: document.getElementById('levelGrid'),
+  levelsSub: document.getElementById('levelsSub'),
+  levelsBtn: document.getElementById('levelsButton'),
+  levelsBack: document.getElementById('levelsBack'),
+  unlockAll: document.getElementById('unlockAll'),
+  complete: document.getElementById('complete'),
+  completeTitle: document.getElementById('completeTitle'),
+  completeStars: document.getElementById('completeStars'),
+  completeStats: document.getElementById('completeStats'),
+  completeNext: document.getElementById('completeNext'),
+  levelName: document.getElementById('levelName'),
+  gemCount: document.getElementById('gemCount'),
 };
 
 const imageMap = new Map();
@@ -352,9 +435,10 @@ function startLoading() {
       panorama = buildPanorama();
       buildSelectionGrid();
       ui.boot.hidden = true;
-      const requested = new URLSearchParams(location.search).get('autostart');
+      const params = new URLSearchParams(location.search);
+      const requested = params.get('autostart');
       if (requested && CHARACTER_BY_ID.has(requested)) {
-        startGame(requested);
+        startGame(requested, (Number(params.get('level')) || 1) - 1);
       } else {
         showSelection();
       }
@@ -711,7 +795,7 @@ function buildSelectionGrid() {
     power.textContent = ability.name;
     copy.append(name, power);
     button.append(image, copy);
-    button.addEventListener('click', () => startGame(character.id));
+    button.addEventListener('click', () => showLevels(character.id));
     ui.grid.append(button);
   }
 }
@@ -724,6 +808,9 @@ function showSelection() {
   ui.hud.hidden = true;
   ui.controls.hidden = true;
   ui.change.hidden = true;
+  ui.levelsBtn.hidden = true;
+  ui.levels.hidden = true;
+  ui.complete.hidden = true;
   ui.banner.hidden = true;
   input.left = false;
   input.right = false;
@@ -732,41 +819,255 @@ function showSelection() {
   drawSelectionBackdrop();
 }
 
-function startGame(characterId) {
+// ------------------------------------------------------------------ level pack
+const LEVELS = window.SPRITE_LEVELS || [];
+const THEMES = window.SPRITE_THEMES || null;
+const PROGRESS_KEY = 'spriteArcade.2d.progress.v1';
+let pickedCharacterId = null;
+let completedLevelIndex = 0;
+
+function readProgress() {
+  try {
+    const value = JSON.parse(localStorage.getItem(PROGRESS_KEY));
+    if (value && typeof value === 'object') return { levels: value.levels || {}, unlockAll: !!value.unlockAll };
+  } catch (_) { /* storage unavailable: progress just won't persist */ }
+  return { levels: {}, unlockAll: false };
+}
+let progress = readProgress();
+function writeProgress() {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); } catch (_) { /* no-op */ }
+}
+function levelUnlocked(index) {
+  return index === 0 || progress.unlockAll || !!progress.levels[LEVELS[index - 1].id];
+}
+function starText(count) { return '★'.repeat(count) + '☆'.repeat(3 - count); }
+
+function hexToRgba(hex, alpha) {
+  const value = parseInt(hex.slice(1), 16);
+  return `rgba(${value >> 16 & 255},${value >> 8 & 255},${value & 255},${alpha})`;
+}
+
+function groundBelow(x, y) {
+  let best = Infinity;
+  for (const platform of game.platforms) {
+    if (platform.active === false) continue;
+    if (x >= platform.x && x <= platform.x + platform.w && platform.y >= y - 6 && platform.y < best) best = platform.y;
+  }
+  return best;
+}
+
+function clonePlatform(source) {
+  const platform = Object.assign({}, source);
+  if (source.mover) {
+    const mover = source.mover;
+    platform.baseX = source.x;
+    platform.baseY = source.y;
+    const offset = Math.sin(mover.phase || 0) * mover.range;
+    if (mover.axis === 'x') platform.x += offset; else platform.y += offset;
+  }
+  if (source.crumble) {
+    platform.state = 'solid';
+    platform.timer = 0;
+    platform.active = true;
+  }
+  return platform;
+}
+
+function createAmbient(level) {
+  const spec = level.theme.ambient;
+  if (!spec) return [];
+  return Array.from({ length: spec.count }, () => ({
+    kind: spec.kind,
+    color: spec.color,
+    x: rand(0, W),
+    y: rand(0, H),
+    z: rand(0.35, 1),
+    phase: rand(0, TAU),
+  }));
+}
+
+function createAbyss(level) {
+  const color = level.theme.fogBottom;
+  if (!color) return null;
+  const strip = document.createElement('canvas');
+  strip.width = 4;
+  strip.height = 150;
+  const g = strip.getContext('2d');
+  const gradient = g.createLinearGradient(0, 0, 0, 150);
+  gradient.addColorStop(0, hexToRgba(color, 0));
+  gradient.addColorStop(1, hexToRgba(color, level.theme.palette === 'sky' ? 0.9 : 0.55));
+  g.fillStyle = gradient;
+  g.fillRect(0, 0, 4, 150);
+  return strip;
+}
+
+function showLevels(characterId) {
+  if (characterId) pickedCharacterId = characterId;
+  if (!pickedCharacterId) { showSelection(); return; }
+  mode = 'levels';
+  cancelAnimationFrame(rafId);
+  game = null;
+  ui.select.hidden = true;
+  ui.complete.hidden = true;
+  ui.levels.hidden = false;
+  ui.hud.hidden = true;
+  ui.controls.hidden = true;
+  ui.change.hidden = true;
+  ui.levelsBtn.hidden = true;
+  ui.banner.hidden = true;
+  input.left = false;
+  input.right = false;
+  input.jumpHeld = false;
+  input.actionHeld = false;
+  const character = CHARACTER_BY_ID.get(pickedCharacterId);
+  ui.levelsSub.textContent = `Playing as ${character ? character.name : 'a Sprite'} · clear a level to unlock the next · ★ finish · ★★ 70% gems · ★★★ every gem`;
+  buildLevelGrid();
+  drawSelectionBackdrop();
+}
+
+const previewCache = new Map();
+// Cards show the level's real backdrop (cropped), built once and cached.
+function paintLevelPreview(canvas, level) {
+  let art = previewCache.get(level.id);
+  if (!art) {
+    art = document.createElement('canvas');
+    art.width = canvas.width;
+    art.height = canvas.height;
+    const g = art.getContext('2d');
+    const scale = art.height / H;
+    const srcW = art.width / scale;
+    const srcX = (W - srcW) / 2;
+    const backdrop = level.theme.legacy || !THEMES ? null : THEMES.build(level);
+    if (backdrop) {
+      g.save();
+      g.scale(scale, scale);
+      g.translate(-srcX, 0);
+      g.drawImage(backdrop.sky, 0, 0);
+      for (const layer of backdrop.layers) {
+        const width = layer.img.width;
+        const offset = (900 * layer.speed) % width;
+        g.drawImage(layer.img, -offset, 0);
+        g.drawImage(layer.img, width - offset, 0);
+      }
+      g.restore();
+    } else if (panorama) {
+      g.drawImage(panorama, 380, 0, srcW, H, 0, 0, art.width, art.height);
+    } else if (THEMES) {
+      THEMES.paintPreview(art, level);
+    }
+    previewCache.set(level.id, art);
+  }
+  canvas.getContext('2d').drawImage(art, 0, 0);
+}
+
+function buildLevelGrid() {
+  ui.levelGrid.textContent = '';
+  ui.unlockAll.setAttribute('aria-pressed', String(progress.unlockAll));
+  LEVELS.forEach((level, index) => {
+    const best = progress.levels[level.id];
+    const unlocked = levelUnlocked(index);
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'level-card';
+    card.disabled = !unlocked;
+    const preview = document.createElement('canvas');
+    preview.width = 280;
+    preview.height = 336;
+    paintLevelPreview(preview, level);
+    const copy = document.createElement('div');
+    copy.className = 'level-copy';
+    copy.innerHTML = '<small class="n"></small><strong></strong><span class="tag"></span><span class="stats"><span class="st"></span><span class="gm"></span></span>';
+    copy.querySelector('.n').textContent = `LEVEL ${index + 1}`;
+    copy.querySelector('strong').textContent = level.name;
+    copy.querySelector('.tag').textContent = level.tagline;
+    copy.querySelector('.st').textContent = starText(best ? best.stars : 0);
+    copy.querySelector('.gm').textContent = `✦ ${best ? best.gems : 0}/${level.gems.length}`;
+    card.append(preview, copy);
+    if (!unlocked) {
+      const lock = document.createElement('div');
+      lock.className = 'level-lock';
+      lock.innerHTML = '<b>🔒</b><span>Clear the previous level</span>';
+      card.append(lock);
+    }
+    card.addEventListener('click', () => startGame(pickedCharacterId, index));
+    ui.levelGrid.append(card);
+  });
+}
+
+function completeLevel() {
+  const level = game.level;
+  const total = game.gems.length;
+  const got = game.gemCount;
+  const stars = 1 + (got >= Math.ceil(total * 0.7) ? 1 : 0) + (got >= total ? 1 : 0);
+  const time = game.time;
+  const previous = progress.levels[level.id] || {};
+  const improvedTime = previous.time ? Math.min(previous.time, time) : time;
+  progress.levels[level.id] = { stars: Math.max(previous.stars || 0, stars), gems: Math.max(previous.gems || 0, got), time: improvedTime };
+  writeProgress();
+  completedLevelIndex = game.levelIndex;
+  const last = completedLevelIndex >= LEVELS.length - 1;
+  mode = 'complete';
+  cancelAnimationFrame(rafId);
+  game = null;
+  ui.hud.hidden = true;
+  ui.controls.hidden = true;
+  ui.change.hidden = true;
+  ui.levelsBtn.hidden = true;
+  ui.banner.hidden = true;
+  input.left = false;
+  input.right = false;
+  input.jumpHeld = false;
+  input.actionHeld = false;
+  ui.completeTitle.textContent = last ? 'ALL LEVELS CLEARED!' : 'LEVEL COMPLETE';
+  ui.completeStars.textContent = starText(stars);
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+  ui.completeStats.textContent = `${level.name}\n✦ ${got}/${total} gems · time ${minutes}:${seconds}` + (stars < 3 ? '\nReplay to collect every gem for ★★★' : '\nPerfect run!');
+  ui.completeStats.style.whiteSpace = 'pre-line';
+  ui.completeNext.hidden = last;
+  ui.complete.hidden = false;
+  drawSelectionBackdrop();
+}
+
+function startGame(characterId, levelIndex = 0) {
   const character = CHARACTER_BY_ID.get(characterId) || CHARACTERS[0];
-  game = createGame(character);
+  pickedCharacterId = character.id;
+  const index = clamp(Math.floor(levelIndex) || 0, 0, LEVELS.length - 1);
+  game = createGame(character, index);
   mode = 'game';
   ui.select.hidden = true;
+  ui.levels.hidden = true;
+  ui.complete.hidden = true;
   ui.hud.hidden = false;
   ui.controls.hidden = false;
   ui.change.hidden = false;
+  ui.levelsBtn.hidden = false;
   ui.characterName.textContent = character.name;
   ui.abilityName.textContent = game.ability.name;
   ui.abilityHint.textContent = game.ability.hint;
-  showBanner('BREAK THE BROWN BRICKS • REACH THE COLLECTION TUBE', 3.1);
+  ui.levelName.textContent = `LEVEL ${index + 1} · ${game.level.name.toUpperCase()}`;
+  updateHud();
+  showBanner(`LEVEL ${index + 1} · ${game.level.name.toUpperCase()} — ${game.level.tagline}`, 3.1);
   lastFrame = performance.now();
   cancelAnimationFrame(rafId);
   rafId = requestAnimationFrame(loop);
 }
 
-function createGame(character) {
-  const platforms = buildPlatforms();
-  const objects = buildObjects();
-  const hazards = buildHazards();
-  const checkpoints = [
-    { x: 110, y: 412 },
-    { x: 1180, y: 412 },
-    { x: 2450, y: 412 },
-    { x: 3450, y: 412 },
-  ];
+function createGame(character, levelIndex = 0) {
+  const level = LEVELS[levelIndex] || LEVELS[0];
+  WORLD_W = level.worldW;
+  const platforms = level.platforms.map(clonePlatform);
+  const objects = level.objects.map((o) => makeObject(o.type, o.x, o.y, o.w, o.h, o.hp, { special: o.special }));
+  const hazards = level.hazards.map((h) => Object.assign({}, h));
+  const checkpoints = level.checkpoints.map((c) => Object.assign({}, c));
   const player = {
     id: 'player',
     isPlayer: true,
     characterId: character.id,
-    x: 120,
-    y: 410,
-    previousX: 120,
-    previousY: 410,
+    x: level.spawn.x,
+    y: level.spawn.y,
+    previousX: level.spawn.x,
+    previousY: level.spawn.y,
     w: 34,
     h: 50,
     drawSize: 78,
@@ -775,6 +1076,8 @@ function createGame(character) {
     facing: 1,
     hp: 3,
     grounded: false,
+    standing: null,
+    padTime: 0,
     coyote: 0,
     jumpBuffer: 0,
     airJumps: 1,
@@ -786,17 +1089,23 @@ function createGame(character) {
     alive: true,
   };
 
-  const enemies = spawnEnemies(character.id);
+  const enemies = spawnEnemies(character.id, level);
   return {
     time: 0,
     running: true,
     character,
+    level,
+    levelIndex,
     ability: getAbility(character.id),
     player,
     cameraX: 0,
+    lastCameraX: 0,
     platforms,
     objects,
     hazards,
+    pads: level.pads.map((pad) => Object.assign({ squash: 0 }, pad)),
+    gems: level.gems.map((gem, index) => ({ x: gem.x, y: gem.y, got: false, phase: index * 0.7 })),
+    gemCount: 0,
     checkpoints,
     enemies,
     projectiles: [],
@@ -804,13 +1113,16 @@ function createGame(character) {
     particles: [],
     timers: [],
     pickups: [],
-    tube: { x: 3992, y: 365, w: 112, h: 205, water: 0, glow: 0 },
+    tube: { x: level.tube.x, y: level.tube.y, w: 112, h: 205, water: 0, glow: 0 },
     finish: null,
     shake: 0,
     flash: 0,
     bannerTime: 0,
     bricksDestroyed: 0,
-    backgroundAnimations: createBackgroundAnimations(),
+    backgroundAnimations: level.theme.legacy ? createBackgroundAnimations() : { trees: [], flowers: [], fireflies: [] },
+    backdrop: level.theme.legacy || !THEMES ? null : THEMES.build(level),
+    abyss: createAbyss(level),
+    ambient: createAmbient(level),
   };
 }
 
@@ -890,17 +1202,9 @@ function buildHazards() {
   ];
 }
 
-function spawnEnemies(selectedId) {
+function spawnEnemies(selectedId, level) {
   const possible = shuffle(CHARACTERS.filter((character) => character.id !== selectedId));
-  const locations = [
-    { x: 880, y: 412, min: 735, max: 1010 },
-    { x: 1330, y: 412, min: 1245, max: 1480 },
-    { x: 2000, y: 412, min: 1860, max: 2200 },
-    { x: 2680, y: 412, min: 2490, max: 2890 },
-    { x: 3220, y: 412, min: 3070, max: 3450 },
-    { x: 3710, y: 412, min: 3620, max: 3870 },
-  ];
-  return locations.map((location, index) => {
+  return level.enemies.map((location, index) => {
     const character = possible[index % possible.length];
     return {
       id: `enemy-${nextId++}`,
@@ -1860,7 +2164,7 @@ function getSolids() {
   const objectSolids = game.objects
     .filter((object) => object.active && object.solid)
     .map((object) => ({ x: object.x, y: object.y, w: object.w, h: object.h, object }));
-  return game.platforms.concat(objectSolids);
+  return game.platforms.filter((platform) => platform.active !== false).concat(objectSolids);
 }
 
 function entityRect(entity) {
@@ -1902,6 +2206,7 @@ function resolveHorizontal(entity, oldX) {
 
 function resolveVertical(entity, oldY) {
   entity.grounded = false;
+  entity.standing = null;
   const solids = getSolids();
   const body = entityRect(entity);
   for (const solid of solids) {
@@ -1910,6 +2215,7 @@ function resolveVertical(entity, oldY) {
       entity.y = solid.y - entity.h / 2;
       entity.vy = 0;
       entity.grounded = true;
+      entity.standing = solid;
       if (entity.special && entity.special.type === 'ground-pound' && !entity.special.impacted) {
         entity.special.impacted = true;
         triggerEarthImpact(entity, entity.special.team);
@@ -1935,6 +2241,7 @@ function updatePlayer(dt) {
   player.flash = Math.max(0, player.flash - dt);
   player.cooldown = Math.max(0, player.cooldown - dt);
   player.jumpBuffer = Math.max(0, player.jumpBuffer - dt);
+  player.padTime = Math.max(0, (player.padTime || 0) - dt);
   player.coyote = player.grounded ? 0.12 : Math.max(0, player.coyote - dt);
 
   if (input.jumpPressed) player.jumpBuffer = 0.14;
@@ -1945,7 +2252,8 @@ function updatePlayer(dt) {
 
   if (!movementLocked) {
     const target = input.left === input.right ? 0 : (input.left ? -225 : 225);
-    const acceleration = player.grounded ? 1850 : 1080;
+    const slick = player.grounded && player.standing && player.standing.slick;
+    const acceleration = player.grounded ? (slick ? 520 : 1850) : 1080;
     player.vx = moveToward(player.vx, target, acceleration * dt);
     if (target !== 0) player.facing = Math.sign(target);
   }
@@ -1975,7 +2283,7 @@ function updatePlayer(dt) {
     burstParticles(player.x, player.y + player.h / 2, ['#ffffff', '#c8f3ff'], 8, 30, 110, 3, 6, 'puff');
   }
 
-  if (!input.jumpHeld && player.vy < -160) player.vy += GRAVITY * 1.4 * dt;
+  if (!input.jumpHeld && player.padTime <= 0 && player.vy < -160) player.vy += GRAVITY * 1.4 * dt;
   player.vy = Math.min(MAX_FALL, player.vy + GRAVITY * dt);
 
   const oldX = player.x;
@@ -1989,6 +2297,7 @@ function updatePlayer(dt) {
   player.y += player.vy * dt;
   resolveVertical(player, oldY);
   if (player.grounded) player.airJumps = 1;
+  bouncePads(player);
 
   if (player.y > H + 110) {
     damagePlayer(3, player.x);
@@ -2032,6 +2341,87 @@ function updateCheckpoints() {
       player.checkpointIndex = index;
       showBanner('CHECKPOINT', 1.15);
     }
+  }
+}
+
+function bouncePads(player) {
+  const body = entityRect(player);
+  for (const pad of game.pads) {
+    if (player.vy < 0 || !rects(body, { x: pad.x, y: pad.y - 4, w: pad.w, h: pad.h + 4 })) continue;
+    player.vy = -pad.power;
+    player.grounded = false;
+    player.standing = null;
+    player.airJumps = 1;
+    player.padTime = 0.35;
+    pad.squash = 0.32;
+    burstParticles(pad.x + pad.w / 2, pad.y, ['#ffffff', '#ffe27a', '#9ff6ff'], 10, 40, 160, 3, 6, 'puff');
+  }
+}
+
+function updatePlatforms(dt) {
+  const player = game.player;
+  for (const platform of game.platforms) {
+    if (platform.mover) {
+      const mover = platform.mover;
+      const offset = Math.sin(game.time * mover.speed + (mover.phase || 0)) * mover.range;
+      const nextX = mover.axis === 'x' ? platform.baseX + offset : platform.x;
+      const nextY = mover.axis === 'y' ? platform.baseY + offset : platform.y;
+      const dx = nextX - platform.x;
+      const dy = nextY - platform.y;
+      platform.x = nextX;
+      platform.y = nextY;
+      if (player.standing === platform && player.grounded && !game.finish) {
+        player.x += dx;
+        player.y += dy;
+      }
+    }
+    if (platform.crumble) {
+      if (platform.state === 'gone') {
+        platform.timer -= dt;
+        const body = entityRect(player);
+        if (platform.timer <= 0 && !rects(body, platform)) {
+          platform.state = 'solid';
+          platform.active = true;
+        }
+      } else if (platform.state === 'shaking') {
+        platform.timer -= dt;
+        if (platform.timer <= 0) {
+          platform.state = 'gone';
+          platform.active = false;
+          platform.timer = 2.6;
+          burstParticles(platform.x + platform.w / 2, platform.y + 12, ['#ffffff', '#c8d7e8', '#8aa0c0'], 14, 30, 130, 3, 8, 'debris');
+        }
+      } else if (player.standing === platform && player.grounded) {
+        platform.state = 'shaking';
+        platform.timer = 0.6;
+      }
+    }
+  }
+  for (const pad of game.pads) pad.squash = Math.max(0, pad.squash - dt);
+}
+
+function updateGems() {
+  const player = game.player;
+  for (const gem of game.gems) {
+    if (gem.got || Math.hypot(player.x - gem.x, player.y - gem.y) >= 38) continue;
+    gem.got = true;
+    game.gemCount += 1;
+    burstParticles(gem.x, gem.y, ['#ffffff', '#ffe27a', '#9ff6ff'], 10, 40, 170, 2, 5, 'spark');
+  }
+}
+
+function updateAmbient(dt) {
+  const cameraDelta = game.cameraX - game.lastCameraX;
+  game.lastCameraX = game.cameraX;
+  for (const p of game.ambient) {
+    p.phase += dt;
+    p.x -= cameraDelta * p.z * 0.6;
+    if (p.kind === 'snow') { p.y += (34 + 56 * p.z) * dt; p.x += (-16 + Math.sin(p.phase * 1.3) * 14) * dt; }
+    else if (p.kind === 'ember') { p.y -= (26 + 70 * p.z) * dt; p.x += Math.sin(p.phase * 2) * 18 * dt; }
+    else if (p.kind === 'wisp') { p.x -= (10 + 26 * p.z) * dt; }
+    else { p.y -= 6 * p.z * dt; p.x += Math.sin(p.phase * 0.8) * 10 * dt; }
+    if (p.x < -70) p.x += W + 140; else if (p.x > W + 70) p.x -= W + 140;
+    if (p.y > H + 10) p.y = -10; else if (p.y < -10) p.y = H + 10;
   }
 }
 
@@ -2236,7 +2626,7 @@ function updateProjectiles(dt) {
     spawnProjectileTrail(projectile);
 
     let removed = false;
-    const platformHit = game.platforms.some((platform) => circleRect(projectile.x, projectile.y, projectile.radius, platform));
+    const platformHit = game.platforms.some((platform) => platform.active !== false && circleRect(projectile.x, projectile.y, projectile.radius, platform));
     if (platformHit) {
       if (projectile.bounce > 0 && projectile.vy > 0) {
         projectile.vy *= -0.55;
@@ -2469,8 +2859,9 @@ function updatePickups(dt) {
     pickup.life -= dt;
     pickup.vy += 460 * dt;
     pickup.y += pickup.vy * dt;
-    if (pickup.y > GROUND_Y - 16) {
-      pickup.y = GROUND_Y - 16;
+    const floor = groundBelow(pickup.x, pickup.y - 40) - 16;
+    if (pickup.y > floor) {
+      pickup.y = floor;
       pickup.vy *= -0.35;
     }
     if (Math.hypot(player.x - pickup.x, player.y - pickup.y) < 44) {
@@ -2557,7 +2948,7 @@ function updateFinish(dt) {
       game.flash = 0.55;
     }
   } else if (finish.phase === 'flash' && finish.time >= 0.65) {
-    showSelection();
+    completeLevel();
   }
 }
 
@@ -2576,8 +2967,10 @@ function update(dt) {
     updateFinish(dt);
     if (!game || mode !== 'game') return;
   } else {
+    updatePlatforms(dt);
     updatePlayer(dt);
     updateEnemies(dt);
+    updateGems();
   }
   updateProjectiles(dt);
   updateZones(dt);
@@ -2587,6 +2980,7 @@ function update(dt) {
 
   const targetCamera = clamp(game.player.x - W * 0.36, 0, WORLD_W - W);
   game.cameraX = lerp(game.cameraX, targetCamera, 1 - Math.exp(-dt * 5.8));
+  updateAmbient(dt);
 
   input.jumpPressed = false;
   input.actionPressed = false;
@@ -2600,6 +2994,7 @@ function updateHud() {
   ui.cooldownFill.style.width = `${clamp(progress, 0, 1) * 100}%`;
   ui.cooldownFill.style.background = hexToCss(game.ability.color);
   ui.cooldownText.textContent = game.player.cooldown > 0 ? `${game.player.cooldown.toFixed(1)}s` : 'READY';
+  ui.gemCount.textContent = `✦ ${game.gemCount}/${game.gems.length}`;
 }
 
 function drawSelectionBackdrop() {
@@ -2610,7 +3005,17 @@ function drawSelectionBackdrop() {
 
 function drawPanorama(cameraX, time) {
   ctx.clearRect(0, 0, W, H);
-  if (panorama) {
+  const backdrop = game && game.backdrop;
+  if (backdrop) {
+    ctx.drawImage(backdrop.sky, 0, 0);
+    for (const layer of backdrop.layers) {
+      const width = layer.img.width;
+      const offset = ((cameraX * layer.speed) % width + width) % width;
+      ctx.drawImage(layer.img, -offset, 0);
+      ctx.drawImage(layer.img, width - offset, 0);
+    }
+    if (game.abyss) ctx.drawImage(game.abyss, 0, H - 150, W, 150);
+  } else if (panorama) {
     ctx.drawImage(panorama, cameraX, 0, W, H, 0, 0, W, H);
   } else {
     ctx.fillStyle = '#73c4ef';
@@ -2620,6 +3025,7 @@ function drawPanorama(cameraX, time) {
 }
 
 function drawAnimatedBackground(cameraX, time) {
+  if (game && !game.level.theme.legacy) return;
   const animations = game ? game.backgroundAnimations : createBackgroundAnimations();
 
   for (const tree of animations.trees) {
@@ -2724,6 +3130,9 @@ function drawAnimatedBackground(cameraX, time) {
 function drawPlatform(platform, cameraX) {
   const x = platform.x - cameraX;
   if (x + platform.w < -20 || x > W + 20) return;
+  if (platform.active === false) return;
+  const skin = THEMES && THEMES.style(platform.type);
+  if (skin) { drawSkinnedPlatform(platform, skin, x); return; }
   if (platform.type === 'ground' || platform.type === 'stone-ground' || platform.type === 'facility-ground') {
     const dirt = ctx.createLinearGradient(0, platform.y, 0, platform.y + platform.h);
     if (platform.type === 'ground') {
@@ -2766,6 +3175,235 @@ function drawPlatform(platform, cameraX) {
     for (let block = 0; block < 4; block += 1) ctx.fillRect(block * platform.w / 4 + 2, -5 - (block % 2) * 3, platform.w / 4 - 4, 10);
   }
   ctx.restore();
+}
+
+function drawSkinnedPlatform(platform, skin, x) {
+  const shake = platform.state === 'shaking' ? Math.sin(game.time * 90) * 2.2 : 0;
+  const y = platform.y;
+  const { w, h } = platform;
+  ctx.save();
+  ctx.translate(shake, platform.state === 'shaking' ? Math.abs(shake) * 0.5 : 0);
+  if (skin.kind === 'ground') {
+    const dirt = ctx.createLinearGradient(0, y, 0, y + h);
+    dirt.addColorStop(0, skin.dirt[0]);
+    dirt.addColorStop(1, skin.dirt[1]);
+    ctx.fillStyle = dirt;
+    ctx.fillRect(x, y, w, h);
+    if (skin.glow) {
+      const rim = ctx.createLinearGradient(0, y - 22, 0, y);
+      rim.addColorStop(0, hexToRgba(skin.glow, 0));
+      rim.addColorStop(1, hexToRgba(skin.glow, 0.3));
+      ctx.fillStyle = rim;
+      ctx.fillRect(x, y - 22, w, 22);
+    }
+    ctx.fillStyle = skin.top;
+    ctx.fillRect(x, y, w, 10);
+    ctx.fillStyle = skin.topHi;
+    ctx.fillRect(x, y, w, 4);
+    for (let px = x + 14; px < x + w; px += 44) {
+      const row = Math.floor((px - x) / 44);
+      ctx.fillStyle = skin.glow && row % 3 === 0 ? hexToRgba(skin.glow, 0.45) : skin.speck;
+      ctx.beginPath();
+      ctx.arc(px, y + 26 + (row % 2) * 18, row % 3 === 0 && skin.glow ? 3.4 : 3, 0, TAU);
+      ctx.fill();
+    }
+    if (skin.shine) {
+      ctx.fillStyle = 'rgba(255,255,255,.22)';
+      for (let px = x + 30; px < x + w - 30; px += 130) {
+        ctx.beginPath();
+        ctx.moveTo(px, y + 14); ctx.lineTo(px + 18, y + 14); ctx.lineTo(px - 10, y + 52); ctx.lineTo(px - 28, y + 52);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  } else if (skin.kind === 'cloud') {
+    const radius = Math.min(h * 0.62, skin.small ? 15 : 22);
+    const tall = h > 40;
+    const body = ctx.createLinearGradient(0, y, 0, y + h);
+    body.addColorStop(0, '#ffffff');
+    body.addColorStop(tall ? 0.55 : 1, '#d3e3ff');
+    body.addColorStop(1, tall ? 'rgba(190,212,250,0)' : '#aebfe6');
+    ctx.fillStyle = body;
+    ctx.strokeStyle = 'rgba(104,136,204,.8)';
+    ctx.lineWidth = 3;
+    roundedPath(ctx, x, y + 2, w, h - 2, Math.min(h / 2, 26));
+    ctx.stroke();
+    ctx.fill();
+    ctx.beginPath();
+    const step = radius * 1.25;
+    for (let cx = x + radius * 0.8, i = 0; cx < x + w - radius * 0.4; cx += step, i += 1) {
+      const r = radius * (0.85 + ((i * 37) % 7) / 20);
+      ctx.moveTo(cx + r, y + r * 0.55);
+      ctx.arc(cx, y + r * 0.55, r, 0, TAU);
+    }
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.fillStyle = 'rgba(160,190,235,.25)';
+    ctx.fillRect(x + 8, y + Math.min(h - 8, 14), w - 16, 3);
+  } else {
+    if (skin.glow) {
+      const under = ctx.createLinearGradient(0, y + h, 0, y + h + 34);
+      under.addColorStop(0, hexToRgba(skin.glow, 0.28));
+      under.addColorStop(1, hexToRgba(skin.glow, 0));
+      ctx.fillStyle = under;
+      ctx.fillRect(x - 4, y + h, w + 8, 34);
+    }
+    if (skin.shards) {
+      ctx.fillStyle = skin.hi;
+      for (let sx = x + 10; sx < x + w - 10; sx += 24) {
+        const depth = 12 + ((Math.floor(sx) * 7) % 14);
+        ctx.beginPath(); ctx.moveTo(sx - 6, y + h - 4); ctx.lineTo(sx, y + h + depth); ctx.lineTo(sx + 6, y + h - 4); ctx.closePath(); ctx.fill();
+      }
+    }
+    const slab = ctx.createLinearGradient(0, y, 0, y + h);
+    slab.addColorStop(0, skin.hi);
+    slab.addColorStop(0.35, skin.body);
+    slab.addColorStop(1, skin.body);
+    ctx.fillStyle = slab;
+    roundedPath(ctx, x, y, w, h, h / 2.4);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(8,16,36,.4)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.3)';
+    roundedPath(ctx, x + 6, y + 3, w - 12, 5, 3);
+    ctx.fill();
+    if (skin.rivets) {
+      ctx.fillStyle = 'rgba(20,24,30,.55)';
+      for (let rx = x + 12; rx < x + w - 8; rx += 22) { ctx.beginPath(); ctx.arc(rx, y + h / 2 + 2, 2.4, 0, TAU); ctx.fill(); }
+      ctx.fillStyle = skin.glow;
+      ctx.fillRect(x + 10, y + h - 4, w - 20, 2);
+    }
+    if (skin.shine) {
+      ctx.fillStyle = 'rgba(255,255,255,.38)';
+      ctx.beginPath(); ctx.moveTo(x + w * 0.2, y + 4); ctx.lineTo(x + w * 0.2 + 14, y + 4); ctx.lineTo(x + w * 0.2 + 4, y + h - 4); ctx.lineTo(x + w * 0.2 - 10, y + h - 4); ctx.closePath(); ctx.fill();
+    }
+  }
+  if (platform.slick && skin.kind !== 'cloud') {
+    ctx.fillStyle = 'rgba(255,255,255,.55)';
+    ctx.fillRect(x + 4, y, w - 8, 2);
+  }
+  ctx.restore();
+}
+
+function drawPad(pad, cameraX) {
+  const x = pad.x - cameraX;
+  if (x + pad.w < -10 || x > W + 10) return;
+  const squash = pad.squash > 0 ? Math.sin(pad.squash / 0.32 * Math.PI) : 0;
+  const cx = x + pad.w / 2;
+  const baseY = pad.y + pad.h;
+  const plateY = baseY - 8 - (1 - squash * 0.6) * 12;
+  ctx.save();
+  ctx.fillStyle = '#2a3d52';
+  roundedPath(ctx, x + 2, baseY - 6, pad.w - 4, 6, 3);
+  ctx.fill();
+  ctx.strokeStyle = '#c9d8e6';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let i = 0; i < 4; i += 1) {
+    const yy = baseY - 6 - ((baseY - 6 - plateY) * i) / 3;
+    ctx.moveTo(cx - 12, yy); ctx.lineTo(cx + 12, yy - 3);
+  }
+  ctx.stroke();
+  const glowAlpha = 0.5 + Math.sin(game.time * 5) * 0.2 + squash * 0.4;
+  ctx.fillStyle = `rgba(255,214,90,${glowAlpha * 0.3})`;
+  ctx.beginPath(); ctx.ellipse(cx, plateY, pad.w * 0.8, 10, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#ffd35a';
+  roundedPath(ctx, x, plateY - 5, pad.w, 8, 4);
+  ctx.fill();
+  ctx.fillStyle = '#fff1b8';
+  roundedPath(ctx, x + 6, plateY - 4, pad.w - 12, 3, 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawGem(gem, cameraX) {
+  if (gem.got) return;
+  const x = gem.x - cameraX;
+  if (x < -20 || x > W + 20) return;
+  const t = game.time * 3 + gem.phase;
+  const y = gem.y + Math.sin(t) * 3.5;
+  const squeeze = 0.65 + Math.abs(Math.cos(t * 0.5)) * 0.35;
+  ctx.save();
+  ctx.translate(x, y);
+  const halo = ctx.createRadialGradient(0, 0, 2, 0, 0, 20);
+  halo.addColorStop(0, 'rgba(255,230,120,.5)');
+  halo.addColorStop(1, 'rgba(255,230,120,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(0, 0, 20, 0, TAU); ctx.fill();
+  ctx.scale(squeeze, 1);
+  ctx.fillStyle = '#ffd24a';
+  ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(8, 0); ctx.lineTo(0, 11); ctx.lineTo(-8, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff3b0';
+  ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(8, 0); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(120,70,0,.55)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(8, 0); ctx.lineTo(0, 11); ctx.lineTo(-8, 0); ctx.closePath(); ctx.stroke();
+  ctx.restore();
+}
+
+function drawAmbient(time) {
+  if (!game || !game.ambient.length) return;
+  ctx.save();
+  for (const p of game.ambient) {
+    if (p.kind === 'snow') {
+      ctx.fillStyle = `rgba(255,255,255,${0.5 + p.z * 0.4})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1 + p.z * 2.2, 0, TAU); ctx.fill();
+    } else if (p.kind === 'ember') {
+      const flick = 0.55 + Math.sin(p.phase * 9) * 0.3;
+      ctx.fillStyle = hexToRgba(p.color, flick);
+      ctx.fillRect(p.x, p.y, 1.5 + p.z * 2, 1.5 + p.z * 2);
+    } else if (p.kind === 'wisp') {
+      ctx.fillStyle = `rgba(255,255,255,${0.1 + p.z * 0.1})`;
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, 60 * p.z + 20, 8 * p.z + 3, 0, 0, TAU); ctx.fill();
+    } else {
+      const a = 0.35 + Math.sin(p.phase * 2.4) * 0.3;
+      const glowGradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 7 * p.z + 2);
+      glowGradient.addColorStop(0, hexToRgba(p.color, a));
+      glowGradient.addColorStop(1, hexToRgba(p.color, 0));
+      ctx.fillStyle = glowGradient;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 7 * p.z + 2, 0, TAU); ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawLava(hazard, x) {
+  const top = hazard.y - 8;
+  const gradient = ctx.createLinearGradient(0, top, 0, H);
+  gradient.addColorStop(0, '#ffc23d');
+  gradient.addColorStop(0.18, '#ff6a1a');
+  gradient.addColorStop(1, '#7a1206');
+  const halo = ctx.createLinearGradient(0, top - 46, 0, top);
+  halo.addColorStop(0, 'rgba(255,120,30,0)');
+  halo.addColorStop(1, 'rgba(255,120,30,.38)');
+  ctx.fillStyle = halo;
+  ctx.fillRect(x, top - 46, hazard.w, 46);
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.moveTo(x, H);
+  for (let px = 0; px <= hazard.w; px += 10) {
+    ctx.lineTo(x + px, top + Math.sin((hazard.x + px) * 0.045 + game.time * 2.4) * 3.5 + Math.sin((hazard.x + px) * 0.11 - game.time * 1.7) * 1.8);
+  }
+  ctx.lineTo(x + hazard.w, H);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,240,170,.8)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let px = 0; px <= hazard.w; px += 10) {
+    const yy = top + Math.sin((hazard.x + px) * 0.045 + game.time * 2.4) * 3.5 + Math.sin((hazard.x + px) * 0.11 - game.time * 1.7) * 1.8;
+    if (px === 0) ctx.moveTo(x + px, yy); else ctx.lineTo(x + px, yy);
+  }
+  ctx.stroke();
+  for (let i = 0; i < Math.floor(hazard.w / 90); i += 1) {
+    const phase = (game.time * 0.7 + i * 0.37 + hazard.x * 0.013) % 1;
+    ctx.fillStyle = `rgba(255,210,100,${0.7 - phase * 0.7})`;
+    ctx.beginPath();
+    ctx.arc(x + 40 + i * 90 + Math.sin(i * 3 + hazard.x) * 20, top + 26 - phase * 34, 3 + phase * 3, 0, TAU);
+    ctx.fill();
+  }
 }
 
 function drawObject(object, cameraX) {
@@ -2852,20 +3490,30 @@ function drawObject(object, cameraX) {
 function drawHazard(hazard, cameraX) {
   const x = hazard.x - cameraX;
   if (x + hazard.w < -20 || x > W + 20) return;
+  if (hazard.type === 'lava') { drawLava(hazard, x); return; }
+  const style = THEMES ? THEMES.hazardStyle(hazard.type) : { fill: '#8a939a' };
   const count = Math.max(2, Math.floor(hazard.w / 18));
+  if (style.glow) {
+    const halo = ctx.createRadialGradient(x + hazard.w / 2, hazard.y + hazard.h, 2, x + hazard.w / 2, hazard.y + hazard.h, hazard.w * 0.8);
+    halo.addColorStop(0, hexToRgba(style.glow, 0.35));
+    halo.addColorStop(1, hexToRgba(style.glow, 0));
+    ctx.fillStyle = halo;
+    ctx.fillRect(x - hazard.w * 0.3, hazard.y - hazard.w * 0.5, hazard.w * 1.6, hazard.w * 0.9 + hazard.h);
+  }
   for (let index = 0; index < count; index += 1) {
     const spikeX = x + index * hazard.w / count;
     const width = hazard.w / count;
-    const pulse = hazard.type === 'energy' ? Math.sin(game.time * 5 + index) * 3 : 0;
-    ctx.fillStyle = hazard.type === 'energy' ? '#6ee9ff' : '#8a939a';
+    const pulse = style.pulse ? Math.sin(game.time * 5 + index) * 3 : 0;
+    ctx.fillStyle = style.fill;
     ctx.beginPath();
     ctx.moveTo(spikeX, hazard.y + hazard.h);
     ctx.lineTo(spikeX + width / 2, hazard.y + pulse);
     ctx.lineTo(spikeX + width, hazard.y + hazard.h);
     ctx.closePath();
     ctx.fill();
-    if (hazard.type === 'energy') {
-      ctx.strokeStyle = 'rgba(206,255,255,.75)';
+    if (style.stroke) {
+      ctx.strokeStyle = style.stroke;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
     }
   }
@@ -3010,10 +3658,12 @@ function drawSprite(entity, cameraX, options = {}) {
 
 function drawShadow(entity, cameraX, alpha = 0.28) {
   const x = entity.x - cameraX;
-  const air = clamp((GROUND_Y - entity.y) / 260, 0, 1);
+  const floor = game ? groundBelow(entity.x, entity.y + entity.h / 2 - 8) : GROUND_Y;
+  if (!isFinite(floor)) return;
+  const air = clamp((floor - entity.y) / 260, 0, 1);
   ctx.fillStyle = `rgba(0,0,0,${alpha * (1 - air * 0.55)})`;
   ctx.beginPath();
-  ctx.ellipse(x, Math.min(GROUND_Y + 5, entity.y + entity.h / 2 + 12), 24 * (1 - air * 0.4), 7 * (1 - air * 0.35), 0, 0, TAU);
+  ctx.ellipse(x, Math.min(floor + 5, entity.y + entity.h / 2 + 12), 24 * (1 - air * 0.4), 7 * (1 - air * 0.35), 0, 0, TAU);
   ctx.fill();
 }
 
@@ -3345,6 +3995,8 @@ function drawWorld() {
   for (const platform of game.platforms) drawPlatform(platform, cameraX);
   for (const hazard of game.hazards) drawHazard(hazard, cameraX);
   for (const object of game.objects) drawObject(object, cameraX);
+  for (const pad of game.pads) drawPad(pad, cameraX);
+  for (const gem of game.gems) drawGem(gem, cameraX);
 
   drawTubeBack(cameraX);
 
@@ -3394,6 +4046,9 @@ function drawWorld() {
   }
 
   ctx.restore();
+
+  drawAmbient(time);
+  if (game.backdrop && game.backdrop.vignette) ctx.drawImage(game.backdrop.vignette, 0, 0);
 
   if (game.flash > 0) {
     ctx.fillStyle = `rgba(225,250,255,${clamp(game.flash * 1.8, 0, 0.75)})`;
@@ -3450,7 +4105,7 @@ window.addEventListener('keydown', (event) => {
     if (!input.actionHeld) input.actionPressed = true;
     input.actionHeld = true;
   }
-  if (code === 'Escape' && mode === 'game') showSelection();
+  if (code === 'Escape' && mode === 'game') showLevels();
 });
 
 window.addEventListener('keyup', (event) => {
@@ -3469,6 +4124,16 @@ window.addEventListener('blur', () => {
 });
 
 ui.change.addEventListener('click', showSelection);
+ui.levelsBtn.addEventListener('click', () => showLevels());
+ui.levelsBack.addEventListener('click', showSelection);
+ui.unlockAll.addEventListener('click', () => {
+  progress.unlockAll = !progress.unlockAll;
+  writeProgress();
+  buildLevelGrid();
+});
+ui.completeNext.addEventListener('click', () => startGame(pickedCharacterId, completedLevelIndex + 1));
+document.getElementById('completeReplay').addEventListener('click', () => startGame(pickedCharacterId, completedLevelIndex));
+document.getElementById('completeLevels').addEventListener('click', () => showLevels());
 canvas.addEventListener('contextmenu', (event) => event.preventDefault());
 
 document.addEventListener('visibilitychange', () => {
