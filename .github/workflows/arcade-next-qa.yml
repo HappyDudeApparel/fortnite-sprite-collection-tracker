@@ -1,0 +1,54 @@
+name: Sprite Arcade Next staging QA
+# Read-only. Checks the experimental arcade-next build; never writes to main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/collectors-vault/arcade-next/**'
+      - '.github/workflows/arcade-next-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  next:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Known-good game and World 1 are untouched
+        run: |
+          python - <<'PY'
+          import subprocess,pathlib,difflib
+          nxt=pathlib.Path('preview/collectors-vault/arcade-next/2d');old=pathlib.Path('preview/collectors-vault/arcade/2d')
+          for f in ['levels.js','themes.js']:
+            assert (nxt/f).read_bytes()==(old/f).read_bytes(),'World 1 file changed: '+f
+          a=(old/'index.html').read_text().splitlines();b=(nxt/'index.html').read_text().splitlines()
+          changed=[l for l in difflib.unified_diff(a,b,lineterm='',n=0) if l[:1] in '+-' and l[:3] not in ('+++','---')]
+          assert len(changed)<=40,'arcade-next/2d/index.html drifted from the known-good engine: %d changed lines'%len(changed)
+          ca=lambda s:s[s.index('const CHARACTERS = '):s.index(';',s.index('const CHARACTERS = '))]
+          assert ca('\n'.join(a))==ca('\n'.join(b)),'character records changed'
+          assert 'spriteArcade.next.2d.progress.v1' in '\n'.join(b) and "'spriteArcade.2d.progress.v1'" not in '\n'.join(b),'preview must not share the real save key'
+          print('PASS: levels.js/themes.js identical, engine diff', len(changed), 'lines, save key separate')
+          PY
+          for f in preview/collectors-vault/arcade-next/2d/fields.js preview/collectors-vault/arcade-next/2d/levels-next.js preview/collectors-vault/arcade-next/tools/validate-levels.js; do node --check "$f"; done
+      - name: Validate all levels (World 1 physics replay plus Tide Works state search)
+        run: node preview/collectors-vault/arcade-next/tools/validate-levels.js
+      - name: Mutation tests (the validator must catch a broken room)
+        run: node preview/collectors-vault/arcade-next/tools/validate-levels.js --mutate
+      - name: Install browser runner
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+      - name: Browser QA in the real game (water tide, dock, drain route end to end, World 1)
+        run: python preview/collectors-vault/arcade-next/tools/qa-tide-works.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcade-next-screenshots
+          path: preview/collectors-vault/arcade-next/qa-*.png
+          if-no-files-found: ignore
