@@ -359,7 +359,7 @@ export async function buildWorld(scene, level, quality, gfx) {
 
   // ---- solids
   const solids = [];
-  level.islands.forEach((i, idx) => solids.push(makeSolid(i.x - i.w, i.x + i.w, i.y - (i.low ? 1 : 2), i.y, i.z - i.d, i.z + i.d, { id: 'i' + idx, kind: 'island' })));
+  level.islands.forEach((i, idx) => solids.push(makeSolid(i.x - i.w, i.x + i.w, i.y - (i.low ? 1 : 2), i.y, i.z - i.d, i.z + i.d, { id: 'i' + idx, kind: 'island', idx })));
   const movers = level.movers.map((m, idx) => {
     const solid = makeSolid(m.x - m.w, m.x + m.w, m.y - 0.6, m.y, m.z - m.d, m.z + m.d, { id: 'm' + idx, kind: 'mover', mover: true });
     solids.push(solid);

@@ -7,6 +7,9 @@
 //
 // 1 cell = 2 wu. An island of w×d cells covers [x-w, x+w] × [z-d, z+d] (w,d are also its half-extents in wu).
 
+import { ENEMIES } from './roster.js';
+import { enemyBounds, fitIsland } from './rules.js';
+
 const DIRS = { f: [0, -1], b: [0, 1], l: [-1, 0], r: [1, 0] };
 
 export const THEMES = {
@@ -40,9 +43,10 @@ function build(meta, def) {
   });
 
   const place = (isl, f, dirKey, index) => {
-    L.islands.push({ x: isl.x, z: isl.z, w: isl.w, d: isl.d, y: isl.y, low: !!f.low });
     const top = isl.y;
     const dir = DIRS[dirKey] || DIRS.f;
+    // `arrive` is the direction of travel into this island (null for the start): the opposite edge is the landing edge.
+    L.islands.push({ x: isl.x, z: isl.z, w: isl.w, d: isl.d, y: isl.y, low: !!f.low, arrive: index === 0 ? null : dir, gap: f.gap || 0 });
     if (f.flag) L.flags.push({ x: isl.x + (f.flagDx || 0), y: top, z: isl.z + (f.flagDz || 0) });
     if (f.heart) L.hearts.push({ x: isl.x, y: top + 1.5, z: isl.z });
     if (f.spring) {
@@ -57,22 +61,27 @@ function build(meta, def) {
     }
     if (f.enemy) {
       const list = Array.isArray(f.enemy) ? f.enemy : [f.enemy];
+      const here = L.islands[L.islands.length - 1];
       list.forEach((type, i) => {
+        const bounds = enemyBounds(here, ENEMIES[type]);
         const a = (i / list.length) * Math.PI * 2 + 0.6;
-        const off = list.length > 1 ? Math.min(isl.w, isl.d) * 0.4 : 0;
-        L.enemies.push({ type, x: isl.x + Math.cos(a) * off, y: top, z: isl.z + Math.sin(a) * off, r: Math.max(1.5, Math.min(isl.w, isl.d) - 1.3), isl: index });
+        const cx = (bounds.x0 + bounds.x1) / 2, cz = (bounds.z0 + bounds.z1) / 2;
+        const off = list.length > 1 ? Math.min(bounds.x1 - bounds.x0, bounds.z1 - bounds.z0) * 0.3 : 0;
+        const r = Math.max(1, Math.min(bounds.x1 - bounds.x0, bounds.z1 - bounds.z0) / 2);
+        L.enemies.push({ type, x: cx + Math.cos(a) * off, y: top, z: cz + Math.sin(a) * off, r, isl: index });
       });
     }
     if (f.saw) {
       const s = f.saw;
       const acrossX = dir[0] === 0; // sweep across the direction of travel
-      L.saws.push({ x: isl.x, y: top + 0.6, z: isl.z, r: 0.8, axis: acrossX ? 'x' : 'z', range: s.range || (acrossX ? isl.w : isl.d) - 1.2, speed: s.speed || 1.3, phase: s.phase || 0 });
+      L.saws.push({ x: isl.x + dir[0] * 0.3 * isl.w, y: top + 0.6, z: isl.z + dir[1] * 0.3 * isl.d, r: 0.8, axis: acrossX ? 'x' : 'z', range: s.range || (acrossX ? isl.w : isl.d) - 1.2, speed: s.speed || 1.3, phase: s.phase || 0 });
     }
     if (f.spikes) {
+      // Spikes sit on the departure half of the island, never in the landing pocket.
       for (let i = 0; i < f.spikes; i += 1) {
-        const t = f.spikes === 1 ? 0 : (i / (f.spikes - 1)) * 2 - 1;
+        const tt = f.spikes === 1 ? 0.55 : 0.3 + (i / (f.spikes - 1)) * 0.65;
         const side = (i % 2 ? 1 : -1) * (f.spikeSide || (dir[0] === 0 ? isl.w - 1.1 : isl.d - 1.1));
-        L.spikes.push({ x: isl.x + (dir[0] === 0 ? side : dir[0] * t * (isl.w - 1.4)), y: top + 0.9, z: isl.z + (dir[0] === 0 ? dir[1] * t * (isl.d - 1.4) : side), r: 0.8 });
+        L.spikes.push({ x: isl.x + (dir[0] === 0 ? side : dir[0] * tt * (isl.w - 1.4)), y: top + 0.9, z: isl.z + (dir[0] === 0 ? dir[1] * tt * (isl.d - 1.4) : side), r: 0.8 });
       }
     }
     if (f.goal) L.goal = { x: isl.x, y: top, z: isl.z };
@@ -87,7 +96,11 @@ function build(meta, def) {
   def.steps.forEach((st) => {
     const dirKey = st.dir || 'f';
     const dir = DIRS[dirKey];
-    const next = { w: cells(st.w || 3), d: cells(st.d || 3), y: cur.y + (st.dy || 0) };
+    // Authored sizes are minimums: fitIsland grows an island until the landing, the monsters and the hazards it hosts
+    // all fit (see rules.js). The validator re-checks the finished geometry.
+    const enemyCount = st.enemy ? (Array.isArray(st.enemy) ? st.enemy.length : 1) : 0;
+    const fit = fitIsland({ w: cells(st.w || 3), d: cells(st.d || 3) }, dir[0] !== 0, st.gap, enemyCount, !!st.saw, dir);
+    const next = { w: fit.w, d: fit.d, y: cur.y + (st.dy || 0) };
     const alongCur = dir[0] !== 0 ? cur.w : cur.d;
     const alongNext = dir[0] !== 0 ? next.w : next.d;
     const total = alongCur + st.gap + alongNext;
