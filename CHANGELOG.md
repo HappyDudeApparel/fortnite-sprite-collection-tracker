@@ -1,3 +1,9 @@
+## 2.0.45 — 2026-10-22
+- **2D Sprite Platformer:** every level keeps its original route, gems and checkpoints and gains a pad-launched high road with its own gem trail and a sniper, a gated vault (bricks, boulders or crystals) holding a gem cache, and a perch or final stand. Every gem and tube is proven reachable by the level validator.
+- **3D Sprite Arena:** landings are bigger and sized for what they host; monsters can no longer enter the landing pocket, only fight on their own island after a short notice delay, and knockback never carries you off the island; spikes and saws are kept out of the landing pocket.
+- **Dash** (the 3D hero) now fights with **Star Burst**: a ring of stars that hits every monster around him.
+- No changes to the collection, Sprite records, artwork, layouts, Locker, exports or saved progress (the games keep their own storage).
+
 ## 2.0.44 — 2026-10-21
 - Added a **Play Sprite Games** button (top bar on desktop, its own row on phones) that opens a chooser for the 2D Sprite Platformer and the 3D Sprite Arena.
 - New self-contained `games/` folder; games never read or change collection data, and keep their own progress in separate browser storage.

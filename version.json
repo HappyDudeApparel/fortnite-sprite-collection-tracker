@@ -1,5 +1,5 @@
 {
-  "version": "2.0.44",
-  "published": "2026-10-21",
-  "notes": "Added a Play Sprite Games button that opens a 2D / 3D game chooser (new /games/ folder). No changes to the collection, artwork, data or any existing layout."
+  "version": "2.0.45",
+  "published": "2026-10-22",
+  "notes": "Tuned the Sprite games: 2D levels gain skyways, vaults and snipers; 3D landings are bigger and fairer; Dash's attack is Star Burst. No changes to the collection, artwork, data or any existing layout."
 }

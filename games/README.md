@@ -1,6 +1,6 @@
 # Sprite Games (production)
 
-Released with Sprite Collection Locker v2.0.44. The Locker's **Play Sprite Games** button opens `games/` (hub) → `games/2d/` (Sprite Platformer, 5 levels) or `games/3d/` (Sprite Arena, 3 worlds).
+Released with Sprite Collection Locker v2.0.44; tuned in v2.0.45. The Locker's **Play Sprite Games** button opens `games/` (hub) → `games/2d/` (Sprite Platformer, 5 levels) or `games/3d/` (Sprite Arena, 3 worlds).
 
 - Self-contained: nothing here reads or writes the Locker's collection data. Game progress is stored separately in the browser (`spriteArcade.2d.progress.v1`, `spriteArcade.3d.progress.v1`).
 - `catalog.json` maps collection records to artwork (`/assets/embedded/...`) for the character pickers.

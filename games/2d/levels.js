@@ -291,6 +291,100 @@
     tube: tubeOn(5880),
   };
 
+  // ======================================================================================
+  // TUNING LAYERS — added on top of the original routes (ids, names, spawn, checkpoints order and the
+  // original gems all stay). Every level now offers: a high road (pad launch) with its own gem trail and a
+  // sniper, a gated vault (bricks = any power, boulders = heavy powers, crystals = energy powers) holding a gem
+  // cache, and a final stand before the tube. The validator still proves every gem and the tube reachable.
+  // ======================================================================================
+  const layer = (level, add) => {
+    ['platforms', 'objects', 'hazards', 'pads', 'gems', 'enemies', 'checkpoints'].forEach((k) => { if (add[k]) level[k].push(...add[k]); });
+    level.checkpoints.sort((a, b) => a.x - b.x);
+    if (add.tagline) level.tagline = add.tagline;
+    if (add.banner) level.banner = add.banner;
+  };
+  const trail = (ledges, dy = 34, n = 3, dx = 40) => flat(...ledges.map(([x, y, w]) => line(x + (w - (n - 1) * dx) / 2, y - dy, n, dx)));
+
+  // 1 — SUNFLOWER RUN: Skyway (pad at x=700), Brick-and-Boulder Vault above the facility, a final stand.
+  const sky1 = [[770, 215, 130], [1000, 180, 130], [1250, 150, 140], [1500, 170, 130], [1740, 200, 130], [1990, 165, 130], [2300, 195, 130]];
+  layer(level1, {
+    tagline: 'Meadow, river gorge, a sunny skyway and a vault. Pick your road.',
+    platforms: [
+      ...sky1.map(([x, y, w], i) => ledge(x, y, w, i % 2 ? 'log' : 'rock')),
+      ledge(3150, 240, 300, 'facility'),            // vault floor
+      ledge(3850, 330, 130, 'facility'),            // sniper perch before the tube
+    ],
+    objects: [boulder(3150, 240), ...bricks(3406, 240, 1, 2)],   // vault walls: boulder (heavy powers) and bricks (any power)
+    pads: [pad(700, 470)],
+    gems: [...trail(sky1), ...line(3260, 205, 4, 42)],
+    enemies: [foe(1320, 1270, 1370, 150), foe(3910, 3860, 3960, 330)],
+  });
+
+  // 2 — LUMEN CAVERNS: Crystal Vault (energy powers), Crystal Skyway (pad at x=2580), a sniper-guarded final stand.
+  const sky2 = [[2700, 190, 120], [2930, 160, 120], [3160, 150, 120], [3390, 175, 120], [3620, 150, 120], [3860, 180, 120], [4100, 150, 120]];
+  layer(level2, {
+    tagline: 'Glowing crystal tunnels. Mind the pits; a crystal skyway waits above.',
+    platforms: [
+      ...sky2.map(([x, y, w]) => ledge(x, y, w, 'crystal')),
+      ledge(1150, 290, 230, 'crystal'),            // vault floor
+      ledge(4760, 390, 100, 'crystal'),            // step up to the perch
+      ledge(4900, 300, 150, 'crystal'),            // sniper perch
+    ],
+    objects: [crystal(1150, 290), crystal(1334, 290)],
+    pads: [pad(2580, 470)],
+    gems: [...trail(sky2), ...line(1215, 255, 3, 45), ...line(4930, 265, 3, 40)],
+    enemies: [foe(3220, 3170, 3270, 150), foe(4980, 4910, 5040, 300)],
+    checkpoints: [cp(4820)],
+  });
+
+  // 3 — CLOUDSPIRE CLIMB: Cloud Express (high road from the pad at x=1150), a boulder-and-brick vault, a crowded summit.
+  const sky3 = [[1280, 160, 120], [1530, 130, 120], [1790, 150, 120], [2060, 120, 120], [2330, 140, 120], [2620, 110, 120]];
+  layer(level3, {
+    tagline: 'Hop between sky islands to the top, or ride the Cloud Express above.',
+    platforms: [
+      ...sky3.map(([x, y, w]) => ledge(x, y, w, 'cloud')),
+      ledge(4440, 320, 130, 'cloud'),              // step up to the vault
+      ledge(4720, 250, 260, 'cloud'),              // vault floor
+    ],
+    objects: [boulder(4720, 250), ...bricks(4936, 250, 1, 2)],
+    gems: [...trail(sky3), ...line(4820, 215, 3, 45)],
+    enemies: [foe(1850, 1800, 1900, 150), foe(4450, 4350, 4560, 430)],
+  });
+
+  // 4 — CINDER WORKS: Foundry Skyway (pad at x=1780), a heavy-power vault, a sniper perch above the last spikes.
+  const sky4 = [[1900, 200, 120], [2150, 170, 120], [2400, 150, 120], [2650, 130, 120], [2900, 150, 120], [3150, 170, 120]];
+  layer(level4, {
+    tagline: 'The floor is lava. Literally. Take the catwalks or the skyway.',
+    platforms: [
+      ...sky4.map(([x, y, w]) => ledge(x, y, w, 'metal')),
+      ledge(3290, 380, 100, 'metal'),              // step up to the vault
+      ledge(3450, 300, 230, 'metal'),              // vault floor
+      ledge(5100, 300, 140, 'metal'),              // sniper perch
+    ],
+    objects: [...bricks(3450, 300, 1, 2), boulder(3604, 300)],
+    pads: [pad(1780, 470)],
+    gems: [...trail(sky4), ...line(3510, 265, 3, 40), ...line(5130, 265, 3, 40)],
+    enemies: [foe(2700, 2660, 2750, 130), foe(5170, 5110, 5230, 300)],
+    checkpoints: [cp(5340)],
+  });
+
+  // 5 — FROSTLINE PASS: Ice Skyway (pad at x=1660), a crystal vault, a perch beside the tube.
+  const sky5 = [[1760, 230, 120], [2000, 200, 120], [2250, 170, 120], [2500, 200, 120], [2760, 170, 120], [3040, 150, 120]];
+  layer(level5, {
+    tagline: 'Slippery ice, long drops, a skyway and one big finale.',
+    platforms: [
+      ...sky5.map(([x, y, w]) => ledge(x, y, w, 'ice-ledge')),
+      ledge(4100, 380, 90, 'ice-ledge'),           // step up to the vault
+      ledge(3960, 290, 240, 'ice-ledge'),          // vault floor
+      ledge(5600, 320, 140, 'ice-ledge'),          // perch beside the tube
+    ],
+    objects: [crystal(3960, 290), crystal(4154, 290)],
+    pads: [pad(1660, 430)],
+    gems: [...trail(sky5), ...line(4040, 255, 3, 45), ...line(5630, 285, 3, 40)],
+    enemies: [foe(2310, 2260, 2360, 170), foe(5670, 5610, 5730, 320)],
+    checkpoints: [cp(5420)],
+  });
+
   const LEVELS = [level1, level2, level3, level4, level5];
 
   // Enemies walk through props (they don't collide), so shrink every patrol to the widest gap between
