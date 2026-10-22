@@ -9,6 +9,8 @@
  * Monsters are ignored (they can be bitten or stomped).
  */
 import { LEVELS } from '../3d/js/levels.js';
+import { ENEMIES } from '../3d/js/roster.js';
+import { ARRIVAL_DEPTH, MIN_HALF, AREA_PER_ENEMY, minAlong, minHalfFor, freeArea, enemyBounds, onIsland as onIslandRule } from '../3d/js/rules.js';
 import { P, makePlayer, makeSolid, stepPlayer, applySprings, moverOffset, hazardHit } from '../3d/js/sim.js';
 
 const DT = 1 / 60, GEM_R = 1.5;
@@ -29,6 +31,45 @@ function buildSolids(level, rand) {
   return solids;
 }
 
+/** Fairness rules (see 3d/js/rules.js): landings big enough, monsters and hazards out of the landing pocket. */
+export function fairness(level) {
+  const out = [];
+  const depthFromArrival = (q, x, z) => {
+    if (!q.arrive) return Infinity;
+    const along = q.arrive[0] !== 0 ? q.w : q.d;
+    return (x - q.x) * q.arrive[0] + (z - q.z) * q.arrive[1] + along;
+  };
+  level.islands.forEach((q, a) => {
+    const tag = `island ${a}`;
+    if (q.w < MIN_HALF || q.d < MIN_HALF) out.push(`${tag} is ${2 * q.w}x${2 * q.d} wu: landings must be at least ${2 * MIN_HALF}x${2 * MIN_HALF}`);
+    if (q.arrive) {
+      const along = q.arrive[0] !== 0 ? q.w : q.d;
+      if (along < minAlong(q.gap)) out.push(`${tag} is only ${2 * along} wu deep for a ${q.gap} wu jump (needs ${2 * minAlong(q.gap)})`);
+    }
+    const mons = level.enemies.filter((e) => e.isl === a);
+    const saws = level.saws.filter((s) => onIslandRule(q, s.x, s.z, 0.5));
+    const need = minHalfFor(mons.length, saws.length > 0);
+    if ((mons.length || saws.length) && (q.w < need || q.d < need)) out.push(`${tag} hosts ${mons.length} monster(s)${saws.length ? ' and a saw' : ''} but is ${2 * q.w}x${2 * q.d} (needs ${2 * need}x${2 * need})`);
+    if (mons.length && freeArea(q) < AREA_PER_ENEMY * mons.length) out.push(`${tag} has ${Math.round(freeArea(q))} wu² free for ${mons.length} monster(s) (needs ${AREA_PER_ENEMY * mons.length})`);
+    for (const e of mons) {
+      const b = enemyBounds(q, ENEMIES[e.type]);
+      if (b.x1 - b.x0 < 1.5 || b.z1 - b.z0 < 1.5) out.push(`${tag}: ${e.type} has almost no room to patrol (${(b.x1 - b.x0).toFixed(1)}x${(b.z1 - b.z0).toFixed(1)})`);
+      if (e.x < b.x0 - 0.01 || e.x > b.x1 + 0.01 || e.z < b.z0 - 0.01 || e.z > b.z1 + 0.01) out.push(`${tag}: ${e.type} starts outside its patrol area`);
+      if (q.arrive) {
+        const reach = ENEMIES[e.type].radius + P.radius;
+        const depth = depthFromArrival(q, b.x0 + (q.arrive[0] > 0 ? 0 : (b.x1 - b.x0)), b.z0);
+        void depth;
+        // Closest the monster can ever be to the landing edge, minus its reach, must clear the pocket.
+        const nearest = q.arrive[0] > 0 ? b.x0 - (q.x - q.w) : q.arrive[0] < 0 ? (q.x + q.w) - b.x1 : q.arrive[1] > 0 ? b.z0 - (q.z - q.d) : (q.z + q.d) - b.z1;
+        if (nearest - reach < ARRIVAL_DEPTH - 0.01) out.push(`${tag}: ${e.type} can get within ${(nearest - reach).toFixed(1)} wu of the landing edge (pocket is ${ARRIVAL_DEPTH})`);
+      }
+    }
+    for (const sp of level.spikes) if (onIslandRule(q, sp.x, sp.z, 0.3) && depthFromArrival(q, sp.x, sp.z) - sp.r < ARRIVAL_DEPTH) out.push(`${tag}: a spike block sits inside the landing pocket`);
+    for (const sw of saws) if (depthFromArrival(q, sw.x, sw.z) - sw.r < ARRIVAL_DEPTH) out.push(`${tag}: a saw sits inside the landing pocket`);
+  });
+  return out;
+}
+
 function structure(level, n) {
   const out = [];
   const isl = level.islands;
@@ -43,6 +84,7 @@ function structure(level, n) {
   level.enemies.forEach((e, i) => { if (!onIsland(e)) out.push(`enemy ${i} (${e.type}) is not on an island`); });
   level.springs.forEach((s, i) => { if (!onIsland(s, 0.2)) out.push(`spring ${i} is not on an island`); });
   if (!level.goal) out.push('no goal');
+  out.push(...fairness(level));
   level.gems.forEach((g, i) => {
     if (isl.some((q) => Math.abs(g.x - q.x) < q.w && Math.abs(g.z - q.z) < q.d && g.y < q.y + 0.4 && g.y > q.y - 2)) out.push(`gem ${i} is inside an island`);
   });
@@ -134,6 +176,30 @@ function reachability(level, seed) {
   }
   return { tube, gemsHit, nodes: seen.size };
 }
+
+/** Break levels on purpose; the fairness rules must flag each one. */
+function mutationTests() {
+  let ok = true;
+  const base = () => JSON.parse(JSON.stringify(LEVELS[0]));
+  const firstEnemyIsland = (l) => l.islands[l.enemies[0].isl];
+  const cases = [
+    ['intact level 1', (l) => l, (issues) => issues.length === 0],
+    ['a landing shrunk to 4x4 wu', (l) => { const q = l.islands[3]; q.w = 2; q.d = 2; return l; }, (i) => i.some((m) => /landings must be at least/.test(m))],
+    ['a long jump onto a shallow island', (l) => { const q = l.islands[5]; q.gap = 12; return l; }, (i) => i.some((m) => /deep for a/.test(m))],
+    ['a monster island shrunk to 6x6', (l) => { const q = firstEnemyIsland(l); q.w = 3; q.d = 3; return l; }, (i) => i.some((m) => /hosts 1 monster/.test(m))],
+    ['a monster moved into the landing pocket', (l) => { const q = firstEnemyIsland(l), e = l.enemies[0]; e.x = q.x - q.arrive[0] * (q.w - 0.8); e.z = q.z - q.arrive[1] * (q.d - 0.8); return l; }, (i) => i.some((m) => /starts outside its patrol area|can get within/.test(m))],
+    ['a spike block in the landing pocket', (l) => { const q = l.islands[11]; l.spikes.push({ x: q.x - q.arrive[0] * (q.w - 1), y: q.y + 0.9, z: q.z - q.arrive[1] * (q.d - 1), r: 0.8 }); return l; }, (i) => i.some((m) => /spike block sits inside the landing pocket/.test(m))],
+    ['three monsters crammed onto one island', (l) => { const e = l.enemies[0]; l.enemies.push({ ...e }, { ...e }); return l; }, (i) => i.some((m) => /hosts 3 monster|free for 3 monster/.test(m))],
+  ];
+  for (const [name, fn, expect] of cases) {
+    const issues = fairness(fn(base()));
+    const good = expect(issues);
+    console.log(`${good ? 'PASS' : 'FAIL'} mutation: ${name}`);
+    if (!good) { ok = false; console.log('   issues:', issues.slice(0, 4)); }
+  }
+  return ok;
+}
+if (args.includes('--mutate')) process.exit(mutationTests() ? 0 : 1);
 
 let failed = false;
 LEVELS.forEach((level, i) => {

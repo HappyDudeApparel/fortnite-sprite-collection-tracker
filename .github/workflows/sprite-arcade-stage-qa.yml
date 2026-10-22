@@ -55,7 +55,7 @@ jobs:
           catalog=json.loads((root/'catalog.json').read_text())
           assert len(catalog['entries'])==279 and len([x for x in catalog['entries'] if x['player2d']])==97
           # 3D: required files, and no Gamer Bros code identifiers.
-          for f in ['index.html','js/main.js','js/sim.js','js/levels.js','js/world.js','js/actors.js','assets/characters/citrus.glb','assets/kenney/Textures/colormap.png','vendor/three/three.module.min.js']:
+          for f in ['index.html','js/main.js','js/sim.js','js/rules.js','js/levels.js','js/world.js','js/actors.js','assets/characters/citrus.glb','assets/kenney/Textures/colormap.png','vendor/three/three.module.min.js']:
             assert (root/'3d'/f).exists(),'missing 3D file '+f
           for f in (root/'3d/js').glob('*.js'):
             t=f.read_text()
@@ -90,6 +90,12 @@ jobs:
         run: node preview/collectors-vault/arcade/tools/validate-levels.js
       - name: Prove every 3D world is completable (same physics file the game runs)
         run: node preview/collectors-vault/arcade/tools/validate-3d-levels.mjs
+      - name: 3D fairness rules (landing sizes, monster-free landing pockets, safe knockback) and mutation tests
+        run: |
+          node preview/collectors-vault/arcade/tools/validate-3d-levels.mjs --mutate
+          node preview/collectors-vault/arcade/tools/test-3d-rules.mjs
+      - name: Browser QA of 3D fairness (landing pockets, knockback, Dash)
+        run: python preview/collectors-vault/arcade/tools/qa-3d-fairness.py
       - name: Play test staging page, hub, 2D and 3D (mobile and desktop)
         shell: bash
         run: |

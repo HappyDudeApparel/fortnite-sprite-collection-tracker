@@ -1,7 +1,7 @@
 // Playable and enemy character definitions. Add new rigged GLBs here.
 export const PLAYABLE = {
   citrus: {
-    id: 'citrus', name: 'Citrus Sprite', file: 'citrus', scale: 0.86,
+    id: 'citrus', name: 'Dash', file: 'citrus', scale: 0.86,
     clips: { idle: 'Idle', walk: 'Walk', jump: 'Jump', attack: 'Bite_InPlace', hit: 'HitRecieve', win: 'Dance' },
     jelly: true,
   },
