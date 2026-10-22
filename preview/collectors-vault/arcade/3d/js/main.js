@@ -223,26 +223,26 @@ state.hurt = hurt; // test hook
 function attack() {
   const p = state.player;
   if (p.attackCd > 0 || state.mode !== 'play') return;
-  p.attackT = 0.38; p.attackCd = 0.5; p.attackHit = false;
+  // Star Burst: a ring of golden stars around Dash that hits every monster in reach (no need to aim).
+  p.attackT = 0.38; p.attackCd = 0.6; p.attackHit = false;
   const s = state.sim;
-  s.vx = Math.sin(p.yaw) * 9; s.vz = Math.cos(p.yaw) * 9;
   sfx.bite();
-  fx.spark.burst(s.x + Math.sin(p.yaw) * 1.2, s.y + 1, s.z + Math.cos(p.yaw) * 1.2, 6, 4, 0.25, 0.35, 1, 0.95, 0.7, 0);
+  for (let i = 0; i < 3; i += 1) fx.spark.burst(s.x, s.y + 1 + i * 0.25, s.z, 10, 4 + i * 2, 0.35 + i * 0.1, 1, 0.85, 0.25, 0);
 }
 
 function resolveAttack() {
   const p = state.player, s = state.sim;
   if (p.attackT <= 0 || p.attackHit || p.attackT > 0.28) return;
   p.attackHit = true;
-  const fx0 = Math.sin(p.yaw), fz0 = Math.cos(p.yaw);
+  const REACH = 3.8; // wu, all around
   for (const e of state.enemies) {
     if (!e.alive) continue;
-    const vx = e.x - s.x, vz = e.z - s.z;
-    const along = vx * fx0 + vz * fz0, lateral = Math.abs(vx * fz0 - vz * fx0);
-    if (along > -0.6 && along < 3.4 && lateral < 2.0 + e.type.radius * 0.5 && Math.abs(e.y - s.y) < 2.6) {
+    const vx = e.x - s.x, vz = e.z - s.z, dist = Math.hypot(vx, vz);
+    if (dist < REACH + e.type.radius * 0.5 && Math.abs(e.y - s.y) < 2.6) {
       if (e.damage(1, fx, sfx)) state.stats.kills += 1;
       e.hitT = 0.4;
-      e.x += fx0 * 0.8; e.z += fz0 * 0.8;
+      const l = dist || 1;
+      e.x += (vx / l) * 0.8; e.z += (vz / l) * 0.8;
       rig.shake = Math.max(rig.shake, 0.35);
     }
   }

@@ -84,7 +84,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .act{position:absolute;border-radius:50%;pointer-events:auto;touch-action:none;display:grid;place-items:center;font-weight:950;letter-spacing:.06em;border:2px solid rgba(255,255,255,.55);box-shadow:inset 0 0 20px rgba(160,230,255,.18),0 8px 20px rgba(0,0,0,.3)}
 #btnJump{right:max(22px,env(safe-area-inset-right));bottom:max(30px,env(safe-area-inset-bottom));width:88px;height:88px;background:radial-gradient(circle at 35% 28%,rgba(190,245,255,.45),rgba(20,90,130,.6));font-size:12px}
 #btnBite{right:max(122px,calc(env(safe-area-inset-right) + 112px));bottom:max(24px,env(safe-area-inset-bottom));width:72px;height:72px;background:radial-gradient(circle at 35% 28%,rgba(255,235,180,.45),rgba(190,70,30,.65));font-size:11px}
-#btnBite{margin-bottom:34px}
+#btnBite{margin-bottom:34px;font-size:10px;line-height:1.1}
 
 /* pause / complete */
 .menu{padding:22px;text-align:center;width:min(380px,90vw)}
@@ -113,7 +113,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 <div id="touch" hidden>
   <div id="camZone"></div>
   <div id="stick"><div id="knob"></div></div>
-  <button id="btnBite" class="act" aria-label="Bite attack">BITE</button>
+  <button id="btnBite" class="act" aria-label="Star Burst attack">STAR BURST</button>
   <button id="btnJump" class="act" aria-label="Jump">JUMP</button>
 </div>
 
@@ -125,7 +125,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div class="top"><a class="back" href="../">← Sprite Games</a><button id="muteBtn" class="btn small">🔊 Sound</button></div>
   <div class="hero">
     <h1>SPRITE <span>ARENA</span></h1>
-    <p class="tag">Run, jump and bite your way through glowing 3D worlds.</p>
+    <p class="tag">Run, jump and Star Burst your way through glowing 3D worlds.</p>
     <button id="playBtn" class="btn primary" style="font-size:18px;padding:14px 38px">▶ PLAY</button>
   </div>
   <div class="hero">
