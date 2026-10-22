@@ -4,6 +4,7 @@ import { instantiateCharacter } from './assets.js';
 import { PLAYABLE, ENEMIES } from './roster.js';
 import { groundY, P } from './sim.js';
 import { styleCitrus, getEnv } from './look.js';
+import { enemyBounds, onIsland, NOTICE_DELAY } from './rules.js';
 
 const TAU = Math.PI * 2;
 function dampAngle(a, b, lambda, dt) {
@@ -156,7 +157,7 @@ export class Enemy {
   constructor(scene, def, spec, island, blobs) {
     this.scene = scene; this.type = def; this.spec = spec; this.blobs = blobs; this.blob = blobs.alloc();
     this.x = spec.x; this.z = spec.z; this.y = spec.y; this.homeX = spec.x; this.homeZ = spec.z; this.r = spec.r;
-    this.bounds = { x0: island.x - island.w + 1.0, x1: island.x + island.w - 1.0, z0: island.z - island.d + 1.0, z1: island.z + island.d - 1.0 };
+    this.island = island; this.bounds = enemyBounds(island, def); this.noticeT = 0;
     this.hp = def.hp; this.state = 'patrol'; this.yaw = Math.random() * TAU; this.t = Math.random() * 5;
     this.tx = this.x; this.tz = this.z; this.pause = 0; this.hitT = 0; this.deadT = 0; this.removed = false; this.attackT = 0;
     this.group = new THREE.Group();
@@ -216,8 +217,10 @@ export class Enemy {
     this.attackT = Math.max(0, this.attackT - dt);
     const dx = player.x - this.x, dz = player.z - this.z;
     const dist = Math.hypot(dx, dz);
-    const sameLevel = Math.abs(player.y - this.y) < 3.2;
-    const wantsChase = sameLevel && dist < 11 && this.hitT <= 0;
+    // Monsters only fight on their own island, and only after the player has had time to land and look around.
+    const onMyIsland = Math.abs(player.y - this.y) < 2.2 && onIsland(this.island, player.x, player.z, 0.4);
+    this.noticeT = onMyIsland ? this.noticeT + dt : 0;
+    const wantsChase = onMyIsland && this.noticeT > NOTICE_DELAY && this.hitT <= 0;
     this.attackCd = Math.max(0, (this.attackCd || 0) - dt);
     let speed = 0;
 

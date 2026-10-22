@@ -9,6 +9,7 @@ import { Particles } from './fx.js';
 import { sfx, initAudio, setMuted, isMuted } from './audio.js';
 import { P, makePlayer, stepPlayer, applySprings, hazardHit } from './sim.js';
 import { initLook } from './look.js';
+import { onIsland, safeKnockback } from './rules.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -31,7 +32,7 @@ let renderer, scene, camera, quality, input, rig;
 const fx = {};
 const state = {
   mode: 'boot', levelIndex: 0, world: null, player: null, enemies: [], sim: null, simT: 0, acc: 0, time: 0,
-  stats: null, checkpoint: null, introT: 0, finishT: 0, camMode: 'follow', choice: { kind: 'model', id: 'citrus' }, choiceName: 'Citrus Sprite',
+  stats: null, checkpoint: null, introT: 0, finishT: 0, camMode: 'follow', choice: { kind: 'model', id: 'citrus' }, choiceName: 'Dash',
   inp: { mx: 0, my: 0, jump: false, jumpHeld: false, attack: false, pause: false, camYaw: 0, camPitch: 0 },
   jumpPending: false, loading: false,
 };
@@ -68,7 +69,7 @@ function updateHud(force) {
 }
 
 // ------------------------------------------------------------------------------------------------ roster (catalog)
-let roster = [{ kind: 'model', id: 'citrus', name: 'Citrus Sprite', image: null }];
+let roster = [{ kind: 'model', id: 'citrus', name: 'Dash', image: null }];
 async function loadCatalog() {
   try {
     const r = await fetch('../catalog.json', { cache: 'no-store' });
@@ -85,7 +86,7 @@ async function loadCatalog() {
       const e = cat.entries.find((x) => x.id === want);
       if (e) { roster = roster.filter((x) => x.id !== e.id); roster.splice(1, 0, { kind: 'billboard', id: e.id, name: e.name, image: e.image }); state.choice = { kind: 'billboard', image: e.image, id: e.id }; state.choiceName = e.name; }
     }
-  } catch (_) { /* roster stays Citrus-only */ }
+  } catch (_) { /* roster stays Dash-only */ }
 }
 
 function buildStrip() {
@@ -206,37 +207,42 @@ function hurt(fromX, fromZ) {
   const p = state.player, s = state.sim;
   if (p.invuln > 0 || state.mode !== 'play') return;
   p.hp -= 1; p.invuln = 1.4; p.hurtT = 0.45; state.stats.hits += 1;
-  const dx = s.x - fromX, dz = s.z - fromZ, l = Math.hypot(dx, dz) || 1;
-  s.vx = (dx / l) * 9; s.vz = (dz / l) * 9; s.vy = 9; s.grounded = false;
+  // Knock back away from the hit, but never off the island the player stands on.
+  const islands = LEVELS[state.levelIndex].islands;
+  const here = s.standing && s.standing.kind === 'island' ? islands[s.standing.idx] : islands.find((q) => onIsland(q, s.x, s.z, 0.6) && Math.abs(q.y - s.y) < 1.5);
+  const kb = safeKnockback(s, { x: fromX, z: fromZ }, here);
+  s.vx = kb.vx; s.vz = kb.vz; s.vy = kb.vy; s.grounded = false;
   rig.shake = 0.8; sfx.hit();
   const fl = $('flash'); fl.style.transition = 'none'; fl.style.opacity = '1'; requestAnimationFrame(() => { fl.style.transition = 'opacity .45s'; fl.style.opacity = '0'; });
   fx.spark.burst(s.x, s.y + 1, s.z, 14, 6, 0.5, 0.45, 1, 0.4, 0.4, 6);
   if (p.hp <= 0) { toast('Oops! Back to the last flag'); p.hp = p.maxHp; respawn(); }
 }
 
+state.hurt = hurt; // test hook
+
 function attack() {
   const p = state.player;
   if (p.attackCd > 0 || state.mode !== 'play') return;
-  p.attackT = 0.38; p.attackCd = 0.5; p.attackHit = false;
+  // Star Burst: a ring of golden stars around Dash that hits every monster in reach (no need to aim).
+  p.attackT = 0.38; p.attackCd = 0.6; p.attackHit = false;
   const s = state.sim;
-  s.vx = Math.sin(p.yaw) * 9; s.vz = Math.cos(p.yaw) * 9;
   sfx.bite();
-  fx.spark.burst(s.x + Math.sin(p.yaw) * 1.2, s.y + 1, s.z + Math.cos(p.yaw) * 1.2, 6, 4, 0.25, 0.35, 1, 0.95, 0.7, 0);
+  for (let i = 0; i < 3; i += 1) fx.spark.burst(s.x, s.y + 1 + i * 0.25, s.z, 10, 4 + i * 2, 0.35 + i * 0.1, 1, 0.85, 0.25, 0);
 }
 
 function resolveAttack() {
   const p = state.player, s = state.sim;
   if (p.attackT <= 0 || p.attackHit || p.attackT > 0.28) return;
   p.attackHit = true;
-  const fx0 = Math.sin(p.yaw), fz0 = Math.cos(p.yaw);
+  const REACH = 3.8; // wu, all around
   for (const e of state.enemies) {
     if (!e.alive) continue;
-    const vx = e.x - s.x, vz = e.z - s.z;
-    const along = vx * fx0 + vz * fz0, lateral = Math.abs(vx * fz0 - vz * fx0);
-    if (along > -0.6 && along < 3.4 && lateral < 2.0 + e.type.radius * 0.5 && Math.abs(e.y - s.y) < 2.6) {
+    const vx = e.x - s.x, vz = e.z - s.z, dist = Math.hypot(vx, vz);
+    if (dist < REACH + e.type.radius * 0.5 && Math.abs(e.y - s.y) < 2.6) {
       if (e.damage(1, fx, sfx)) state.stats.kills += 1;
       e.hitT = 0.4;
-      e.x += fx0 * 0.8; e.z += fz0 * 0.8;
+      const l = dist || 1;
+      e.x += (vx / l) * 0.8; e.z += (vz / l) * 0.8;
       rig.shake = Math.max(rig.shake, 0.35);
     }
   }
