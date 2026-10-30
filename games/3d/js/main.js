@@ -5,6 +5,8 @@ import { LEVELS } from './levels.js';
 import { buildWorld, KIT } from './world.js';
 import { preloadKenney } from './assets.js';
 import { Player, createEnemies, BlobShadows } from './actors.js';
+import { PLAYABLE } from './roster.js';
+import { PowerBurst } from './powers.js';
 import { Particles } from './fx.js';
 import { sfx, initAudio, setMuted, isMuted } from './audio.js';
 import { P, makePlayer, stepPlayer, applySprings, hazardHit } from './sim.js';
@@ -34,7 +36,7 @@ const state = {
   mode: 'boot', levelIndex: 0, world: null, player: null, enemies: [], sim: null, simT: 0, acc: 0, time: 0,
   stats: null, checkpoint: null, introT: 0, finishT: 0, camMode: 'follow', choice: { kind: 'model', id: 'citrus' }, choiceName: 'Dash',
   inp: { mx: 0, my: 0, jump: false, jumpHeld: false, attack: false, pause: false, camYaw: 0, camPitch: 0 },
-  jumpPending: false, loading: false,
+  jumpPending: false, loading: false, activeAbility: null,
 };
 window.ARENA = state; // test/debug hook
 
@@ -69,45 +71,37 @@ function updateHud(force) {
 }
 
 // ------------------------------------------------------------------------------------------------ roster (catalog)
-let roster = [{ kind: 'model', id: 'citrus', name: 'Dash', image: null }];
+// Only genuine 3D selections. Flat collection billboards are intentionally hidden.
+let roster = Object.values(PLAYABLE).map((d) => ({kind:'model',id:d.id,name:d.name,image:d.image||null,icon:d.icon||'🍊'}));
 async function loadCatalog() {
-  try {
-    const r = await fetch('../catalog.json', { cache: 'no-store' });
-    if (!r.ok) return;
-    const cat = await r.json();
-    const seen = new Set();
-    for (const e of cat.entries) {
-      if (!e.player2d || e.variant !== 'Base' || seen.has(e.family)) continue;
-      seen.add(e.family);
-      roster.push({ kind: 'billboard', id: e.id, name: e.name, image: e.image });
-    }
-    const want = Number(params.get('sprite'));
-    if (want) {
-      const e = cat.entries.find((x) => x.id === want);
-      if (e) { roster = roster.filter((x) => x.id !== e.id); roster.splice(1, 0, { kind: 'billboard', id: e.id, name: e.name, image: e.image }); state.choice = { kind: 'billboard', image: e.image, id: e.id }; state.choiceName = e.name; }
-    }
-  } catch (_) { /* roster stays Dash-only */ }
+  const ids = {207:'bush-sprite',228:'crown-sprite'};
+  const requested = ids[Number(params.get('sprite'))] || params.get('character');
+  if(requested && PLAYABLE[requested]) {
+    state.choice={kind:'model',id:requested};
+    state.choiceName=PLAYABLE[requested].name;
+  }
 }
 
 function buildStrip() {
   const strip = $('strip'); strip.textContent = '';
-  const selectedKey = state.choice.kind === 'model' ? 'citrus' : state.choice.id;
+  const selectedKey = state.choice.id;
   roster.forEach((r) => {
     const b = document.createElement('button');
     b.className = 'chip'; b.type = 'button'; b.title = r.name;
-    b.setAttribute('aria-pressed', String((r.kind === 'model' ? 'citrus' : r.id) === selectedKey));
-    if (r.image) { const img = document.createElement('img'); img.src = r.image; img.alt = r.name; b.append(img); } else { b.textContent = '🍊'; b.style.fontSize = '30px'; }
+    b.setAttribute('aria-pressed', String(r.id === selectedKey));
+    if (r.image) { const img = document.createElement('img'); img.src = r.image; img.alt = r.name; b.append(img); } else { b.textContent = r.icon; b.style.fontSize = '30px'; }
     if (r.kind === 'model') { const t = document.createElement('span'); t.className = 't3'; t.textContent = '3D'; b.append(t); }
     b.addEventListener('click', async () => {
       sfx.click();
-      state.choice = r.kind === 'model' ? { kind: 'model', id: r.id } : { kind: 'billboard', image: r.image, id: r.id };
+      state.choice = { kind: 'model', id: r.id };
       state.choiceName = r.name;
       await state.player.setSprite(state.choice);
       buildStrip();
     });
     strip.append(b);
   });
-  $('pickName').textContent = state.choiceName + (state.choice.kind === 'model' ? ' · full 3D model' : ' · 2.5D collection art');
+  $('pickName').textContent = state.choiceName + ' · full 3D · ' + (PLAYABLE[state.choice.id]?.power || 'STAR BURST');
+  $('btnBite').textContent = PLAYABLE[state.choice.id]?.power || 'PRISM BURST';
 }
 
 // ------------------------------------------------------------------------------------------------ level loading
@@ -137,7 +131,7 @@ async function loadLevel(index, attract = false) {
   }
   // sim
   state.sim = makePlayer(level.spawn.x, level.spawn.y + 0.05, level.spawn.z);
-  state.simT = 0; state.acc = 0; state.time = 0; state.finishT = 0;
+  state.simT = 0; state.acc = 0; state.time = 0; state.finishT = 0; state.activeAbility = null; if(fx.power)fx.power.active=false;
   state.stats = { gems: 0, kills: 0, hits: 0, falls: 0 };
   state.checkpoint = { x: level.spawn.x, y: level.spawn.y, z: level.spawn.z };
   state.jumpPending = false;
@@ -220,32 +214,46 @@ function hurt(fromX, fromZ) {
 
 state.hurt = hurt; // test hook
 
+const POWERS = {
+  citrus:{name:'Prismatic Starburst',range:[3.3,5.1],cooldown:3.6,invuln:0},
+  'earth-sprite':{name:'Branch Lash',range:[3.8,4.4],cooldown:2.6,invuln:0},
+  'ghost-sprite':{name:'Phase Pulse',range:[3.2,4.4],cooldown:4.2,invuln:1.4},
+  'bush-sprite':{name:'Bramble Burst',range:[3.0,4.1],cooldown:3.4,invuln:.65},
+  'crown-sprite':{name:'Royal Verdict',range:[3.6,5.3],cooldown:4.8,invuln:1.1},
+};
 function attack() {
-  const p = state.player;
-  if (p.attackCd > 0 || state.mode !== 'play') return;
-  // Star Burst: a ring of golden stars around Dash that hits every monster in reach (no need to aim).
-  p.attackT = 0.38; p.attackCd = 0.6; p.attackHit = false;
-  const s = state.sim;
+  const p=state.player;
+  if(p.attackCd>0||state.mode!=='play')return;
+  const id=state.choice.id in POWERS?state.choice.id:'citrus';
+  const spec=POWERS[id],s=state.sim;
+  p.attackT=.85;p.attackCd=spec.cooldown;p.attackHit=false;
+  p.invuln=Math.max(p.invuln,spec.invuln);
+  state.activeAbility={id,spec,t:0,next:0};
+  fx.power.start(id,s.x,s.y,s.z);
   sfx.bite();
-  for (let i = 0; i < 3; i += 1) fx.spark.burst(s.x, s.y + 1 + i * 0.25, s.z, 10, 4 + i * 2, 0.35 + i * 0.1, 1, 0.85, 0.25, 0);
+  toast(spec.name,900);
 }
-
 function resolveAttack() {
-  const p = state.player, s = state.sim;
-  if (p.attackT <= 0 || p.attackHit || p.attackT > 0.28) return;
-  p.attackHit = true;
-  const REACH = 3.8; // wu, all around
-  for (const e of state.enemies) {
-    if (!e.alive) continue;
-    const vx = e.x - s.x, vz = e.z - s.z, dist = Math.hypot(vx, vz);
-    if (dist < REACH + e.type.radius * 0.5 && Math.abs(e.y - s.y) < 2.6) {
-      if (e.damage(1, fx, sfx)) state.stats.kills += 1;
-      e.hitT = 0.4;
-      const l = dist || 1;
-      e.x += (vx / l) * 0.8; e.z += (vz / l) * 0.8;
-      rig.shake = Math.max(rig.shake, 0.35);
+  const a=state.activeAbility;
+  if(!a)return;
+  a.t+=STEP;
+  const times=[.16,.48];
+  while(a.next<2&&a.t>=times[a.next]){
+    const wave=a.next++,s=state.sim,re=a.spec.range[wave];
+    if(wave===1)fx.power.emit(1);
+    for(const e of state.enemies){
+      if(!e.alive)continue;
+      const vx=e.x-s.x,vz=e.z-s.z,dist=Math.hypot(vx,vz);
+      if(dist>re+e.type.radius*.5||Math.abs(e.y-s.y)>3.2)continue;
+      if(e.damage(1,fx,sfx))state.stats.kills++;
+      e.hitT=.48;
+      const l=dist||1;
+      e.x+=vx/l*(a.id==='earth-sprite'?1.2:.65);
+      e.z+=vz/l*(a.id==='earth-sprite'?1.2:.65);
+      rig.shake=Math.max(rig.shake,a.id==='earth-sprite'?.55:.33);
     }
   }
+  if(a.t>.87)state.activeAbility=null;
 }
 
 function enemyContacts() {
@@ -253,8 +261,13 @@ function enemyContacts() {
   for (const e of state.enemies) {
     if (!e.alive) continue;
     const dx = s.x - e.x, dz = s.z - e.z;
-    const reach = e.type.radius + P.radius;
-    if (dx * dx + dz * dz > reach * reach) continue;
+    const dist2=dx*dx+dz*dz;
+    // Earth uses a telegraphed extending-branch strike, not an invisible contact aura.
+    if(e.type.branchReach && e.attackT>.19 && e.attackT<.48 && !e.branchHit && dist2<e.type.branchReach*e.type.branchReach && Math.abs(s.y-e.y)<2.7) {
+      e.branchHit=true;hurt(e.x,e.z);
+    }
+    const reach=e.type.radius+P.radius;
+    if(dist2>reach*reach)continue;
     const top = e.y + e.type.height;
     if (s.y > e.y + 0.5 && s.y < top + 0.6 && s.vy < -1 && s.y > top - 1.2) {
       // stomp
@@ -426,7 +439,7 @@ function frame(now) {
 
   // fx + world
   if (state.mode !== 'pause') {
-    fx.dust.update(dt); fx.spark.update(dt);
+    fx.dust.update(dt); fx.spark.update(dt); fx.power.update(dt);
     if (state.world && state.sim && !state.loading) state.world.render(dt, performance.now() / 1000, camera.position, state.sim);
   }
   fx.dust.setScale(renderer.domElement.height, camera.fov); fx.spark.setScale(renderer.domElement.height, camera.fov);
@@ -463,6 +476,7 @@ async function boot() {
     rig = new CameraRig(camera); state.rig = rig;
     fx.dust = new Particles(260, false); fx.spark = new Particles(420, true);
     scene.add(fx.dust.points, fx.spark.points);
+    fx.power = new PowerBurst(scene,fx.spark);
     initLook(renderer);
     quality.apply();
     addEventListener('resize', () => quality.apply());

@@ -1,6 +1,7 @@
 // Actors: the player (rigged model or billboarded collection Sprite) and enemy monsters.
 import * as THREE from 'three';
 import { instantiateCharacter } from './assets.js';
+import { makeProceduralSprite } from './procedural.js';
 import { PLAYABLE, ENEMIES } from './roster.js';
 import { groundY, P } from './sim.js';
 import { styleCitrus, getEnv } from './look.js';
@@ -57,7 +58,7 @@ export class Player {
     if (choice.kind === 'model') {
       const def = PLAYABLE[choice.id];
       this.def = def;
-      const m = await instantiateCharacter(def.file);
+      const m = def.procedural ? makeProceduralSprite(choice.id) : await instantiateCharacter(def.file);
       m.root.scale.setScalar(def.scale);
       m.root.position.y = 0;
       this.look = def.jelly ? styleCitrus(m.root, m, getEnv()) : null;
@@ -79,7 +80,7 @@ export class Player {
   }
 
   play(key, fade = 0.18, once = false) {
-    if (!this.def) return;
+    if (!this.def || this.def.procedural) return;
     const name = this.def.clips[key];
     const next = this.actions[name];
     if (!next || this.current === next) return;
@@ -125,6 +126,7 @@ export class Player {
       else if (speed > 0.7) { this.play('walk', 0.12); if (this.current) this.current.timeScale = Math.max(0.7, speed / 4.4); }
       else this.play('idle', 0.2);
       if (this.mixer) this.mixer.update(dt);
+      if (this.model.visual) this.model.visual.animate(performance.now()/1000, this.attackT > 0 ? Math.max(0,Math.sin(Math.PI*(1-this.attackT/.85))) : 0);
       if (this.look) { this.look.uTime.value = performance.now() / 1000; this.look.uMove.value += (Math.min(1, speed / 8.5) - this.look.uMove.value) * (1 - Math.exp(-6 * dt)); }
       this.model.root.visible = this.invuln <= 0 || Math.floor(this.invuln * 14) % 2 === 0;
     } else if (this.billboard) {
@@ -166,16 +168,17 @@ export class Enemy {
   }
 
   async load() {
-    const m = await instantiateCharacter(this.type.file);
+    const m = this.type.procedural ? makeProceduralSprite(this.type.procedural) : await instantiateCharacter(this.type.file);
     m.root.scale.setScalar(this.type.scale);
     m.root.traverse((o) => { if (o.isMesh || o.isSkinnedMesh) o.castShadow = true; });
     this.group.add(m.root);
     this.model = m; this.mixer = m.mixer; this.actions = m.actions;
     this.play('idle', 0);
-    this.mixer.update(Math.random());
+    if (this.mixer) this.mixer.update(Math.random());
   }
 
   play(key, fade = 0.2, once = false) {
+    if (this.type.procedural) return;
     const name = this.type.clips[key];
     const next = name && this.actions[name];
     if (!next || this.current === next) return;
@@ -230,7 +233,7 @@ export class Enemy {
       this.state = 'chase';
       this.yaw = Math.atan2(dx, dz);
       speed = dist > 1.4 ? this.type.chase : 0;
-      if (dist < 2.2 && this.attackT <= 0 && this.attackCd <= 0) { this.attackT = 0.7; this.attackCd = 1.8; this.play('attack', 0.08, true); }
+      if (dist < (this.type.branchReach || 2.2) && this.attackT <= 0 && this.attackCd <= 0) { this.attackT = 0.7; this.attackCd = this.type.branchReach ? 2.4 : 1.8; this.branchHit = false; this.play('attack', 0.08, true); }
     } else {
       this.state = 'patrol';
       if (this.pause > 0) {
@@ -249,7 +252,7 @@ export class Enemy {
       }
     }
 
-    if (this.attackT > 0.3 && this.hitT <= 0) speed = this.type.chase * 1.7; // lunge so the bite actually reaches
+    if (this.attackT > 0.3 && this.hitT <= 0) speed = this.type.branchReach ? 0 : this.type.chase * 1.7; // lunge so the bite actually reaches
     if (speed > 0) {
       this.x = Math.min(this.bounds.x1, Math.max(this.bounds.x0, this.x + Math.sin(this.yaw) * speed * dt));
       this.z = Math.min(this.bounds.z1, Math.max(this.bounds.z0, this.z + Math.cos(this.yaw) * speed * dt));
@@ -263,6 +266,7 @@ export class Enemy {
     const float = this.type.floats ? Math.sin(this.t * 2.4) * this.type.floats + this.type.floats : 0;
     this.group.position.set(this.x, this.y + float, this.z);
     this.group.rotation.y = this.yaw;
+    if (this.model?.visual) this.model.visual.animate(this.t, this.attackT > 0 ? Math.max(0,Math.sin(Math.PI*(1-this.attackT/.7))) : 0);
     this.blobs.set(this.blob, this.x, this.y + 0.03, this.z, this.type.radius * (this.state === 'dying' ? this.group.scale.x : 1.15));
   }
 
@@ -270,7 +274,11 @@ export class Enemy {
 }
 
 export async function createEnemies(scene, level, blobs) {
-  const list = level.enemies.map((e) => new Enemy(scene, ENEMIES[e.type], e, level.islands[e.isl], blobs));
+  const list = level.enemies.map((e) => {
+    // Preview only: replace 2 legacy 3D monsters with original Sprite-style combatants, never touching level data.
+    const type = e.type === 'ghost' ? ENEMIES['ghost-sprite'] : e.type === 'stump' ? ENEMIES['earth-sprite'] : ENEMIES[e.type];
+    return new Enemy(scene, type, e, level.islands[e.isl], blobs);
+  });
   await Promise.all(list.map((e) => e.load()));
   return list;
 }
