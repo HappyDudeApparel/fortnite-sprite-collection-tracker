@@ -36,7 +36,7 @@ const state = {
   mode: 'boot', levelIndex: 0, world: null, player: null, enemies: [], sim: null, simT: 0, acc: 0, time: 0,
   stats: null, checkpoint: null, introT: 0, finishT: 0, camMode: 'follow', choice: { kind: 'model', id: 'citrus' }, choiceName: 'Dash',
   inp: { mx: 0, my: 0, jump: false, jumpHeld: false, attack: false, pause: false, camYaw: 0, camPitch: 0 },
-  jumpPending: false, loading: false, activeAbility: null,
+  jumpPending: false, loading: false, activeAbility: null, lastHurt: -999, lastJonesyHeal: 0,
 };
 window.ARENA = state; // test/debug hook
 
@@ -72,9 +72,11 @@ function updateHud(force) {
 
 // ------------------------------------------------------------------------------------------------ roster (catalog)
 // Only genuine 3D selections. Flat collection billboards are intentionally hidden.
-let roster = Object.values(PLAYABLE).map((d) => ({kind:'model',id:d.id,name:d.name,image:d.image||null,icon:d.icon||'🍊'}));
+let roster = Object.values(PLAYABLE)
+  .filter((d) => d.id !== 'klombo-cheat' && d.id !== 'klombo-loot')
+  .map((d) => ({kind:'model',id:d.id,name:d.name,image:d.image||null,icon:d.icon||'🍊'}));
 async function loadCatalog() {
-  const ids = {207:'bush-sprite',228:'crown-sprite'};
+  const ids = {1:'water-sprite',8:'earth-sprite',15:'fire-sprite',29:'ghost-sprite',207:'bush-sprite',219:'klombo-base',220:'klombo-cheat',222:'jonesy-sprite',228:'crown-sprite',247:'klombo-loot'};
   const requested = ids[Number(params.get('sprite'))] || params.get('character');
   if(requested && PLAYABLE[requested]) {
     state.choice={kind:'model',id:requested};
@@ -84,7 +86,7 @@ async function loadCatalog() {
 
 function buildStrip() {
   const strip = $('strip'); strip.textContent = '';
-  const selectedKey = state.choice.id;
+  const selectedKey = state.choice.id.startsWith('klombo-') ? 'klombo-base' : state.choice.id;
   roster.forEach((r) => {
     const b = document.createElement('button');
     b.className = 'chip'; b.type = 'button'; b.title = r.name;
@@ -102,6 +104,25 @@ function buildStrip() {
   });
   $('pickName').textContent = state.choiceName + ' · full 3D · ' + (PLAYABLE[state.choice.id]?.power || 'STAR BURST');
   $('btnBite').textContent = PLAYABLE[state.choice.id]?.power || 'PRISM BURST';
+  const skins=$('skinChoices');
+  skins.hidden=!state.choice.id.startsWith('klombo-');
+  skins.textContent='';
+  if(!skins.hidden){
+    const choices=[['klombo-base','BASE'],['klombo-cheat','CHEAT MASTER'],['klombo-loot','LOOT HACKER']];
+    for(const [id,label] of choices){
+      const b=document.createElement('button');b.type='button';b.textContent=label;
+      b.setAttribute('aria-pressed',String(state.choice.id===id));
+      b.setAttribute('aria-label','Klombo skin '+label);
+      b.addEventListener('click',async()=>{
+        if(state.choice.id===id)return;
+        sfx.click();state.choice={kind:'model',id};
+        state.choiceName=PLAYABLE[id].name;
+        await state.player.setSprite(state.choice);
+        buildStrip();
+      });
+      skins.append(b);
+    }
+  }
 }
 
 // ------------------------------------------------------------------------------------------------ level loading
@@ -127,11 +148,11 @@ async function loadLevel(index, attract = false) {
   await state.player.setSprite(state.choice);
   if (!attract) {
     setLoading(true, null, 'Meeting the locals…', 0.75);
-    state.enemies = await createEnemies(scene, level, state.blobs);
+    state.enemies = await createEnemies(scene, level, state.blobs, state.choice.id);
   }
   // sim
   state.sim = makePlayer(level.spawn.x, level.spawn.y + 0.05, level.spawn.z);
-  state.simT = 0; state.acc = 0; state.time = 0; state.finishT = 0; state.activeAbility = null; if(fx.power)fx.power.active=false;
+  state.simT = 0; state.acc = 0; state.time = 0; state.finishT = 0; state.activeAbility = null; state.lastHurt = -999; state.lastJonesyHeal = 0; if(fx.power)fx.power.active=false;
   state.stats = { gems: 0, kills: 0, hits: 0, falls: 0 };
   state.checkpoint = { x: level.spawn.x, y: level.spawn.y, z: level.spawn.z };
   state.jumpPending = false;
@@ -200,7 +221,7 @@ function respawn() {
 function hurt(fromX, fromZ) {
   const p = state.player, s = state.sim;
   if (p.invuln > 0 || state.mode !== 'play') return;
-  p.hp -= 1; p.invuln = 1.4; p.hurtT = 0.45; state.stats.hits += 1;
+  p.hp -= 1; p.invuln = 1.4; p.hurtT = 0.45; state.stats.hits += 1; state.lastHurt = state.time;
   // Knock back away from the hit, but never off the island the player stands on.
   const islands = LEVELS[state.levelIndex].islands;
   const here = s.standing && s.standing.kind === 'island' ? islands[s.standing.idx] : islands.find((q) => onIsland(q, s.x, s.z, 0.6) && Math.abs(q.y - s.y) < 1.5);
@@ -220,6 +241,12 @@ const POWERS = {
   'ghost-sprite':{name:'Phase Pulse',range:[3.2,4.4],cooldown:4.2,invuln:1.4},
   'bush-sprite':{name:'Bramble Burst',range:[3.0,4.1],cooldown:3.4,invuln:.65},
   'crown-sprite':{name:'Royal Verdict',range:[3.6,5.3],cooldown:4.8,invuln:1.1},
+  'water-sprite':{name:'Tidal Shield',range:[3.5,4.8],cooldown:4.1,invuln:1.0},
+  'fire-sprite':{name:'Firestorm',range:[3.3,4.8],cooldown:3.6,invuln:0},
+  'jonesy-sprite':{name:'Rally Shield',range:[3.5,4.5],cooldown:7.5,invuln:1.7},
+  'klombo-base':{name:'Munch & Reward',range:[3.5,4.5],cooldown:4.6,invuln:.5},
+  'klombo-cheat':{name:'Cheat Matrix',range:[3.8,5.2],cooldown:5.5,invuln:.7},
+  'klombo-loot':{name:'Loot Scanner',range:[4.1,5.7],cooldown:5.1,invuln:.6},
 };
 function attack() {
   const p=state.player;
@@ -228,6 +255,9 @@ function attack() {
   const spec=POWERS[id],s=state.sim;
   p.attackT=.85;p.attackCd=spec.cooldown;p.attackHit=false;
   p.invuln=Math.max(p.invuln,spec.invuln);
+  if (id==='jonesy-sprite' && p.hp<p.maxHp) p.hp+=1;
+  if (id==='water-sprite' && p.hp<p.maxHp) p.hp+=1;
+  if (id==='klombo-base' && p.hp<p.maxHp && state.stats.kills>0) p.hp+=1;
   state.activeAbility={id,spec,t:0,next:0};
   fx.power.start(id,s.x,s.y,s.z);
   sfx.bite();
@@ -241,11 +271,20 @@ function resolveAttack() {
   while(a.next<2&&a.t>=times[a.next]){
     const wave=a.next++,s=state.sim,re=a.spec.range[wave];
     if(wave===1)fx.power.emit(1);
+    if(a.id==='klombo-loot' || a.id==='klombo-base'){
+      const radius=a.id==='klombo-loot'?8:4.1;
+      for(const g of state.world.gems){
+        if(!g.got && Math.hypot(g.x-s.x,g.z-s.z)<radius && Math.abs(g.y-s.y)<4){
+          g.got=true;state.stats.gems++;sfx.gem();
+          fx.spark.burst(g.x,g.y,g.z,10,3,.4,.4,.5,1,.7,0);
+        }
+      }
+    }
     for(const e of state.enemies){
       if(!e.alive)continue;
       const vx=e.x-s.x,vz=e.z-s.z,dist=Math.hypot(vx,vz);
       if(dist>re+e.type.radius*.5||Math.abs(e.y-s.y)>3.2)continue;
-      if(e.damage(1,fx,sfx))state.stats.kills++;
+      if(e.damage(a.id==='klombo-cheat'?2:1,fx,sfx))state.stats.kills++;
       e.hitT=.48;
       const l=dist||1;
       e.x+=vx/l*(a.id==='earth-sprite'?1.2:.65);
@@ -296,6 +335,14 @@ function physicsStep() {
   state.simT += STEP;
   if (state.mode !== 'play') return;
 
+  // Jonesy's passive delayed recovery; taking another hit resets its timer.
+  if(state.choice.id==='jonesy-sprite' && state.player.hp<state.player.maxHp
+     && state.time-state.lastHurt>4.5 && state.time-state.lastJonesyHeal>6.5){
+    state.player.hp=Math.min(state.player.maxHp,state.player.hp+1);
+    state.lastJonesyHeal=state.time;
+    fx.spark.burst(s.x,s.y+1.2,s.z,14,3.3,.5,.35,.7,1,.55,0);
+    toast('Jonesy recovered a heart');
+  }
   if (s.justJumped) { sfx.jump(); fx.dust.burst(s.x, s.y + 0.1, s.z, 5, 2, 0.4, 0.5, 0.9, 0.9, 0.9, -1); }
   if (s.justDoubled) { sfx.jump2(); fx.spark.burst(s.x, s.y + 0.4, s.z, 12, 4.5, 0.45, 0.4, 0.6, 0.9, 1, 3); }
   if (s.justLanded) { sfx.land(); fx.dust.burst(s.x, s.y + 0.1, s.z, 6, 2.6, 0.45, 0.6, 0.9, 0.9, 0.9, -1); }
@@ -412,11 +459,15 @@ function frame(now) {
   } else if (mode === 'title' || mode === 'levels') {
     // attract: slow orbit around the start island
     state.time += dt;
+    // Character showroom: keep the entire 3D Sprite visible at all times.
+    // Previous full-world orbit regularly placed a tree between the camera
+    // and small characters, hiding the important Cheat/Loot animations.
+    state.player.yaw = Math.sin(state.time * .68) * .38;
     state.player.update(dt, state.sim, rig.yaw, state.world.solids, fx);
-    const a = state.time * 0.22;
-    camera.position.set(Math.sin(a) * 9, 4.2, Math.cos(a) * 9 + 2.6);
-    camera.lookAt(0, 2.3, 2.6);
-    rig.target.set(0, 3, 0);
+    const s = state.sim;
+    camera.position.set(s.x + Math.sin(state.time*.36)*.55,s.y+3.55,s.z+7.65);
+    camera.lookAt(s.x,s.y+1.42,s.z);
+    rig.target.set(s.x,s.y+1.5,s.z);
   }
 
   // camera

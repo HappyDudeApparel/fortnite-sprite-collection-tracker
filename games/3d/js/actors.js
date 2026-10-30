@@ -273,12 +273,14 @@ export class Enemy {
   dispose() { this.scene.remove(this.group); this.blobs.hide(this.blob); }
 }
 
-export async function createEnemies(scene, level, blobs) {
-  const list = level.enemies.map((e) => {
-    // Preview only: replace 2 legacy 3D monsters with original Sprite-style combatants, never touching level data.
-    const type = e.type === 'ghost' ? ENEMIES['ghost-sprite'] : e.type === 'stump' ? ENEMIES['earth-sprite'] : ENEMIES[e.type];
-    return new Enemy(scene, type, e, level.islands[e.isl], blobs);
-  });
+export async function createEnemies(scene, level, blobs, selectedSpriteId = null) {
+  // The active player must never fight its own character, including former monster aliases.
+  const aliases = {ghost:'ghost-sprite', stump:'earth-sprite', cthulhu:'water-sprite', alien:'fire-sprite'};
+  const enemySpecs = level.enemies.map((spec) => ({
+    spec, id:aliases[spec.type] || spec.type,
+  })).filter(({id}) => id !== selectedSpriteId);
+  const list = enemySpecs.map(({spec,id}) =>
+    new Enemy(scene, ENEMIES[id], spec, level.islands[spec.isl], blobs));
   await Promise.all(list.map((e) => e.load()));
   return list;
 }

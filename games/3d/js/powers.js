@@ -6,7 +6,13 @@ const PALETTES={
  'earth-sprite':['#a5ee77','#4ccf77','#d6aa5c','#60cf8f'],
  'ghost-sprite':['#b4f7ff','#7bd9ff','#c19cff','#eefcff'],
  'bush-sprite':['#b5ed63','#60ca76','#dbb578','#8deaa3'],
- 'crown-sprite':['#fff1ab','#ffce35','#ff891a','#ff5362']
+ 'crown-sprite':['#fff1ab','#ffce35','#ff891a','#ff5362'],
+ 'water-sprite':['#bafaff','#56f5f5','#26befb','#9ee3ff'],
+ 'fire-sprite':['#fff0aa','#ffc045','#ff6e21','#fe1f20'],
+ 'jonesy-sprite':['#ffdba9','#e7ac73','#f68271','#eec999'],
+ 'klombo-base':['#ff49c6','#a054f8','#fff0b6','#47d8fc'],
+ 'klombo-cheat':['#16ee54','#b0ff3a','#25deae','#08a02c'],
+ 'klombo-loot':['#59ecff','#ab6cfa','#4268f9','#27b6f2']
 };
 function stars(n,mat){
  const sh=new THREE.Shape(),outer=.23,inner=.115;

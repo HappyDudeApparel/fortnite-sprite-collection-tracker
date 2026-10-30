@@ -2,6 +2,7 @@
 // C7S4 Bush/Crown proportions and colors sampled from the Locker's base artwork.
 // Ghost/Earth are recoverable stand-ins pending their historical Blender source.
 import * as THREE from 'three';
+import {makeWater,makeFire,makeJonesy,makeKlombo} from './procedural-heroes.js';
 
 const mat=(hex,rough=.48,metal=0)=>new THREE.MeshPhysicalMaterial({color:hex,roughness:rough,metalness:metal,clearcoat:.24,clearcoatRoughness:.2});
 const M={
@@ -42,24 +43,74 @@ function roundedBody(g,material,w,h,d,y){
  return add(g,geometry,material,0,y,0);
 }
 function spriteBush(root){
+ // Faithful C7S4 Bush read: sandstone face, deep bark cheeks, dense animated
+ // lime/emerald leaf hair, rough knuckled fists and dark mossy boots.
  const core=new THREE.Group();root.add(core);
- roundedBody(core,M.tan,1.55,1.45,.78,1.56);
- // Bark-coloured sides, layered forearms and blocky boots.
- box(core,M.earth,0,.98,-.35,1.42,.37,.29);
- for (const side of [-1,1]){
-   box(core,M.forest,side*.44,.30,-.10,.25,.68,.31);
-   ball(core,M.earth2,side*.76,1.02,.39,.36,.32,.37);
-   ball(core,M.earth,side*.83,1.00,.66,.30,.30,.28);
-   for(let j=0;j<3;j++)ball(core,M.bark,side*(.73+(j-1)*.17),.86,.79,.14,.15,.18);
+ const barkDark= new THREE.MeshPhysicalMaterial({color:'#643d26',roughness:.84});
+ const beige= new THREE.MeshPhysicalMaterial({color:'#c59c77',roughness:.72});
+ const leafBack= new THREE.MeshPhysicalMaterial({color:'#1c683e',roughness:.67,side:THREE.DoubleSide});
+ const moss= new THREE.MeshPhysicalMaterial({color:'#4f853e',roughness:.71});
+ roundedBody(core,M.tan,1.54,1.46,.81,1.57);
+ // A varied natural bark border around the head; not a bland plain cube.
+ for(const side of [-1,1]){
+  box(core,M.earth,side*.68,1.10,-.24,.19,.92,.29);
+  for(let k=0;k<4;k++){
+   const y=1.11+k*.23;
+   const plate=ball(core,k%2?beige:M.barkLight,side*.69,y,.30,.20,.15,.14);
+   plate.rotation.z=side*(k%2?-.22:.20);
+  }
+  ball(core,barkDark,side*.67,1.08,.38,.21,.22,.28);
+  box(core,M.forest,side*.41,.39,-.07,.29,.75,.38);
+  // Chunky little twig arms are connected to visible rocky fists.
+  const arm=ball(core,M.earth2,side*.82,1.22,.04,.27,.26,.30);
+  const fist=new THREE.Group();fist.position.set(side*.82,1.01,.27);core.add(fist);
+  ball(fist,beige,0,0,0,.32,.32,.32);
+  ball(fist,M.earth,side*.02,-.04,.18,.29,.26,.20);
+  for(let j=0;j<3;j++){
+    ball(fist,j===1?M.earth2:barkDark,side*((j-1)*.16),-.18,.22,.11,.15,.17);
+  }
+  core.userData['fist'+side]=fist;
  }
- for(let i=0;i<17;i++){
-  const a=i*2.399,xx=Math.sin(a)*(.15+Math.sqrt(i/17)*.74),zz=Math.cos(a)*(.15+Math.sqrt(i/17)*.35);
-  const color=i%4===0?M.lime:i%3===0?M.forest:M.green;
-  leaf(core,xx,2.38+((i*7)%5)*.037,zz,Math.sin(a)*.6,color,.27+(i%3)*.026);
+ // Puffy 3D leaf masses layered around hairline and head sides,
+ // then individual elongated foliage blades on stalks.
+ for(let i=0;i<27;i++){
+  const a=i*2.3999;
+  const ring=.32+.55*Math.sqrt((i+1)/27);
+  const x=Math.sin(a)*ring,z=Math.cos(a)*ring*.57;
+  const y=2.24+.16*Math.sin(i*1.9)+.10*Math.cos(a);
+  const m=i%4===0?M.lime:i%3===0?leafBack:M.green;
+  ball(core,m,x,y,z,.24+(i%3)*.042,.22+(i%4)*.038,.22);
+  leaf(core,x+Math.cos(a)*.09,y+.19,z+Math.sin(a)*.05,Math.cos(a)*.63,i%5===0?M.lime:M.green,.24+(i%3)*.05);
  }
- face(core,1.83,.52,.31,.025);
- for(let i=0;i<6;i++)ball(core,M.earth2,(-2.5+i)*.19,1.48,.53,.035,.03,.024);
- return {root,animate(t,attack){core.position.y=.035*Math.sin(t*3);core.rotation.z=.018*Math.sin(t*2);root.rotation.z=0;core.scale.setScalar(1+attack*.04)}};
+ // Low hanging side leaf tufts make the haircut wrap around the silhouette.
+ for(let sign of [-1,1])for(let j=0;j<5;j++){
+  const tuft=leaf(core,sign*(.70+(j%2)*.12),2.26-j*.20,-.02+(j%3)*.23,sign*(.63+j*.12),j%3===0?M.lime:M.green,.19);
+  tuft.rotation.z=sign*(.53+j*.11);
+ }
+ // Deeply readable eyes and happy mouth on the front of the head.
+ for(let sign of [-1,1]){
+  ball(core,M.eye,sign*.32,1.85,.54,.12,.137,.078);
+  ball(core,M.white,sign*.32-.033,1.90,.62,.034,.04,.026);
+ }
+ ball(core,M.eye,0,1.55,.535,.079,.037,.033);
+ for(let sign of [-1,1])for(let j=0;j<3;j++){
+  ball(core,M.earth,sign*(.42+j*.10),1.56+(j%2)*.10,.535,.025,.025,.018);
+ }
+ for(let i=0;i<5;i++){
+  const x=(i-2)*.24;
+  const patch=ball(core,i%2?M.earth2:moss,x,1.07,.33,.18,.16,.12);
+  patch.rotation.z=i*.15;
+ }
+ return {root,animate(t,attack){
+   core.position.y=.047*Math.sin(t*3.1);
+   core.rotation.z=.035*Math.sin(t*1.9);
+   for(const side of [-1,1]){
+     const f=core.userData['fist'+side];
+     if(f){f.position.z=.27+attack*.40;
+       f.position.y=1.01+attack*.07+Math.sin(t*3+side)*.035;
+     }
+   }
+ }};
 }
 function spriteCrown(root){
  const core=new THREE.Group();root.add(core);
@@ -138,10 +189,18 @@ function spriteEarth(root){
    }
  }};
 }
-export const PROCEDURAL = new Set(['ghost-sprite','earth-sprite','bush-sprite','crown-sprite']);
+export const PROCEDURAL = new Set(['ghost-sprite','earth-sprite','bush-sprite','crown-sprite','water-sprite','fire-sprite','jonesy-sprite','klombo-base','klombo-cheat','klombo-loot']);
 export function makeProceduralSprite(id){
  const root=new THREE.Group();
- const visual=id==='bush-sprite'?spriteBush(root):id==='crown-sprite'?spriteCrown(root):id==='earth-sprite'?spriteEarth(root):spriteGhost(root);
+ const visual=id==='bush-sprite'?spriteBush(root)
+  :id==='crown-sprite'?spriteCrown(root)
+  :id==='earth-sprite'?spriteEarth(root)
+  :id==='ghost-sprite'?spriteGhost(root)
+  :id==='water-sprite'?makeWater(root)
+  :id==='fire-sprite'?makeFire(root)
+  :id==='jonesy-sprite'?makeJonesy(root)
+  :id.startsWith('klombo-')?makeKlombo(root,id.slice('klombo-'.length))
+  :spriteGhost(root);
  root.userData.spriteId=id;
  return {root,visual,mixer:null,actions:{},height:3};
 }
