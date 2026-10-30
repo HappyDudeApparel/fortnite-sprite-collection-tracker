@@ -1,3 +1,4 @@
+import { buildAdventureWorld } from './adventure-world.js';
 // World builder: turns a level definition into a THREE scene graph + the solids/hazards the sim needs.
 // Performance rules: everything repeated is instanced, one Lambert material for the whole Kenney kit, one shadow
 // light that follows the player, no per-frame allocation (scratch objects are module-level).
@@ -184,6 +185,7 @@ function distToSegment(px, pz, ax, az, bx, bz) {
 
 // ------------------------------------------------------------------------------------------------ build
 export async function buildWorld(scene, level, quality, gfx) {
+  if (level.adventure) return buildAdventureWorld(scene,level,quality,gfx);
   const theme = THEMES[level.theme];
   const group = new THREE.Group();
   scene.add(group);

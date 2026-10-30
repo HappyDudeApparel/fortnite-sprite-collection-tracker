@@ -1,7 +1,9 @@
 // Sprite Arena (3D) — game orchestration: boot, menus, fixed-step simulation, combat, collectibles, finish.
 import * as THREE from 'three';
 import { createRenderer, Quality, Input, CameraRig, IS_MOBILE } from './engine.js';
-import { LEVELS } from './levels.js';
+import { LEVELS as CLASSIC_LEVELS } from './levels.js';
+import { VALLEY } from './adventure-level.js';
+const LEVELS=[VALLEY,...CLASSIC_LEVELS];
 import { buildWorld, KIT } from './world.js';
 import { preloadKenney } from './assets.js';
 import { Player, createEnemies, BlobShadows } from './actors.js';
@@ -25,7 +27,7 @@ function readProgress() {
 }
 const progress = readProgress();
 const saveProgress = () => { try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); } catch (_) { /* no-op */ } };
-const unlocked = (i) => i === 0 || progress.unlockAll || !!progress.levels[LEVELS[i - 1].id];
+const unlocked = (i) => i===0 || i===1 || progress.unlockAll || !!progress.levels[LEVELS[i-1].id];
 const starText = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
 
 // ------------------------------------------------------------------------------------------------ core objects
@@ -37,6 +39,7 @@ const state = {
   stats: null, checkpoint: null, introT: 0, finishT: 0, camMode: 'follow', choice: { kind: 'model', id: 'citrus' }, choiceName: 'Dash',
   inp: { mx: 0, my: 0, jump: false, jumpHeld: false, attack: false, pause: false, camYaw: 0, camPitch: 0 },
   jumpPending: false, loading: false, activeAbility: null, lastHurt: -999, lastJonesyHeal: 0,
+  attackQueue:0,attackCombo:0,lastAttackAt:-999,lastSpecialAt:-999,nextAttackAt:0,questIndex:0,
 };
 window.ARENA = state; // test/debug hook
 
@@ -68,6 +71,34 @@ function updateHud(force) {
     $('hearts').textContent = '♥'.repeat(Math.max(0, s.player.hp)) + '♡'.repeat(Math.max(0, s.player.maxHp - s.player.hp));
     $('gems').textContent = `✦ ${s.stats.gems}/${s.world.gems.length}`;
   }
+  if(s.world.level.adventure){
+    const q=s.world.level.quests[s.questIndex],el=$('questHint');
+    el.hidden=false;
+    let label='',target=q;
+    if(s.questIndex===1){
+      const remaining=s.world.runes.filter(r=>!r.lit);
+      if(remaining.length){
+        target=remaining.reduce((a,b)=>
+          Math.hypot(a.x-s.sim.x,a.z-s.sim.z)<Math.hypot(b.x-s.sim.x,b.z-s.sim.z)?a:b);
+      }
+      const count=2-remaining.length;
+      label='CHAPTER 2/3 · Cave runes '+count+'/2 · TAP ACTION';
+      if(!remaining.length){label='CHAPTER 2/3 · Return to the crystal heart';target=q;}
+    }else if(s.questIndex===2){
+      const guard=s.enemies.find(e=>e.spec.guardian&&e.alive);
+      if(guard){target=guard;label='CHAPTER 3/3 · Defeat castle guardian ('+guard.hp+' HP)';}
+      else label='CHAPTER 3/3 · Raise the upper ward';
+    }else if(s.questIndex===0)label='CHAPTER 1/3 · Restore the village beacon';
+    else label='FINAL CHAPTER · Reach the summit portal';
+    if(!target)target=s.world.goal;
+    const dx=target.x-s.sim.x,dz=target.z-s.sim.z;
+    const distance=Math.round(Math.hypot(dx,dz));
+    const directions=['↑','↗','→','↘','↓','↙','←','↖'];
+    const radians=Math.atan2(dx,-dz)+(rig?.yaw||0);
+    const dir=directions[((Math.round(radians/(Math.PI/4))%8)+8)%8];
+    const current=label+' · '+dir+' '+distance+'m';
+    if(el.textContent!==current)el.textContent=current;
+  }else $('questHint').hidden=true;
 }
 
 // ------------------------------------------------------------------------------------------------ roster (catalog)
@@ -154,6 +185,7 @@ async function loadLevel(index, attract = false) {
   state.sim = makePlayer(level.spawn.x, level.spawn.y + 0.05, level.spawn.z);
   state.simT = 0; state.acc = 0; state.time = 0; state.finishT = 0; state.activeAbility = null; state.lastHurt = -999; state.lastJonesyHeal = 0; if(fx.power)fx.power.active=false;
   state.stats = { gems: 0, kills: 0, hits: 0, falls: 0 };
+  state.questIndex=0;state.attackQueue=0;state.attackCombo=0;state.lastAttackAt=-999;state.lastSpecialAt=-999;state.nextAttackAt=0;
   state.checkpoint = { x: level.spawn.x, y: level.spawn.y, z: level.spawn.z };
   state.jumpPending = false;
   state.player.hp = state.player.maxHp; state.player.win = false;
@@ -198,9 +230,9 @@ function showLevels() {
     const best = progress.levels[L.id];
     const open = unlocked(i);
     const b = document.createElement('button'); b.className = 'card'; b.type = 'button'; b.disabled = !open;
-    const th = L.theme === 'frost' ? ['#07163a', '#2a56a0', '#bfe0ff'] : L.theme === 'cinder' ? ['#12050c', '#8a2a1c', '#ff8a2a'] : ['#2f86ff', '#8fd3ff', '#ffe3b4'];
+    const th = L.adventure ? ['#154c48','#308967','#ecd596'] : L.theme === 'frost' ? ['#07163a', '#2a56a0', '#bfe0ff'] : L.theme === 'cinder' ? ['#12050c', '#8a2a1c', '#ff8a2a'] : ['#2f86ff', '#8fd3ff', '#ffe3b4'];
     b.innerHTML = `<div class="art" style="background:linear-gradient(180deg,${th[0]},${th[1]} 55%,${th[2]})"></div><div class="body"><div class="n">WORLD ${i + 1}</div><h3></h3><p></p><div class="st"><span class="s"></span><span class="g"></span></div></div>`;
-    b.querySelector('h3').textContent = L.name; b.querySelector('p').textContent = L.tagline;
+    b.querySelector('h3').textContent = L.adventure ? '★ '+L.name+' · STORY MODE' : L.name+' · CLASSIC'; b.querySelector('p').textContent = L.tagline;
     b.querySelector('.s').textContent = starText(best ? best.stars : 0); b.querySelector('.g').textContent = `✦ ${best ? best.gems : 0}/${L.gemCount}`;
     if (!open) { const lk = document.createElement('div'); lk.className = 'lock'; lk.textContent = '🔒 Clear the previous world'; b.append(lk); }
     b.addEventListener('click', () => { sfx.click(); launch(i); });
@@ -248,53 +280,68 @@ const POWERS = {
   'klombo-cheat':{name:'Cheat Matrix',range:[3.8,5.2],cooldown:5.5,invuln:.7},
   'klombo-loot':{name:'Loot Scanner',range:[4.1,5.7],cooldown:5.1,invuln:.6},
 };
-function attack() {
-  const p=state.player;
-  if(p.attackCd>0||state.mode!=='play')return;
-  const id=state.choice.id in POWERS?state.choice.id:'citrus';
-  const spec=POWERS[id],s=state.sim;
-  p.attackT=.85;p.attackCd=spec.cooldown;p.attackHit=false;
-  p.invuln=Math.max(p.invuln,spec.invuln);
-  if (id==='jonesy-sprite' && p.hp<p.maxHp) p.hp+=1;
-  if (id==='water-sprite' && p.hp<p.maxHp) p.hp+=1;
-  if (id==='klombo-base' && p.hp<p.maxHp && state.stats.kills>0) p.hp+=1;
-  state.activeAbility={id,spec,t:0,next:0};
-  fx.power.start(id,s.x,s.y,s.z);
-  sfx.bite();
-  toast(spec.name,900);
-}
-function resolveAttack() {
-  const a=state.activeAbility;
-  if(!a)return;
-  a.t+=STEP;
-  const times=[.16,.48];
-  while(a.next<2&&a.t>=times[a.next]){
-    const wave=a.next++,s=state.sim,re=a.spec.range[wave];
-    if(wave===1)fx.power.emit(1);
-    if(a.id==='klombo-loot' || a.id==='klombo-base'){
-      const radius=a.id==='klombo-loot'?8:4.1;
-      for(const g of state.world.gems){
-        if(!g.got && Math.hypot(g.x-s.x,g.z-s.z)<radius && Math.abs(g.y-s.y)<4){
-          g.got=true;state.stats.gems++;sfx.gem();
-          fx.spark.burst(g.x,g.y,g.z,10,3,.4,.4,.5,1,.7,0);
-        }
-      }
-    }
-    for(const e of state.enemies){
-      if(!e.alive)continue;
-      const vx=e.x-s.x,vz=e.z-s.z,dist=Math.hypot(vx,vz);
-      if(dist>re+e.type.radius*.5||Math.abs(e.y-s.y)>3.2)continue;
-      if(e.damage(a.id==='klombo-cheat'?2:1,fx,sfx))state.stats.kills++;
-      e.hitT=.48;
-      const l=dist||1;
-      e.x+=vx/l*(a.id==='earth-sprite'?1.2:.65);
-      e.z+=vz/l*(a.id==='earth-sprite'?1.2:.65);
-      rig.shake=Math.max(rig.shake,a.id==='earth-sprite'?.55:.33);
+// Responsive action: every tap connects, taps during recovery are queued.
+function attack(){
+ const p=state.player;
+ const stamp=performance.now()/1000;
+ if(stamp<state.nextAttackAt||state.mode!=='play')return;
+ if(state.attackQueue>0)state.attackQueue--;
+ const id=state.choice.id in POWERS?state.choice.id:'citrus',spec=POWERS[id],s=state.sim;
+ state.attackCombo=stamp-state.lastAttackAt<1.1?(state.attackCombo%3)+1:1;
+ state.lastAttackAt=stamp;
+ const combo=state.attackCombo,finisher=combo===3;
+ const empowered=finisher&&stamp-state.lastSpecialAt>spec.cooldown;
+ if(empowered)state.lastSpecialAt=stamp;
+ p.attackT=.38;p.attackCd=.20;p.attackHit=false;state.nextAttackAt=stamp+.20;
+ const radius=finisher?5.25:3.8;
+ const damage=finisher?2:1;
+ if(empowered){
+   p.invuln=Math.max(p.invuln,Math.min(.85,spec.invuln));
+   if((id==='jonesy-sprite'||id==='water-sprite')&&p.hp<p.maxHp)p.hp++;
+   if(id==='klombo-base'&&p.hp<p.maxHp&&state.stats.kills>0)p.hp++;
+ }
+ state.activeAbility={id,spec,t:0,next:combo};
+ // Crystal dungeons use the same action button as combat.
+ if(state.world.level.adventure&&state.questIndex===1){
+   for(let i=0;i<state.world.runes.length;i++){
+     const r=state.world.runes[i];
+     if(!r.lit&&Math.hypot(r.x-s.x,r.z-s.z)<3.0&&Math.abs(s.y-r.y)<2.3){
+       if(state.world.activateRune(i)){
+         sfx.gem();toast('CAVE RUNE '+(i+1)+' POWERED!',1350);
+         fx.spark.burst(r.x,-3.7,r.z,40,7,.85,.5,.6,1,.7,3);
+       }
+     }
+   }
+ }
+ fx.power.start(id,s.x,s.y,s.z);
+ if(finisher)fx.power.emit(1);
+ sfx.bite();
+ for(const e of state.enemies){
+  if(!e.alive)continue;
+  const dx=e.x-s.x,dz=e.z-s.z,dist=Math.hypot(dx,dz);
+  if(dist>radius+e.type.radius*.35||Math.abs(e.y-s.y)>3.0)continue;
+  const dmg=damage+(empowered&&id==='klombo-cheat'?1:0);
+  if(e.damage(dmg,fx,sfx))state.stats.kills++;
+  e.hitT=.37;
+  const l=dist||1,kb=finisher?.42:.20;
+  e.x+=dx/l*kb;e.z+=dz/l*kb;
+  rig.shake=Math.max(rig.shake,finisher?.34:.12);
+ }
+ if(id.startsWith('klombo-')&&(finisher||id==='klombo-loot')){
+  for(const g of state.world.gems){
+    if(!g.got&&Math.hypot(g.x-s.x,g.z-s.z)<(id==='klombo-loot'?7:4.4)&&Math.abs(g.y-s.y)<3.8){
+      g.got=true;state.stats.gems++;sfx.gem();
     }
   }
-  if(a.t>.87)state.activeAbility=null;
+ }
+ if(finisher)toast(empowered?spec.name+' · COMBO!':'3-HIT COMBO!',750);
 }
-
+function resolveAttack(){
+ if(state.activeAbility){
+  state.activeAbility.t+=STEP;
+  if(state.activeAbility.t>.8)state.activeAbility=null;
+ }
+}
 function enemyContacts() {
   const s = state.sim, p = state.player;
   for (const e of state.enemies) {
@@ -368,6 +415,24 @@ function physicsStep() {
       sfx.flag(); toast('Checkpoint!'); fx.spark.burst(f.x, f.y + 1.2, f.z, 24, 6, 0.9, 0.5, 0.5, 0.95, 1, -1, 3);
     }
   }
+  // Story objectives: village beacon, cavern heart, castle ward, summit portal.
+  if(LEVELS[state.levelIndex].adventure){
+    const quests=LEVELS[state.levelIndex].quests,q=quests[state.questIndex];
+    const caveReady=state.questIndex!==1||w.runes.every(r=>r.lit);
+    const guardReady=state.questIndex!==2||state.enemies.every(e=>!e.spec.guardian||!e.alive);
+    if(q&&caveReady&&guardReady&&Math.hypot(s.x-q.x,s.z-q.z)<q.range&&Math.abs(s.y-q.y)<2.2){
+      state.questIndex++;w.questIndex=state.questIndex;
+      if(w.completeQuest)w.completeQuest(state.questIndex-1);
+      sfx.flag();fx.spark.burst(q.x,q.y+1.2,q.z,36,9,.9,.5,.8,1,.75,1);
+      const next=quests[state.questIndex];
+      toast(next?'Quest complete! '+next.name:'The summit portal is ready!',2900);
+    }
+    // Unlock an optional fast route from the cave to the castle, saving backtracking.
+    if(state.questIndex>=2&&Math.hypot(s.x+23,s.z+28)<2.0&&s.y<-3){
+      s.x=22;s.y=.12;s.z=-13;s.vx=s.vy=s.vz=0;s.standing=null;
+      rig.snap(s.x,s.y,s.z);toast('Ancient passage → Castle',1800);
+    }
+  }
   // hazards
   for (const sp of w.spikes) if (hazardHit(s, sp)) { hurt(sp.x, sp.z); break; }
   for (const sw of w.saws) if (hazardHit(s, sw)) { hurt(sw.x, sw.z); break; }
@@ -376,7 +441,7 @@ function physicsStep() {
   if (s.y < LEVELS[state.levelIndex].killY) { state.stats.falls += 1; sfx.fall(); toast('Whoops! Back to the last flag'); respawn(); }
   // goal
   const g = w.goal;
-  if (Math.hypot(s.x - g.x, s.z - g.z) < 1.9 && s.y > g.y - 0.6 && s.y < g.y + 3) beginFinish();
+  if ((!LEVELS[state.levelIndex].adventure||state.questIndex===3)&&Math.hypot(s.x-g.x,s.z-g.z)<1.9&&s.y>g.y-.6&&s.y<g.y+3)beginFinish();
 }
 
 function beginFinish() {
@@ -445,7 +510,8 @@ function frame(now) {
       if (state.introT >= 3.5) { state.mode = 'play'; $('banner').hidden = true; rig.snap(state.sim.x, state.sim.y, state.sim.z); }
     }
     if (state.mode !== 'intro') {
-      if (inp.attack) attack();
+      if(inp.attackCount>0)state.attackQueue=Math.min(8,state.attackQueue+inp.attackCount);
+      if(state.mode==='play'&&state.attackQueue>0&&performance.now()/1000>=state.nextAttackAt)attack();
       state.time += dt;
     }
     state.acc += dt;
@@ -455,6 +521,7 @@ function frame(now) {
     if (state.mode === 'finish') updateFinish(dt);
     for (const e of state.enemies) e.update(dt, state.sim, state.world.solids);
     state.player.update(dt, state.sim, rig.yaw, state.world.solids, fx);
+    if(state.mode==='play'&&state.attackQueue>0&&performance.now()/1000>=state.nextAttackAt)attack();
     updateHud(false);
   } else if (mode === 'title' || mode === 'levels') {
     // attract: slow orbit around the start island
@@ -485,6 +552,12 @@ function frame(now) {
     rig.target.set(s.x, s.y + 1.5, s.z);
   } else if (state.mode === 'play' || state.mode === 'finish') {
     const sp = Math.hypot(state.sim.vx, state.sim.vz);
+    // Underground is genuinely below the surface: keep the third-person camera
+    // inside the cavern instead of clipping above ground through road/floor meshes.
+    if(state.world.level.adventure){
+      rig.dist=state.sim.y < -1.5 ? 5.4 : (IS_MOBILE?10.8:9.6);
+      if(state.sim.y < -1.5)rig.pitch=Math.min(rig.pitch,.20);
+    }
     rig.update(dt, state.sim.x, Math.max(state.sim.y, state.world.minY - 6), state.sim.z, sp, state.inp);
   } else if (state.mode === 'pause') { /* hold */ }
 

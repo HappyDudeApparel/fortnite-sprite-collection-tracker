@@ -69,7 +69,7 @@ export class Input {
     this.keys = new Set();
     this.mx = 0; this.my = 0;
     this.touchMove = { x: 0, y: 0, active: false };
-    this.jumpHeld = false; this._jumpEdge = false; this._attackEdge = false; this._pauseEdge = false;
+    this.jumpHeld = false; this._jumpEdge = false; this._attackTaps = 0; this._pauseEdge = false;
     this.camYaw = 0; this.camPitch = 0;
     this.padPrev = { a: false, b: false, start: false };
     this.dragging = false;
@@ -80,7 +80,7 @@ export class Input {
       this.keys.add(e.code);
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
       if (e.code === 'Space') { this._jumpEdge = true; this.jumpHeld = true; }
-      if (['KeyJ', 'KeyK', 'KeyX', 'Enter', 'ShiftLeft', 'ShiftRight'].includes(e.code)) this._attackEdge = true;
+      if (['KeyJ', 'KeyK', 'KeyX', 'Enter', 'ShiftLeft', 'ShiftRight'].includes(e.code)) this._attackTaps += 1;
       if (e.code === 'Escape' || e.code === 'KeyP') this._pauseEdge = true;
     });
     addEventListener('keyup', (e) => { this.keys.delete(e.code); if (e.code === 'Space') this.jumpHeld = false; });
@@ -113,7 +113,7 @@ export class Input {
       const up = () => { this.jumpHeld = false; };
       jump.addEventListener('pointerup', up); jump.addEventListener('pointercancel', up);
     }
-    if (attack) attack.addEventListener('pointerdown', (e) => { this._attackEdge = true; e.preventDefault(); });
+    if (attack) attack.addEventListener('pointerdown', (e) => { this._attackTaps += 1; e.preventDefault(); });
     if (camZone) {
       let id = null, lx = 0, ly = 0;
       camZone.addEventListener('pointerdown', (e) => { id = e.pointerId; camZone.setPointerCapture(id); lx = e.clientX; ly = e.clientY; });
@@ -147,17 +147,17 @@ export class Input {
       if (a && !this.padPrev.a) this._jumpEdge = true;
       this.jumpHeld = this.jumpHeld || a;
       if (!a && this.padPrev.a) this.jumpHeld = false;
-      if (b && !this.padPrev.b) this._attackEdge = true;
+      if (b && !this.padPrev.b) this._attackTaps += 1;
       if (st && !this.padPrev.start) this._pauseEdge = true;
       this.padPrev.a = a; this.padPrev.b = b; this.padPrev.start = st;
     }
     const l = Math.hypot(x, y);
     if (l > 1) { x /= l; y /= l; }
     out.mx = x; out.my = y;
-    out.jump = this._jumpEdge; out.jumpHeld = this.jumpHeld; out.attack = this._attackEdge; out.pause = this._pauseEdge;
+    out.jump = this._jumpEdge; out.jumpHeld = this.jumpHeld; out.attackCount = this._attackTaps; out.attack = this._attackTaps>0; out.pause = this._pauseEdge;
     out.camYaw = this.camYaw; out.camPitch = this.camPitch;
     this.camYaw = 0; this.camPitch = 0;
-    this._jumpEdge = false; this._attackEdge = false; this._pauseEdge = false;
+    this._jumpEdge = false; this._attackTaps = 0; this._pauseEdge = false;
     return out;
   }
 }
