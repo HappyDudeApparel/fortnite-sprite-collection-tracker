@@ -1,4 +1,4 @@
-# Sprite Collection Locker — v2.0.48 Treasure Hunters (November 1, 2026)
+# Sprite Collection Locker — v2.0.49 Treasure Hunters (November 1, 2026)
 
 ## Live site
 https://sprites.happydude.ca/
@@ -21,3 +21,8 @@ Replace VICE collage cutouts with individually verified transparent PNG/WebP art
 ## Sources
 https://www.vice.com/en/article/all-33-new-fortnite-sprites-added-in-treasure-hunters-mini-season-full-list/
 https://communities.epicgames.com/thread/set-sail-for-fortnite-treasure-hunters-the-greatest-adventure-of-all-time/Pmud
+
+## v2.0.49 visual theme preview
+On the C7S5 overview, tap the compact **Theme** pill inside the season banner to cycle **Map Glow → Deep Sea → Tavern**. Three visual treatments correspond to the approved concept board. The last choice persists in `localStorage.scl_c7s5_theme_v1`; no collection, Sprite progress, detail, season or Locker state is affected.
+
+Variant legend now uses the selected **Fortune C** (neon-green four-leaf clover inside a brass luck charm) and **Cursed C** (purple haunted relic skull with gold band). **Base and Gold are not modified.** All theme CSS is restricted to the active C7S5 overview; the other two season pages and their independent stored data stay unchanged. Themes only replace backgrounds, colours, materials and dot icon art—not dimensions, rows, columns or click handlers.
