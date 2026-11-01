@@ -18,5 +18,12 @@
   "approvedArchiveConcepts": [
     "C7S3-Runners-FINAL-Canonical-Water-Earth-Fire.png",
     "C7S4-Override-FINAL-Selected-Concept.png"
+  ],
+  "qaCoverage": [
+    "canonical-source-integrity",
+    "seven-responsive-viewports",
+    "independent-season-persistence",
+    "registered-atmosphere",
+    "live-assets-and-browser"
   ]
 }

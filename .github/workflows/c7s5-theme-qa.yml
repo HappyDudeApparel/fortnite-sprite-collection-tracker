@@ -26,12 +26,12 @@ jobs:
         run: |
           python -m pip install playwright pillow
           python -m playwright install --with-deps chromium
+      - name: Validate image-registered route, original bubbles and tavern ambience
+        run: python scripts/qa-c7s5-atmosphere.py --output /tmp/c7s5-premium-qa/atmosphere
       - name: Validate premium themes, responsive UI and collection workflows
         run: python scripts/qa-c7s5-premium.py --output /tmp/c7s5-premium-qa
       - name: Validate approved artwork, navigation and independent season persistence
         run: python scripts/qa-navigation.py --output /tmp/c7s5-premium-qa/navigation
-      - name: Validate image-registered route, original bubbles and tavern ambience
-        run: python scripts/qa-c7s5-atmosphere.py --output /tmp/c7s5-premium-qa/atmosphere
       - name: Verify GitHub Pages publication and live themes
         run: python scripts/qa-c7s5-live.py --output /tmp/c7s5-premium-qa --timeout 180
       - uses: actions/upload-artifact@v4

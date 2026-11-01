@@ -219,4 +219,15 @@ def main():
         if server:server.shutdown()
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    try:
+        main()
+    except Exception:
+        # Surface useful geometry/timing evidence in the public Actions annotation,
+        # where a failed step's full log may require a separate GitHub web login.
+        if os.environ.get('GITHUB_ACTIONS') == 'true':
+            import traceback
+            message = traceback.format_exc()[-10000:]
+            message = message.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+            print('::error title=Atmosphere verification::' + message, flush=True)
+        raise
