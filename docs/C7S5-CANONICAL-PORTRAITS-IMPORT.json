@@ -1,0 +1,486 @@
+{
+  "fetched": "2026-11-01",
+  "source": "Fortnite.GG original in-game asset icons",
+  "reference": "https://fortnite.gg/sprites",
+  "imported_count": 31,
+  "NOT_FOUND_AND_LEFT_AS_OLD_PENDING": [
+    {
+      "name": "Fortune Sweet Dreams Sprite",
+      "id": 532,
+      "reason": "Variant not listed by Fortnite.GG"
+    },
+    {
+      "name": "Cursed Sweet Dreams Sprite",
+      "id": 533,
+      "reason": "Variant not listed by Fortnite.GG"
+    }
+  ],
+  "images": [
+    {
+      "id": 501,
+      "name": "Halfpeel'd Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PeelyBones_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/280-halfpeel'd",
+      "target": "assets/sprites/c7s5/halfpeel-d-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "a850a016bbcac527ed955c38673fc4c1316c45a774230fae0ed89e0d08ac6626",
+      "bytes": 19420,
+      "hasAlpha": true
+    },
+    {
+      "id": 512,
+      "name": "Fortune Halfpeel'd Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PeelyBones_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/281-fortune-halfpeel'd",
+      "target": "assets/sprites/c7s5/halfpeel-d-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "bf9d0cb7a013d7c4e4d1ff01f67b14220d1ac631d39e95a582cb1ed6f3bdeef0",
+      "bytes": 27542,
+      "hasAlpha": true
+    },
+    {
+      "id": 513,
+      "name": "Cursed Halfpeel'd Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PeelyBones_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/282-cursed-halfpeel'd",
+      "target": "assets/sprites/c7s5/halfpeel-d-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "ead7597da75cb982e28e75a0f5dcbd0b887ccbb6c4a6fbe72c79108fd7af20f6",
+      "bytes": 20106,
+      "hasAlpha": true
+    },
+    {
+      "id": 502,
+      "name": "Re-Pete Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Parrot_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/283-re-pete",
+      "target": "assets/sprites/c7s5/re-pete-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "d2bbaa2ef01bc5e9defa138d9a0946bba8bc5e17c0a9603ccc7c83d4c064ccd2",
+      "bytes": 23868,
+      "hasAlpha": true
+    },
+    {
+      "id": 514,
+      "name": "Fortune Re-Pete Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Parrot_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/285-fortune-re-pete",
+      "target": "assets/sprites/c7s5/re-pete-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "c7b80cb5b74607cb1fa034739bb5f1341e5bdc626f5d638099b4fe3c53a9db70",
+      "bytes": 28580,
+      "hasAlpha": true
+    },
+    {
+      "id": 515,
+      "name": "Cursed Re-Pete Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Parrot_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/284-cursed-re-pete",
+      "target": "assets/sprites/c7s5/re-pete-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "a3b19de8354b22ef80917edf885049f15a22b800ffaf8adcb3eac59f620ccf95",
+      "bytes": 29466,
+      "hasAlpha": true
+    },
+    {
+      "id": 503,
+      "name": "Barry O'Fish Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BarrelOfFish_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/286-barry-o'fish",
+      "target": "assets/sprites/c7s5/barry-o-fish-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "039f37e1374156253b52eba26631fb786f7260abfad34ba63dee52db9e2f1493",
+      "bytes": 29668,
+      "hasAlpha": true
+    },
+    {
+      "id": 516,
+      "name": "Fortune Barry O'Fish Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BarrelOfFish_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/288-fortune-barry-o'fish",
+      "target": "assets/sprites/c7s5/barry-o-fish-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "bd6be97c25939ecb4358db3c6c47fa8fbcc57614a7a8d12dd6bfebc814fbbdff",
+      "bytes": 32668,
+      "hasAlpha": true
+    },
+    {
+      "id": 517,
+      "name": "Cursed Barry O'Fish Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_BarrelOfFish_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/287-cursed-barry-o'fish",
+      "target": "assets/sprites/c7s5/barry-o-fish-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "36e32e0c27db7a93377eeb73539fdcd1cc5e5eddd9bf5f1a90243ae0e416015a",
+      "bytes": 29212,
+      "hasAlpha": true
+    },
+    {
+      "id": 504,
+      "name": "Exmarks Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureMap_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/292-exmarks",
+      "target": "assets/sprites/c7s5/exmarks-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "b4a6f948e8b5990165a26c3af2328112df65ee8bbc927d1bf7198a256ea1d37e",
+      "bytes": 23540,
+      "hasAlpha": true
+    },
+    {
+      "id": 518,
+      "name": "Fortune Exmarks Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureMap_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/293-fortune-exmarks",
+      "target": "assets/sprites/c7s5/exmarks-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "9156f2ad8bea0da0dc9ac25ec149f2f10dccba4faa038f4a9e8443cf64ba5383",
+      "bytes": 31342,
+      "hasAlpha": true
+    },
+    {
+      "id": 519,
+      "name": "Cursed Exmarks Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureMap_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/294-cursed-exmarks",
+      "target": "assets/sprites/c7s5/exmarks-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "0ffa97eaff71161b3267e2f9e6d672ef42199278c9677646ee590ae19ad9188e",
+      "bytes": 27872,
+      "hasAlpha": true
+    },
+    {
+      "id": 505,
+      "name": "Plundarrgh Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CoinPile_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/311-plundarrgh",
+      "target": "assets/sprites/c7s5/plundarrgh-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "51b48fb4a6124a66f88032cf333b21c54716ee81c83d4ffb70da6b25091c288b",
+      "bytes": 29078,
+      "hasAlpha": true
+    },
+    {
+      "id": 520,
+      "name": "Fortune Plundarrgh Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CoinPile_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/313-fortune-plundarrgh",
+      "target": "assets/sprites/c7s5/plundarrgh-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "504dcfa9443598296f9d365653a38b7dde47f9ff9c10f2ab24d5e28a18c2a5f4",
+      "bytes": 35734,
+      "hasAlpha": true
+    },
+    {
+      "id": 521,
+      "name": "Cursed Plundarrgh Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_CoinPile_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/312-cursed-plundarrgh",
+      "target": "assets/sprites/c7s5/plundarrgh-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "9b30f562838199e12b1aa408ec2b7055be0daa53b52fdb521e80ee680c1eb004",
+      "bytes": 33542,
+      "hasAlpha": true
+    },
+    {
+      "id": 506,
+      "name": "Chester Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureChest_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/289-chester",
+      "target": "assets/sprites/c7s5/chester-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "04720dac29f180d802799de75a72750b4bd3262cb19a157e377f1b31e60e1918",
+      "bytes": 29356,
+      "hasAlpha": true
+    },
+    {
+      "id": 522,
+      "name": "Fortune Chester Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureChest_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/291-fortune-chester",
+      "target": "assets/sprites/c7s5/chester-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "5283157d301ff3421d9a69923732effd270159d8fcc6eaf022d75ef59a570cd1",
+      "bytes": 37222,
+      "hasAlpha": true
+    },
+    {
+      "id": 523,
+      "name": "Cursed Chester Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_TreasureChest_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/290-cursed-chester",
+      "target": "assets/sprites/c7s5/chester-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "9f74ee09288514e5bce16423b96c62d2df109ed361daf7b99a82978b76b19323",
+      "bytes": 29204,
+      "hasAlpha": true
+    },
+    {
+      "id": 507,
+      "name": "Wayfinder Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Compass_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/295-wayfinder",
+      "target": "assets/sprites/c7s5/wayfinder-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "450465566ac403400740a4097d4f76f07b12fd864cff865df924c9ebd833f3ba",
+      "bytes": 28564,
+      "hasAlpha": true
+    },
+    {
+      "id": 524,
+      "name": "Fortune Wayfinder Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Compass_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/297-fortune-wayfinder",
+      "target": "assets/sprites/c7s5/wayfinder-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "3bcce7c869a602d5370c75cd76359e3d5edc2583a671a4ec1db03668a24d0bcd",
+      "bytes": 33726,
+      "hasAlpha": true
+    },
+    {
+      "id": 525,
+      "name": "Cursed Wayfinder Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_Compass_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/296-cursed-wayfinder",
+      "target": "assets/sprites/c7s5/wayfinder-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "bb23dacbdcefab04420eb2633e31724245bfffd439cdf5ad2957980d314de1d8",
+      "bytes": 27898,
+      "hasAlpha": true
+    },
+    {
+      "id": 508,
+      "name": "Kelper Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_UnbotheredFish_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/298-kelper",
+      "target": "assets/sprites/c7s5/kelper-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "81946f20cbd63ce52190526bf19ce5c45b126b6889cd87e1f64e6caa79e7bcf3",
+      "bytes": 20216,
+      "hasAlpha": true
+    },
+    {
+      "id": 526,
+      "name": "Fortune Kelper Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_UnbotheredFish_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/299-fortune-kelper",
+      "target": "assets/sprites/c7s5/kelper-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "afa37e013d2e90e69ff79c49033b8d6f035657703939cb1c464f8a93a543f1cf",
+      "bytes": 30480,
+      "hasAlpha": true
+    },
+    {
+      "id": 527,
+      "name": "Cursed Kelper Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_UnbotheredFish_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/300-cursed-kelper",
+      "target": "assets/sprites/c7s5/kelper-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "f92bfa8a1b3b034e59ed6e5d7b50522962703a8841e2ef7dca97a5a3603a4c75",
+      "bytes": 20968,
+      "hasAlpha": true
+    },
+    {
+      "id": 509,
+      "name": "Lil' Squibbly Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_SquibblySprite_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/302-lil'-squibbly",
+      "target": "assets/sprites/c7s5/lil-squibbly-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "2af00ff2510ff389ab76afeb8fe1139f64fde86d4a947d8fc7d8b350ee731ade",
+      "bytes": 25170,
+      "hasAlpha": true
+    },
+    {
+      "id": 528,
+      "name": "Fortune Lil' Squibbly Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_SquibblySprite_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/304-fortune-lil'-squibbly",
+      "target": "assets/sprites/c7s5/lil-squibbly-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "ba71ff1fffdfad360bba38367f0dc953f5193521e40f0366c74fd9ecb02f1bcd",
+      "bytes": 32064,
+      "hasAlpha": true
+    },
+    {
+      "id": 529,
+      "name": "Cursed Lil' Squibbly Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_SquibblySprite_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/303-cursed-lil'-squibbly",
+      "target": "assets/sprites/c7s5/lil-squibbly-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "2ed2e9ef6be5954dbdc3b411b180615621ff211fbbb55b41d715e7b305583f27",
+      "bytes": 25758,
+      "hasAlpha": true
+    },
+    {
+      "id": 510,
+      "name": "Lil' Flacko Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PlaymakerBrewery_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/305-lil'-flacko",
+      "target": "assets/sprites/c7s5/lil-flacko-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "2b886c166d80321d4b962451b1b54a1ccc61ba305bf663f5ffd773bb237e7c9e",
+      "bytes": 17832,
+      "hasAlpha": true
+    },
+    {
+      "id": 530,
+      "name": "Fortune Lil' Flacko Sprite",
+      "variant": "Fortune",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PlaymakerBrewery_Jeweled_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/306-fortune-lil'-flacko",
+      "target": "assets/sprites/c7s5/lil-flacko-fortune.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "24e31940838852be7829673cfc0e6ab7aaa0bd866567b941e9c6a38dd0a51252",
+      "bytes": 29522,
+      "hasAlpha": true
+    },
+    {
+      "id": 531,
+      "name": "Cursed Lil' Flacko Sprite",
+      "variant": "Cursed",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PlaymakerBrewery_Cursed_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/307-cursed-lil'-flacko",
+      "target": "assets/sprites/c7s5/lil-flacko-cursed.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "8c1496833eabdfdc64f79a3e6fec4ddafced385e9ed7912f7d724fad55d67164",
+      "bytes": 19358,
+      "hasAlpha": true
+    },
+    {
+      "id": 511,
+      "name": "Sweet Dreams Sprite",
+      "variant": "Base",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_StarLight_L.webp",
+      "detailPage": "https://fortnite.gg/sprites/301-sweet-dreams",
+      "target": "assets/sprites/c7s5/sweet-dreams-base.webp",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "52c3437d42b4b06e9d5986cbe63e454844fe45673bfbc00c19603ea2f7474d1c",
+      "bytes": 19154,
+      "hasAlpha": true
+    }
+  ],
+  "data_policy": "No Sprite entries, IDs, variant associations, ownership, mastery, counts or UI logic altered. Two Sweet Dreams provisional crops remain for separate roster decision."
+}
