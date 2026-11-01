@@ -11,28 +11,14 @@ jobs:
       - run: |
           python - <<'PY'
           import urllib.request,re,html
-          urls=[
-            'https://fortnite.bte.ar/en',
-            'https://www.fnsprites.info/',
-            'https://spritecatch.com/news/treasure-hunters-new-sprites/',
-            'https://beebom.com/fortnite-treasure-hunters-mini-season-sprites-guide/',
-            'https://esports.gg/guides/fortnite/all-new-sprites-fortnite-treasure-hunters/',
-            'https://static.beebom.com/wp-content/uploads/2026/11/fn-treasure-hunters-sprite-Halfpeeld.jpg',
-            'https://images.weserv.nl/?url=fortnite.gg%2Fimg%2Fx%2Fsprites%2Ficons%2FT_Icon_BR_Creature_Sprite_PeelyBones_L.webp',
-            'https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PeelyBones_L.webp',
-          ]
-          for url in urls:
-           try:
-            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'image/avif,image/webp,image/*,*/*;q=0.8','Referer':'https://fortnite.gg/sprites'})
-            with urllib.request.urlopen(req,timeout=24) as x:
-             raw=x.read(350000)
-             typ=x.headers.get('Content-Type','')
-            s=raw.decode('utf-8',errors='replace')
-            print('SOURCE',url,'STATUS',typ,'bytes',len(raw),'MAGIC',repr(raw[:14]),flush=True)
-            if 'text' in typ:
-             matches=re.findall(r'(?:src|data-src|url)=?["\']([^"\']+)',s,re.I)
-             print('SOURCES',[html.unescape(x) for x in matches if any(n in x.lower() for n in ['sprite','webp','halfpeel','png'])][:35],flush=True)
-             for pat in ['halfpeel','PeelyBones','sprite-img','sprites/icons/','Barry O','Fortune']:
-              idx=s.lower().find(pat.lower());print('SNIP',pat,idx,s[max(idx-130,0):idx+260].replace('\n',' ') if idx>=0 else '',flush=True)
-           except Exception as e: print('ERROR',url,type(e).__name__,str(e),flush=True)
+          url='https://r.jina.ai/https://fortnite.gg/sprites'
+          req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0'})
+          try:
+           with urllib.request.urlopen(req,timeout=45) as resp: s=resp.read(3000000).decode('utf-8','replace')
+           print('TEXT SIZE',len(s))
+           p=re.compile(r'\[!\[Image\s*\d*:\s*([^\]]+)\]\((https://fortnite\.gg/img/x/sprites/icons/[^)]+\.webp)\)\]\((https://fortnite\.gg/sprites/[^)]+)\)')
+           a=p.findall(s);print('MATCHES',len(a)); print('FIRST',a[:40])
+           print('SWEET',[(x,y,z) for x,y,z in a if 'Sweet Dreams' in x])
+           if not a:print('EXCERPT',s[s.index('Halfpeel'):s.index('Halfpeel')+1100] if 'Halfpeel' in s else s[:1800])
+          except Exception as e: print('ERROR',type(e).__name__,str(e))
           PY
