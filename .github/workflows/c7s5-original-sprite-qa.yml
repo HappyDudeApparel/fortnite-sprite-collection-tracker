@@ -1,0 +1,116 @@
+name: C7S5 original Sprite sizing & season preservation QA
+on:
+  push:
+    branches: [fix/c7s5-full-size-transparent-sprites-v2054, main]
+    paths:
+      - index.html
+      - version.json
+      - service-worker.js
+      - manifest.webmanifest
+      - asset-manifest.json
+      - assets/ui/c7s5-original-sprite-sizing.css
+      - .github/workflows/c7s5-original-sprite-qa.yml
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify no roster, art or other-season changes
+        run: |
+          python - <<'PY'
+          import json,pathlib,subprocess
+          s=pathlib.Path('index.html').read_text()
+          a=s.index('const SPRITES=')+len('const SPRITES=')
+          b=s.index('];',a)+1
+          records=json.loads(s[a:b])
+          assert len(records)==314
+          assert sum(x['season']=='C7S5' for x in records)==33
+          assert sum(x['season']=='C7S3' for x in records)==119
+          assert sum(x['season']=='C7S4' for x in records)==162
+          assert len(set(x['id'] for x in records))==314
+          assert all(pathlib.Path(x['image']).exists() for x in records if x['season']=='C7S5')
+          css=pathlib.Path('assets/ui/c7s5-original-sprite-sizing.css').read_text()
+          assert 'border: 0 !important' in css
+          assert 'object-fit: contain !important' in css
+          assert 'body.season-c7s5:has(#mainView.active)' in css
+          assert "const APP_VERSION='2.0.54'" in s
+          assert json.loads(pathlib.Path('version.json').read_text())['version']=='2.0.54'
+          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']=='2.0.54'
+          print('PASS: canonical images, three rosters, stable script data, complete 4-lane CSS, PWA version')
+          PY
+      - name: Install Chromium
+        run: |
+          pip install -q playwright
+          playwright install --with-deps chromium
+      - name: Compare image frames, sizing, scrolling and season switching in Chromium
+        run: |
+          python - <<'PY'
+          import threading,http.server
+          from playwright.sync_api import sync_playwright
+          server=http.server.ThreadingHTTPServer(('127.0.0.1',8766),http.server.SimpleHTTPRequestHandler)
+          threading.Thread(target=server.serve_forever,daemon=True).start()
+          with sync_playwright() as playwright:
+            browser=playwright.chromium.launch(args=['--no-sandbox'])
+            for width,height in [(360,800),(390,844),(768,1024),(1024,768),(1440,900)]:
+              page=browser.new_page(viewport={'width':width,'height':height})
+              errs=[]
+              page.on('pageerror',lambda e:errs.append(str(e)))
+              page.goto('http://127.0.0.1:8766/',wait_until='domcontentloaded')
+              page.wait_for_selector('#familyRows .familyRow',timeout=25000)
+              assert page.evaluate('currentSeason')=='C7S5'
+              assert page.locator('#familyRows .familyRow').count()==11
+              assert page.locator('#mainLegend .legendItem').count()==4
+              results=page.evaluate("""async () => {
+                await Promise.all(Array.from(document.querySelectorAll('#familyRows .familyRow img')).slice(0,12).map(img => img.decode().catch(() => {})));
+                const family=document.querySelector('#familyRows .familyHero img');
+                const sprite=document.querySelector('#familyRows .spriteCell img');
+                const table=document.querySelector('#variantTable');
+                const legend=document.querySelector('#mainLegend');
+                const row=document.querySelector('#familyRows .familyRow');
+                const cell=document.querySelector('#familyRows .spriteCell');
+                const c=(el)=>getComputedStyle(el);
+                const size=(el)=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height});
+                return {hero:size(family),sprite:size(sprite),table:size(table),
+                   viewport:innerWidth,scrollWidth:table.scrollWidth,
+                   rowWidth:size(row).width,legendWidth:size(legend).width,
+                   nameColor:c(document.querySelector('#familyRows .familyName')).color,
+                   border:c(sprite).borderTopWidth,heroBorder:c(family).borderTopWidth,
+                   src:sprite.currentSrc,validImage:sprite.naturalWidth>=400,
+                   rowTemplate:c(row).gridTemplateColumns,legendTemplate:c(legend).gridTemplateColumns,
+                   cellSize:size(cell)};
+              }""")
+              assert results['validImage'],results
+              assert results['sprite']['width']>=76,results
+              assert results['hero']['width']>=56,results
+              assert results['border']=='0px' and results['heroBorder']=='0px',results
+              assert abs(results['rowWidth']-results['legendWidth'])<=1.5,results
+              assert results['rowTemplate']==results['legendTemplate'],results
+              assert results['scrollWidth']>results['table']['width']+50,results
+              page.locator('#variantTable').evaluate("(el) => el.scrollLeft=150")
+              assert page.locator('#variantTable').evaluate("(el)=>el.scrollLeft")>=80
+              page.screenshot(path=f'c7s5-original-portrait-{width}.png',full_page=False)
+              page.locator('button[data-season="C7S3"]').click()
+              assert page.evaluate('currentSeason')=='C7S3'
+              assert page.locator('#familyRows .familyRow').count()>15
+              page.locator('button[data-season="C7S4"]').click()
+              assert page.evaluate('currentSeason')=='C7S4'
+              assert page.locator('#familyRows .familyRow').count()>10
+              page.locator('button[data-season="C7S5"]').click()
+              assert page.locator('#familyRows .familyRow').count()==11
+              assert not errs,errs[:5]
+              print('PASS',width,'image=',results['sprite'],'hero=',results['hero'],'header/row=',round(results['rowWidth']),'shared scrolling OK')
+              page.close()
+            browser.close()
+          server.shutdown()
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: c7s5-original-portraits-responsive-screenshots
+          path: c7s5-original-portrait-*.png
+          if-no-files-found: ignore
