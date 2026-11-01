@@ -1,7 +1,7 @@
 {
-  "version": "2.0.53",
+  "version": "2.0.54",
   "published": "2026-11-01",
-  "notes": "C7S5: 31 individually named original Fortnite.GG Sprite portrait WebPs replace mislabeled collage crops. Two Sweet Dreams variants have no authentic published portraits; pending separate roster correction. No Sprite data, functionality or archives modified.",
+  "notes": "Restore C7S5 authentic 512px Sprite portraits to full readable size without image borders/boxes. Use one synchronized horizontally scrolling 4-lane table, preserve all records, other season styles, tracking and assets.",
   "artwork": {
     "kind": "unmodified source Sprite icons (WebP)",
     "count": 31,
@@ -27,5 +27,6 @@
     "registered-atmosphere",
     "live-assets-and-browser",
     "stable-responsive-image-decode-after-resize"
-  ]
+  ],
+  "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens"
 }

@@ -1,0 +1,137 @@
+/*
+ * v2.0.54 — C7S5 original Sprite icon visibility restoration.
+ * Scope: C7S5 main collection only. Images are genuine 512x512 transparent
+ * source portraits. Never draw boxes on the image element itself.
+ *
+ * The premium theme's compressed "fit all columns" phone grid was shrinking
+ * art to 38-50px; restore the same shared horizontal table scroll pattern
+ * used by C7S3/C7S4 so four aligned lanes remain large and usable.
+ */
+body.season-c7s5:has(#mainView.active) #variantTable {
+  --c7s5-name: 212px;
+  --c7s5-variant: 100px;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+body.season-c7s5:has(#mainView.active) #variantTable :is(.variantLegend,#familyRows,.familyRow) {
+  width: calc(var(--c7s5-name) + 4 * var(--c7s5-variant)) !important;
+  min-width: calc(var(--c7s5-name) + 4 * var(--c7s5-variant)) !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+body.season-c7s5:has(#mainView.active) #variantTable :is(.variantLegend,.familyRow) {
+  display: grid !important;
+  grid-template-columns: var(--c7s5-name) repeat(4,var(--c7s5-variant)) !important;
+  gap: 0 !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .familyRow {
+  min-height: 110px !important;
+  padding: 8px 0 !important;
+  align-items: center !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .familyHero {
+  display: grid !important;
+  grid-template-columns: 78px minmax(0,1fr) !important;
+  align-items: center !important;
+  justify-items: start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0 10px !important;
+  text-align: left !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .familyHero img {
+  display: block !important;
+  width: 76px !important;
+  height: 76px !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  margin: 0 auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  filter: drop-shadow(0 5px 7px rgba(0,0,0,.4)) !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .familyName {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: break-word;
+  line-height: 1.12 !important;
+  font-size: 15px !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .spriteCell {
+  display: grid !important;
+  place-items: center !important;
+  justify-self: stretch !important;
+  align-self: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 100px !important;
+  height: 100px !important;
+  padding: 2px !important;
+  background: transparent !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .spriteCell img {
+  display: block !important;
+  width: 88px !important;
+  height: 88px !important;
+  max-width: calc(100% - 4px) !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  margin: 0 auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+/* Keep level pips as the user's real interactive mastery controls. */
+body.season-c7s5:has(#mainView.active) #familyRows .spriteCell:not(.missing) img {
+  filter: drop-shadow(0 5px 7px rgba(0,0,0,.48)) !important;
+}
+/* Retain existing missing-state dimming, not fake dark silhouettes. */
+body.season-c7s5:has(#mainView.active) #familyRows .spriteCell.missing img {
+  filter: grayscale(.2) saturate(.55) drop-shadow(0 3px 5px rgba(0,0,0,.28)) !important;
+}
+body.season-c7s5:has(#mainView.active) #familyRows .spriteCell.preview img {
+  opacity: 1 !important;
+}
+@media (max-width: 760px) {
+  body.season-c7s5:has(#mainView.active) #variantTable {
+    --c7s5-name: 156px;
+    --c7s5-variant: 92px;
+    max-width: 100% !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .familyRow {
+    min-height: 102px !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .familyHero {
+    grid-template-columns: 60px minmax(0,1fr) !important;
+    gap: 5px !important;
+    padding: 0 5px !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .familyHero img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .familyName {
+    font-size: 12px !important;
+    line-height: 1.12 !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .spriteCell {
+    min-height: 94px !important;
+    height: 94px !important;
+  }
+  body.season-c7s5:has(#mainView.active) #familyRows .spriteCell img {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}
