@@ -243,3 +243,6 @@ body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active) .c7s5Banner{justify-
 body[data-c7s5-theme=map] .c7s5BannerCopy{transform:none}
 body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active) .c7s5Banner h1{margin:8px 0 12px!important}
 @media(max-width:760px){body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active) .c7s5Banner h1{font-size:54px!important}}
+
+/* Keep the factual map caption on one line across platform font metrics. */
+body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active) .c7s5Banner p{white-space:nowrap}

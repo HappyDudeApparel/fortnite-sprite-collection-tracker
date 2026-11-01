@@ -125,7 +125,7 @@ def run(base_url, output):
                   const intersects=(a,b)=>a.left-2<b.right&&a.right+2>b.left&&a.top-2<b.bottom&&a.bottom+2>b.top;
                   return {route:svg.getBoundingClientRect().toJSON(),copy:copy.toJSON(),notice:notice.toJSON(),pathCollisions:collisions,xCollides:blockers.some(r=>intersects(x,r))};
                 }''')
-                assert not geometry['pathCollisions'], ('Painted route overlaps live text',name,geometry)
+                assert not geometry['pathCollisions'], ('Painted route overlaps live text',name,{**geometry,'pathCollisions':geometry['pathCollisions'][:3],'collisionCount':len(geometry['pathCollisions'])})
                 assert not geometry['xCollides'], ('Treasure X overlaps live text',name,geometry)
                 samples=[]
                 assert page.locator('.s5RouteDraw').evaluate('(e)=>e.getAnimations()[0].effect.getTiming().iterations')==1, 'Route must settle rather than loop'

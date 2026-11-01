@@ -1,7 +1,7 @@
 {
   "version": "2.0.52",
   "published": "2026-11-01",
-  "notes": "Approved Runners and Override visual treatments using supplied scenery and untouched canonical Sprites; chronological native navigation, image-registered one-shot black map route and red X, preserved sea bubbles, calibrated lantern and magical chest ambience. All 314 records and saved collection logic preserved.",
+  "notes": "Approved Runners and Override visual treatments using supplied scenery and untouched canonical Sprites; chronological native navigation, image-registered one-shot black map route and red X, preserved sea bubbles, calibrated lantern and magical chest ambience. All 314 records and saved collection logic preserved. The compact factual hero caption remains on one line across platform font metrics to keep the registered map route clear.",
   "artwork": {
     "kind": "locally hosted WebP crops",
     "count": 33,
