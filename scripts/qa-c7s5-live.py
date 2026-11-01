@@ -21,8 +21,15 @@ ASSETS = [
     'assets/ui/c7s5-atmosphere.js',
     'assets/ui/c7s5-grain.svg',
     'assets/ui/fonts/cinzel-latin-600-normal.woff2',
+    'assets/ui/fonts/permanent-marker-latin-400-normal.woff2',
     'assets/ui/fonts/cormorant-garamond-latin-700-italic.woff2',
+    'assets/ui/archive-seasons.css',
+    'assets/ui/scl-navigation.css',
+    'assets/ui/scl-navigation.js',
+    'assets/ui/seasons/provenance.json',
 ] + [f'assets/ui/c7s5-{theme}-{shape}.webp' for theme in THEMES for shape in ('wide', 'mobile')]
+ASSETS += [f'assets/ui/seasons/{name}.webp' for name in (
+    'runners-panorama','runners-left','runners-right','override-title','override-stage','override-rift')]
 
 
 def fetch(base_url, path, version, deadline):
@@ -102,6 +109,17 @@ def browser_smoke(base_url, version, output):
                     assert page.evaluate('''()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>k!=='scl_c7s5_theme_v1'))''') == initial_progress
                     page.evaluate('document.fonts.ready')
                     page.screenshot(path=str(output / f'live-{name}-{theme}.png'))
+                assert not errors, errors
+                for season, count, selector in [('C7S3',117,'.archiveRunners'),('C7S4',162,'.archiveOverride')]:
+                    page.locator(f'.tab[data-season="{season}"]').click()
+                    assert page.evaluate('currentSeason') == season
+                    assert page.evaluate('countable().length') == count
+                    assert page.evaluate('(s)=>document.body.classList.contains("season-"+s.toLowerCase())',season)
+                    hero = page.locator(selector)
+                    assert hero.is_visible()
+                    hero.locator('img').evaluate_all('async els=>Promise.all(els.map(i=>i.decode()))')
+                    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+                    page.screenshot(path=str(output / f'live-{name}-{season}.png'))
                 assert not errors, errors
                 report[name] = {'themes': list(THEMES), 'sprites': 33, 'families': 11, 'columns': 4, 'javascript_errors': errors}
                 print(f'PASS live browser: {name}, all three themes, responsive grid, local art, no JavaScript errors', flush=True)

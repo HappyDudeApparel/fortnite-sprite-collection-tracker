@@ -1,3 +1,12 @@
+## v2.0.52 — November 1, 2026
+
+- Implemented the approved Runners and Override overview treatments from the supplied working sources, with real canonical Sprite images and native live collection controls.
+- Unified the existing four-tab navigation in C7S3 / C7S4 / C7S5 / Locker order, with two-line season labels, distinct active accents and fully visible 44px controls. C7S5 remains the default.
+- Registered the black dashed treasure route to the responsive map image. It draws once, reveals a red X only at completion and stays settled; original sea bubbles remain intact.
+- Added image-registered amber lantern breathing light and restrained magical chest glow, with native pause/offscreen/reduced-motion support.
+- Preserved the complete application core, all 314 Sprite records, canonical portrait bytes, ownership/mastery IDs, scene backgrounds and export logic.
+- Expanded local and production QA for seven viewport sizes, real independent season persistence, artwork provenance, animation geometry, native navigation, Locker and PNG export.
+
 ## v2.0.51 — November 1, 2026
 
 - Replaced stretched concept crops with original detailed map, underwater-ruin and haunted-tavern environments, responsive local WebP, live typography and licensed local fonts.

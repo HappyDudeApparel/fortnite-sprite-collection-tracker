@@ -1,4 +1,4 @@
-# Sprite Collection Locker — v2.0.51 Treasure Hunters (November 1, 2026)
+# Sprite Collection Locker — v2.0.52 Approved Season Designs (November 1, 2026)
 
 ## Live site
 https://sprites.happydude.ca/
@@ -13,7 +13,7 @@ The production branch is `main`. GitHub Pages serves the repository root. No man
 - C7S5 is a separate local collection. All 33 portraits are locally hosted WebP crops from the 1536×864 VICE/Epic montage with limbs retained; image-to-name attribution remains provisional until independent portrait sources are available.
 
 ## Troubleshooting
-If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.51**. The app service worker cache name rotates with the version.
+If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.52**. The app service worker cache name rotates with the version.
 
 ## Follow-up image QA
 Replace VICE collage cutouts with individually verified transparent PNG/WebP artwork from an authentic source when available. Verify the visual family assignments before declaring final art complete; never alter C7S3 or C7S4 in that work.
@@ -45,3 +45,13 @@ CHROMIUM_PATH=/usr/bin/chromium python3 scripts/qa-c7s5-premium.py --output /tmp
 ```
 
 Requirements: Python with Playwright and Pillow, plus system Chromium or `python -m playwright install chromium`. The suite checks mobile portrait/landscape, tablet and desktop; themes; ownership/mastery persistence; search/filter; detail/variant selection; Locker/background selection; 1600×1200 PNG download; archived seasons; reduced motion and ambient motion. GitHub Actions runs the same script on release changes.
+
+
+## v2.0.52 — approved season designs and unified navigation
+C7S3 Runners now uses the supplied blossom/waterfall scenery and the exact canonical Water/Earth/Fire assets. C7S4 Override uses the approved title artwork, unlabelled scenery derivatives and the exact canonical Sonic/Tails/Shadow/Klombo/8-Bit assets. All overview counts, filters, rows, mastery bars and details remain live. No mockup ownership values or invented Sprite portraits are imported.
+
+The single native navigation strip is now **C7S3 / Runners → C7S4 / Override → C7S5 / Treasure Hunters → Locker**. C7S5 remains the default opening season. Detail views retain their current-season navigation context. One legacy presentation hook now reads the actual season state instead of tab text, so the two-line labels cannot disable C7S4 styling.
+
+The black map route is registered to the rendered map image, draws once, reveals its red X at the endpoint and settles. Sea bubble rules are byte-identical to v2.0.51. Lantern/chest glow anchors follow their artwork through `object-fit` crops and resize; reduced motion is static. Saved collections and the background/export catalogue are unchanged.
+
+See [source and QA audit](docs/APPROVED-SEASONS-V2052.md). Additional checks: `python3 scripts/qa-navigation.py` and `python3 scripts/qa-c7s5-atmosphere.py`. Existing package/source originals remain in the extracted handoff outside the checkout; the six published scenery derivatives have exact crop/source checksums in `assets/ui/seasons/provenance.json`.

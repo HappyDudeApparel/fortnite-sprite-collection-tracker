@@ -1,7 +1,7 @@
 {
-  "version": "2.0.51",
+  "version": "2.0.52",
   "published": "2026-11-01",
-  "notes": "Premium C7S5 illustrated environments, responsive local artwork and live engraved typography; animated map route, sea atmosphere and lantern/mist layers with reduced-motion and pause controls. All collection records, icons, storage, archive seasons and exports preserved.",
+  "notes": "Approved Runners and Override visual treatments using supplied scenery and untouched canonical Sprites; chronological native navigation, image-registered one-shot black map route and red X, preserved sea bubbles, calibrated lantern and magical chest ambience. All 314 records and saved collection logic preserved.",
   "artwork": {
     "kind": "locally hosted WebP crops",
     "count": 33,
@@ -14,5 +14,9 @@
     "tavern"
   ],
   "themeStorageKey": "scl_c7s5_theme_v1",
-  "artworkThemeSource": "Original text-free environment illustrations generated for Treasure Hunters, art-directed against the user concept; local WebP and licensed local fonts"
+  "artworkThemeSource": "Original text-free environment illustrations generated for Treasure Hunters, art-directed against the user concept; local WebP and licensed local fonts",
+  "approvedArchiveConcepts": [
+    "C7S3-Runners-FINAL-Canonical-Water-Earth-Fire.png",
+    "C7S4-Override-FINAL-Selected-Concept.png"
+  ]
 }

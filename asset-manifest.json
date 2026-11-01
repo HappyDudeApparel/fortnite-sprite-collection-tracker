@@ -1,5 +1,5 @@
 {
-  "version": "2.0.51",
+  "version": "2.0.52",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -356,6 +356,7 @@
     "assets/sprites/c7s5/wayfinder-base.webp",
     "assets/sprites/c7s5/wayfinder-cursed.webp",
     "assets/sprites/c7s5/wayfinder-fortune.webp",
+    "assets/ui/archive-seasons.css",
     "assets/ui/c7s5-atmosphere.js",
     "assets/ui/c7s5-cursed-relic.svg",
     "assets/ui/c7s5-fortune-charm.svg",
@@ -380,6 +381,16 @@
     "assets/ui/c7s5-tavern-wide.webp",
     "assets/ui/c7s5-tavern.svg",
     "assets/ui/fonts/cinzel-latin-600-normal.woff2",
-    "assets/ui/fonts/cormorant-garamond-latin-700-italic.woff2"
+    "assets/ui/fonts/cormorant-garamond-latin-700-italic.woff2",
+    "assets/ui/fonts/permanent-marker-latin-400-normal.woff2",
+    "assets/ui/scl-navigation.css",
+    "assets/ui/scl-navigation.js",
+    "assets/ui/seasons/override-rift.webp",
+    "assets/ui/seasons/override-stage.webp",
+    "assets/ui/seasons/override-title.webp",
+    "assets/ui/seasons/provenance.json",
+    "assets/ui/seasons/runners-left.webp",
+    "assets/ui/seasons/runners-panorama.webp",
+    "assets/ui/seasons/runners-right.webp"
   ]
 }

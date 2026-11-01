@@ -1,0 +1,123 @@
+{
+  "purpose": "User-approved decorative illustration; no claim of canonical game geography",
+  "sources": {
+    "runners": {
+      "name": "C7S3-Runners-FINAL-Canonical-Water-Earth-Fire.png",
+      "sha256": "b18e317f9dd7e4cf08eb4ed0a11af0fe1322413557a5d95970ef40051d41d221"
+    },
+    "override": {
+      "name": "C7S4-Override-FINAL-Selected-Concept.png",
+      "sha256": "7654ab6d4f5971b529c50978a0c5bb96277b969c26008a99bd018049ca5061bc"
+    }
+  },
+  "derivatives": {
+    "assets/ui/seasons/runners-panorama.webp": {
+      "source": "runners",
+      "crop_boxes": [
+        [
+          0,
+          65,
+          450,
+          465
+        ],
+        [
+          1222,
+          65,
+          1672,
+          465
+        ]
+      ],
+      "size": [
+        804,
+        400
+      ],
+      "sha256": "a8bfb89bdb9d5e6a7232787f7dea1ee7d3627e05626a0c60ffe8ae0360c17ac3"
+    },
+    "assets/ui/seasons/runners-left.webp": {
+      "source": "runners",
+      "crop_boxes": [
+        [
+          0,
+          0,
+          450,
+          941
+        ]
+      ],
+      "size": [
+        450,
+        941
+      ],
+      "sha256": "9b23e613eae2bc8e5ca49e6f1ba9b441ff31078c053d7b299c13a394e91cdb51"
+    },
+    "assets/ui/seasons/runners-right.webp": {
+      "source": "runners",
+      "crop_boxes": [
+        [
+          1222,
+          0,
+          1672,
+          590
+        ]
+      ],
+      "size": [
+        450,
+        590
+      ],
+      "sha256": "429e43e232c9ee5fb66cda950fc81c71e1dfccd7e4edc4141c2c5bacb2d1ff9b"
+    },
+    "assets/ui/seasons/override-title.webp": {
+      "source": "override",
+      "crop_boxes": [
+        [
+          560,
+          0,
+          1668,
+          296
+        ]
+      ],
+      "size": [
+        1108,
+        296
+      ],
+      "sha256": "fd65922c038a980923847155ff43d341d79916438607d74a4165a408239c795f"
+    },
+    "assets/ui/seasons/override-stage.webp": {
+      "source": "override",
+      "crop_boxes": [
+        [
+          1000,
+          311,
+          1378,
+          421
+        ],
+        [
+          1000,
+          448,
+          1378,
+          558
+        ]
+      ],
+      "size": [
+        756,
+        110
+      ],
+      "sha256": "ef89e60eff3fc7b063fe0395e43272395a13394738a6f69326794c4717703986"
+    },
+    "assets/ui/seasons/override-rift.webp": {
+      "source": "override",
+      "crop_boxes": [
+        [
+          1334,
+          0,
+          1672,
+          285
+        ]
+      ],
+      "size": [
+        338,
+        285
+      ],
+      "sha256": "b4e9cf99a9dc5dfb7bb3a65a7ad7123f81ef9cf588a67d49415cfd53cf5db744"
+    }
+  }
+}

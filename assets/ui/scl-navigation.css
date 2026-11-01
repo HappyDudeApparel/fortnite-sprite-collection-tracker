@@ -1,0 +1,128 @@
+/* One navigation system for every season and view. Only header descendants are
+   styled here; Sprite tables, scenes, backgrounds and collection state are native. */
+body .app #sclHeader.sclHeader.topbar{
+ --scl-nav-bg:var(--panel,#0b1427);--scl-nav-surface:var(--panel2,#101b31);
+ --scl-nav-ink:var(--text,#f7fbff);--scl-nav-muted:var(--muted,#9aa8c2);
+ --scl-nav-line:var(--line,#24324f);--scl-nav-accent:var(--purple,#7c4dff);
+ --scl-nav-active-ink:#fff;--scl-nav-gleam:#bdcff01f;
+ display:grid!important;grid-template-columns:minmax(220px,1.1fr) minmax(180px,1fr) minmax(280px,.95fr) auto!important;
+ grid-template-areas:"brand search navigation actions"!important;
+ align-items:center!important;gap:12px!important;padding:12px 20px!important;
+ background:var(--scl-nav-bg)!important;color:var(--scl-nav-ink)!important;
+ border-bottom:1px solid var(--scl-nav-line)!important;
+ box-shadow:0 5px 22px #0003,inset 0 -1px 0 var(--scl-nav-gleam)!important;
+ backdrop-filter:none!important;font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif!important;
+}
+body.season-c7s5:has(#mainView.active) .app #sclHeader.sclHeader.topbar{
+ --scl-nav-bg:var(--s5-topbar);--scl-nav-surface:var(--s5-paper);
+ --scl-nav-ink:var(--s5-ink);--scl-nav-muted:var(--s5-muted);--scl-nav-line:var(--s5-frame);
+ --scl-nav-accent:var(--s5-accent);--scl-nav-active-ink:var(--s5-accent-ink);--scl-nav-gleam:var(--s5-fine);
+}
+body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active) .app #sclHeader.sclHeader.topbar{
+ --scl-nav-accent:#8c5c28;--scl-nav-active-ink:#fff8e8;
+}
+body .app #sclHeader.sclHeader.topbar .brand{
+ grid-column:auto!important;grid-row:auto!important;grid-area:brand!important;
+ width:auto!important;min-width:0!important;max-width:none!important;padding:0!important;
+ display:flex!important;justify-content:flex-start!important;gap:10px!important;
+ overflow:hidden!important;order:initial!important;text-align:left!important;
+}
+body .app #sclHeader.sclHeader.topbar .brand-logo{width:46px!important;height:46px!important;max-width:46px!important;flex:0 0 46px!important}
+body .app #sclHeader.sclHeader.topbar .brand-title{
+ display:block!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;font:800 clamp(15px,1.35vw,21px)/1.2 Inter,system-ui,sans-serif!important;
+ color:var(--scl-nav-ink)!important;letter-spacing:-.025em!important;text-transform:none!important;text-shadow:none!important;
+}
+body .app #sclHeader.sclHeader.topbar .search{
+ grid-column:auto!important;grid-row:auto!important;grid-area:search!important;
+ order:initial!important;width:100%!important;min-width:0!important;max-width:none!important;
+}
+body .app #sclHeader.sclHeader.topbar .search input{
+ height:44px!important;border:1px solid var(--scl-nav-line)!important;border-radius:9px!important;
+ color:var(--scl-nav-ink)!important;background:var(--scl-nav-surface)!important;
+ padding:0 39px 0 38px!important;font-size:13px!important;font-weight:650!important;
+ box-shadow:inset 0 1px 3px #0001!important;
+}
+body .app #sclHeader.sclHeader.topbar .search input::placeholder{color:var(--scl-nav-muted)!important;opacity:1}
+body .app #sclHeader.sclHeader.topbar .search::before{top:8px!important;left:13px!important;color:var(--scl-nav-muted)!important}
+body .app #sclHeader.sclHeader.topbar .clearSearch{top:6px!important;right:5px!important;color:var(--scl-nav-muted)!important}
+body .app #sclHeader.sclHeader.topbar .sclNavigation{
+ grid-column:auto!important;grid-row:auto!important;grid-area:navigation!important;order:initial!important;
+ display:grid!important;grid-template-columns:repeat(4,minmax(44px,1fr))!important;
+ width:100%!important;min-width:0!important;max-width:none!important;gap:4px!important;padding:4px!important;margin:0!important;
+ overflow:visible!important;border:1px solid var(--scl-nav-line)!important;border-radius:11px!important;
+ background:var(--scl-nav-surface)!important;box-shadow:inset 0 1px 0 var(--scl-nav-gleam)!important;
+}
+body .app #sclHeader.sclHeader.topbar .sclNavigation .tab{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ min-width:44px!important;width:100%!important;min-height:44px!important;height:44px!important;
+ padding:0 10px!important;margin:0!important;border:0!important;border-radius:7px!important;
+ font:800 12px/1.1 Inter,system-ui,sans-serif!important;letter-spacing:.02em!important;
+ color:var(--scl-nav-ink)!important;background:transparent!important;box-shadow:none!important;
+ white-space:nowrap!important;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease;
+}
+body .app #sclHeader.sclHeader.topbar .sclNavigation .tab:hover{background:var(--scl-nav-gleam)!important}
+body .app #sclHeader.sclHeader.topbar .sclNavigation .tab.active{
+ background:var(--scl-nav-accent)!important;color:var(--scl-nav-active-ink)!important;
+ box-shadow:0 2px 5px #0002,inset 0 1px 0 #ffffff24!important;
+}
+body .app #sclHeader.sclHeader.topbar .top-actions{
+ grid-column:auto!important;grid-row:auto!important;grid-area:actions!important;order:initial!important;
+ display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;
+ width:auto!important;min-width:0!important;max-width:none!important;overflow:visible!important;
+}
+body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn,
+body .app #sclHeader.sclHeader.topbar .top-actions>.gamertagBtn,
+body .app #sclHeader.sclHeader.topbar .top-actions>.playGamesBtn{
+ order:initial!important;flex:0 0 auto!important;height:44px!important;min-height:44px!important;
+ border:1px solid var(--scl-nav-line)!important;border-radius:9px!important;
+ background:var(--scl-nav-surface)!important;color:var(--scl-nav-ink)!important;
+ box-shadow:inset 0 1px 0 var(--scl-nav-gleam)!important;
+}
+body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn{width:auto!important;min-width:88px!important;padding:0 12px!important;font:750 12px/1.1 Inter,system-ui,sans-serif!important;white-space:nowrap!important}
+body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn::after{content:none!important}
+body .app #sclHeader.sclHeader.topbar .top-actions>.gamertagBtn{width:44px!important;min-width:44px!important;padding:0!important;font-size:18px!important}
+body .app #sclHeader.sclHeader.topbar .top-actions>.playGamesBtn{display:inline-flex!important;padding:0 12px!important;font-size:11px!important;letter-spacing:0!important;min-width:0!important}
+body .app #sclHeader.sclHeader.topbar>.playGamesBtn.inbar{display:none!important}
+body .app #sclHeader.sclHeader.topbar button:focus-visible,
+body .app #sclHeader.sclHeader.topbar a:focus-visible,
+body .app #sclHeader.sclHeader.topbar input:focus-visible{outline:2px solid var(--scl-nav-accent)!important;outline-offset:3px!important}
+@media(max-width:1279px){
+ body .app #sclHeader.sclHeader.topbar{
+  grid-template-columns:minmax(170px,1fr) minmax(180px,1.2fr) auto!important;
+  grid-template-areas:"brand search actions" "navigation navigation navigation"!important;
+  gap:10px 14px!important;
+ }
+ body .app #sclHeader.sclHeader.topbar .sclNavigation{max-width:760px!important;justify-self:center!important}
+}
+@media(max-width:900px){
+ body .app #sclHeader.sclHeader.topbar{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-areas:"brand actions" "navigation navigation" "search search"!important;
+  padding:10px 12px!important;gap:8px!important;
+ }
+ body .app #sclHeader.sclHeader.topbar .brand-logo{width:42px!important;height:42px!important;max-width:42px!important;flex-basis:42px!important}
+ body .app #sclHeader.sclHeader.topbar .brand{gap:8px!important}
+ body .app #sclHeader.sclHeader.topbar .brand-title{font-size:14px!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions{gap:5px!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn,
+ body .app #sclHeader.sclHeader.topbar .top-actions>.gamertagBtn,
+ body .app #sclHeader.sclHeader.topbar .top-actions>.playGamesBtn{width:44px!important;min-width:44px!important;flex:0 0 44px!important;padding:0!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn{position:relative;font-size:0!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions>.installBtn::after{content:'+'!important;position:absolute;inset:0;display:grid;place-items:center;font:500 28px/1 Inter,system-ui,sans-serif!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions>.playGamesBtn{font-size:0!important}
+ body .app #sclHeader.sclHeader.topbar .top-actions>.playGamesBtn::before{content:'🎮';font-size:19px;line-height:1}
+ body .app #sclHeader.sclHeader.topbar .sclNavigation{max-width:none!important}
+}
+@media(orientation:landscape) and (max-height:600px) and (max-width:1279px){
+ body .app #sclHeader.sclHeader.topbar{
+  grid-template-columns:46px minmax(100px,1fr) auto!important;
+  grid-template-areas:"brand search actions" "navigation navigation navigation"!important;
+  padding:8px 14px!important;gap:7px 12px!important;
+ }
+ body .app #sclHeader.sclHeader.topbar .brand-title{display:none!important}
+ body .app #sclHeader.sclHeader.topbar .sclNavigation{max-width:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+ body .app #sclHeader.sclHeader.topbar .sclNavigation .tab{transition:none!important}
+}

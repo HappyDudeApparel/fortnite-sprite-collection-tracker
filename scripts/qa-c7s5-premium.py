@@ -17,7 +17,7 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 THEMES = ('map', 'sea', 'tavern')
-VIEWPORTS = ((320, 640, 'small'), (390, 844, 'portrait'), (844, 390, 'landscape'), (768, 1024, 'tablet'), (1440, 900, 'desktop'))
+VIEWPORTS = ((320, 640, 'small'), (360, 800, 'phone'), (390, 844, 'portrait'), (844, 390, 'landscape'), (768, 1024, 'tablet'), (1024, 768, 'tablet-landscape'), (1440, 900, 'desktop'))
 # Frozen v2.0.50 records: visual work must not change names, IDs, artwork or saved progress semantics.
 ROSTER_HASHES = {
     'C7S3': '5c368302ab277cc7ce89af3742d5f479c3959b7d771d86f93ac651c929e243d2',
