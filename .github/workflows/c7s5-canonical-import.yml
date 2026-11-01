@@ -1,0 +1,52 @@
+name: Import canonical C7S5 portraits (source-only upgrade)
+on:
+  push:
+    branches: [feature/c7s5-canonical-image-import-2026-11-01]
+    paths:
+      - .github/workflows/c7s5-canonical-import.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  download-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Install image metadata validator
+        run: python -m pip install --quiet pillow
+      - name: Download individually verified artwork and rotate browser caches
+        run: python scripts/import_c7s5_official_art.py
+      - name: Audit exact dataset preservation and all C7S5 image assets
+        run: |
+          python - <<'PY'
+          import json,pathlib,subprocess,hashlib
+          a=pathlib.Path('index.html').read_text()
+          start=a.index('const SPRITES=')+len('const SPRITES=')
+          stop=a.index('];',start)+1
+          now=json.loads(a[start:stop])
+          old=subprocess.check_output(['git','show','HEAD:index.html']).decode()
+          oldstart=old.index('const SPRITES=')+len('const SPRITES=')
+          oldstop=old.index('];',oldstart)+1
+          previous=json.loads(old[oldstart:oldstop])
+          assert now==previous,'Pixel-only art work may not mutate Sprite dataset'
+          assert len(now)==314 and len([x for x in now if x['season']=='C7S5'])==33
+          report=json.loads(pathlib.Path('docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json').read_text())
+          assert report['imported_count']==31
+          assert len(report['NOT_FOUND_AND_LEFT_AS_OLD_PENDING'])==2
+          for sprite in report['images']:
+           file=pathlib.Path(sprite['target'])
+           assert file.is_file() and file.read_bytes()[:4]==b'RIFF'
+           assert hashlib.sha256(file.read_bytes()).hexdigest()==sprite['sha256']
+          print('PASS: 31 authentic images / 2 missing named forms; 314 unchanged Sprite records; C7S3/C7S4 untouched')
+          PY
+      - name: Commit verified source icons on feature branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/sprites/c7s5/*.webp index.html version.json service-worker.js manifest.webmanifest asset-manifest.json docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json
+          git commit -m "C7S5 v2.0.53: import 31 named original Fortnite.GG sprite icons, preserve older seasons and tracking"
+          git push origin HEAD:feature/c7s5-canonical-image-import-2026-11-01
