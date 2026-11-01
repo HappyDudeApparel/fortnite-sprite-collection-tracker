@@ -1,12 +1,13 @@
 {
-  "version": "2.0.52",
+  "version": "2.0.53",
   "published": "2026-11-01",
-  "notes": "Approved Runners and Override visual treatments using supplied scenery and untouched canonical Sprites; chronological native navigation, image-registered one-shot black map route and red X, preserved sea bubbles, calibrated lantern and magical chest ambience. All 314 records and saved collection logic preserved. The compact factual hero caption remains on one line across platform font metrics to keep the registered map route clear.",
+  "notes": "C7S5: 31 individually named original Fortnite.GG Sprite portrait WebPs replace mislabeled collage crops. Two Sweet Dreams variants have no authentic published portraits; pending separate roster correction. No Sprite data, functionality or archives modified.",
   "artwork": {
-    "kind": "locally hosted WebP crops",
-    "count": 33,
-    "source": "VICE/Epic Treasure Hunters image montage",
-    "status": "visual family mapping provisional; verified per-variant native PNG pending"
+    "kind": "unmodified source Sprite icons (WebP)",
+    "count": 31,
+    "source": "Fortnite.GG",
+    "status": "31 verified by exact matching named Fortnite.GG sprite detail page; 2 unverified Sweet Dreams variants remain pending and are NOT claimed authentic",
+    "manifest": "docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json"
   },
   "themeOptions": [
     "map",
