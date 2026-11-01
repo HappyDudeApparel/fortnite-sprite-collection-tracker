@@ -1627,6 +1627,8 @@ body.season-c7s5:has(#mainView.active) .mainLeft::after{
  box-shadow:0 9px 24px var(--s5-panel-shadow);
 }
 @media(max-width:760px){
+ /* Concept art includes the collection chest panel on phone; restore only C7S5. */
+ body.season-c7s5:has(#mainView.active) #summary{display:grid!important}
  body.season-c7s5:has(#mainView.active) .c7s5Banner{
   min-height:180px!important;background-size:100% 100%!important;
   border-radius:12px!important;
