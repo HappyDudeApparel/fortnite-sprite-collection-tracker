@@ -24,6 +24,7 @@
     "seven-responsive-viewports",
     "independent-season-persistence",
     "registered-atmosphere",
-    "live-assets-and-browser"
+    "live-assets-and-browser",
+    "stable-responsive-image-decode-after-resize"
   ]
 }

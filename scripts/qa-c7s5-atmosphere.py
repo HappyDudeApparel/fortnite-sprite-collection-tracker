@@ -50,7 +50,22 @@ def set_theme(page, theme):
 
 
 def settle(page):
-    page.evaluate('''async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('.c7s5Artwork img')].map(i=>i.decode()));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))}''')
+    page.evaluate('''async()=>{
+      await document.fonts.ready;
+      const frame=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      const images=[...document.querySelectorAll('.c7s5Artwork img')];
+      for(let attempt=0;attempt<5;attempt++){
+        // Resize can replace a pending picture/srcset request, rejecting its decode
+        // promise with EncodingError even though the newly selected source is valid.
+        await frame();
+        const sources=images.map(i=>i.currentSrc);
+        try{await Promise.all(images.map(i=>i.decode()));}
+        catch(error){if(error.name==='EncodingError'&&attempt<4)continue;throw error;}
+        await frame();
+        if(images.every((i,k)=>i.complete&&i.naturalWidth>0&&i.currentSrc===sources[k]))return;
+      }
+      throw new Error('Responsive artwork did not reach a stable decoded source');
+    }''')
     page.wait_for_timeout(100)
 
 
