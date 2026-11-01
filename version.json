@@ -1,7 +1,7 @@
 {
-  "version": "2.0.50",
+  "version": "2.0.51",
   "published": "2026-11-01",
-  "notes": "C7S5 three themes now use the approved original reference artwork for exact illustrated banners, ornate chest summary art and themed footer scenes; only C7S5 styling changed. Existing Sprite rosters and all ownership/mastery records unchanged.",
+  "notes": "Premium C7S5 illustrated environments, responsive local artwork and live engraved typography; animated map route, sea atmosphere and lantern/mist layers with reduced-motion and pause controls. All collection records, icons, storage, archive seasons and exports preserved.",
   "artwork": {
     "kind": "locally hosted WebP crops",
     "count": 33,
@@ -14,5 +14,5 @@
     "tavern"
   ],
   "themeStorageKey": "scl_c7s5_theme_v1",
-  "artworkThemeSource": "User-approved Sprite Collection Locker three-phone theme concept art"
+  "artworkThemeSource": "Original text-free environment illustrations generated for Treasure Hunters, art-directed against the user concept; local WebP and licensed local fonts"
 }

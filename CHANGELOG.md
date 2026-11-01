@@ -1,3 +1,11 @@
+## v2.0.51 — November 1, 2026
+
+- Replaced stretched concept crops with original detailed map, underwater-ruin and haunted-tavern environments, responsive local WebP, live typography and licensed local fonts.
+- Added progressively revealed SVG treasure route, sea bubbles/refraction, and restrained lantern/mist motion; system reduced motion, persistent pause control and offscreen suspension included.
+- Refined C7S5 parchment, sea-glass and walnut/brass surfaces. The existing four-genre table fits phones and fills desktop width without the old blank gutter.
+- Preserved every Sprite record, approved genre icon, ownership/mastery ID and storage key; no changes to C7S3/C7S4, Locker, scene backgrounds or export logic.
+- Added repeatable browser regressions across portrait, landscape, tablet and desktop, including collection persistence and real PNG exports.
+
 ## 2.0.45 — 2026-10-22
 - **2D Sprite Platformer:** every level keeps its original route, gems and checkpoints and gains a pad-launched high road with its own gem trail and a sniper, a gated vault (bricks, boulders or crystals) holding a gem cache, and a perch or final stand. Every gem and tube is proven reachable by the level validator.
 - **3D Sprite Arena:** landings are bigger and sized for what they host; monsters can no longer enter the landing pocket, only fight on their own island after a short notice delay, and knockback never carries you off the island; spikes and saws are kept out of the landing pocket.

@@ -1,4 +1,4 @@
-# Sprite Collection Locker — v2.0.50 Treasure Hunters (November 1, 2026)
+# Sprite Collection Locker — v2.0.51 Treasure Hunters (November 1, 2026)
 
 ## Live site
 https://sprites.happydude.ca/
@@ -13,7 +13,7 @@ The production branch is `main`. GitHub Pages serves the repository root. No man
 - C7S5 is a separate local collection. All 33 portraits are locally hosted WebP crops from the 1536×864 VICE/Epic montage with limbs retained; image-to-name attribution remains provisional until independent portrait sources are available.
 
 ## Troubleshooting
-If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.48**. The app service worker cache name rotates with the version.
+If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.51**. The app service worker cache name rotates with the version.
 
 ## Follow-up image QA
 Replace VICE collage cutouts with individually verified transparent PNG/WebP artwork from an authentic source when available. Verify the visual family assignments before declaring final art complete; never alter C7S3 or C7S4 in that work.
@@ -29,3 +29,19 @@ Variant legend now uses the selected **Fortune C** (neon-green four-leaf clover 
 
 ## v2.0.50 exact approved-concept illustrated skins
 The active C7S5 page theme button still cycles Map Glow → Deep Sea Relic → Pirate Tavern Mystic. Unlike the earlier simple SVG-only interpretation, each theme now directly uses locally hosted cropped artwork from the user's approved design reference. Assets: three fully illustrated mobile hero scenes (with baked decorative banner title and Season Collection ribbon), three natural chest-and-ornamental summary-panel backgrounds, and three detailed bottom murals. These are kept at 2x source pixel dimensions, exported as compressed WebP and served locally. The native accessible hero text remains in the DOM but is visually hidden to avoid double-printing the title. The existing app layout, five functional collection summary tiles, 11x4 C7S5 row geometry and saved theme preference are retained. The side-by-side mockups themselves contained fictional demo row names and an incorrect example tally; those are not imported as data. All 281 existing C7S3/C7S4 Sprite records stay byte-identical, and 33 C7S5 sprites remain untouched.
+
+
+## v2.0.51 premium Treasure Hunters environments
+The C7S5 overview uses original, text-free illustrated environments with real local-font typography. Treasure Map Glow reveals a dotted treasure route; Deep Sea Relic has rising bubbles and moving refracted light; Pirate Tavern Mystic has lantern glow and drifting violet mist. The theme button cycles all three and retains the existing `scl_c7s5_theme_v1` preference. A separate Motion button pauses the atmosphere, and the system reduced-motion preference disables it automatically. Animation also pauses offscreen and in background tabs.
+
+The existing family-plus-four-genre table now fills its available width and shows all four genres on phones. Every collection control and its original handler remains intact. There are no data migrations. All 314 Sprite records, including C7S5's 33 entries, and approved Fortune/Cursed icon files are hash-checked against v2.0.50. C7S3/C7S4, Locker, scene backgrounds and export implementation are unchanged.
+
+Local assets: `assets/ui/c7s5-{map,sea,tavern}-{mobile,wide}.webp` (960px/1536px, undistorted `object-fit:cover`), `c7s5-premium.css`, `c7s5-atmosphere.js`, and OFL-licensed fonts in `assets/ui/fonts/`. Original generated artwork follows the user-supplied concept's art direction; it is not a crop of the phone mockups. Historical v2.0.50 artwork remains on disk for compatibility.
+
+Run the meaningful static and browser regressions with:
+
+```sh
+CHROMIUM_PATH=/usr/bin/chromium python3 scripts/qa-c7s5-premium.py --output /tmp/c7s5-premium-qa
+```
+
+Requirements: Python with Playwright and Pillow, plus system Chromium or `python -m playwright install chromium`. The suite checks mobile portrait/landscape, tablet and desktop; themes; ownership/mastery persistence; search/filter; detail/variant selection; Locker/background selection; 1600×1200 PNG download; archived seasons; reduced motion and ambient motion. GitHub Actions runs the same script on release changes.

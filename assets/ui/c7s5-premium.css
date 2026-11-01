@@ -1,0 +1,237 @@
+/* Treasure Hunters v2.0.51. All materials are confined to the C7S5 overview.
+   Sprite scenes, export canvases, collection state and archive seasons are untouched. */
+@font-face{font-family:S5 Display;src:url('fonts/cormorant-garamond-latin-700-italic.woff2') format('woff2');font-weight:700;font-style:italic;font-display:swap}
+@font-face{font-family:S5 Engraved;src:url('fonts/cinzel-latin-600-normal.woff2') format('woff2');font-weight:600;font-display:swap}
+
+body.season-c7s5:has(#mainView.active){
+ --s5-gold:#c49a57;--s5-fine:#b38c535c;--s5-light:#fff3cf;
+ --s5-heading-font:'S5 Engraved',Georgia,serif;
+ --s5-texture:url('c7s5-grain.svg');
+ background-image:var(--s5-texture)!important;background-size:180px!important;
+ background-color:var(--s5-plate)!important;
+ transition:background-color .4s,color .4s;
+}
+body.season-c7s5[data-c7s5-theme=map]:has(#mainView.active){
+ --s5-ink:#332d25;--s5-muted:#6b5236;--s5-heading:#293a3e;
+ --s5-paper:#f3e1b9;--s5-plate:#ddc59a;--s5-row:#f5e7c9;--s5-row-alt:#e7cea1;
+ --s5-frame:#9b7847;--s5-topbar:#f4e5c9;--s5-shadow:#583a2038;
+ --s5-highlight:#fff8df;--s5-banner-ink:#26383b;--s5-banner-glow:#64451d;
+ --s5-panel-shadow:#8d622e26;--s5-row-top:#f5e7c9;--s5-row-base:#e7cea1;
+ --s5-footer-art:url('c7s5-map-wide.webp');--s5-vignette:#fff2d425;
+}
+body.season-c7s5[data-c7s5-theme=sea]:has(#mainView.active){
+ --s5-ink:#e1fff8;--s5-muted:#a0cbc7;--s5-heading:#e0fff4;
+ --s5-paper:#103f49;--s5-plate:#06232c;--s5-row:#0e4049;--s5-row-alt:#082d38;
+ --s5-frame:#588b82;--s5-topbar:#082b34;--s5-shadow:#000e16a6;
+ --s5-highlight:#b3fff4;--s5-banner-ink:#effff6;--s5-banner-glow:#a3f8e8;
+ --s5-panel-shadow:#00101770;--s5-row-top:#0e4049;--s5-row-base:#082d38;
+ --s5-footer-art:url('c7s5-sea-wide.webp');--s5-vignette:#001a2770;
+}
+body.season-c7s5[data-c7s5-theme=tavern]:has(#mainView.active){
+ --s5-ink:#ffead0;--s5-muted:#cbad99;--s5-heading:#ffe9c3;
+ --s5-paper:#35262b;--s5-plate:#1d171f;--s5-row:#402a31;--s5-row-alt:#291e27;
+ --s5-frame:#a07748;--s5-topbar:#241b22;--s5-shadow:#0b040cb0;
+ --s5-highlight:#ffe1ad;--s5-banner-ink:#fff0d0;--s5-banner-glow:#f9cc84;
+ --s5-panel-shadow:#0f060b80;--s5-row-top:#402a31;--s5-row-base:#291e27;
+ --s5-footer-art:url('c7s5-tavern-wide.webp');--s5-vignette:#180d1c50;
+}
+/* Fine, tactile navigation. No geometry overrides for archived seasons. */
+body.season-c7s5:has(#mainView.active) .topbar{
+ background:var(--s5-texture),var(--s5-topbar)!important;
+ border-bottom:1px solid var(--s5-frame)!important;
+ box-shadow:0 4px 22px var(--s5-shadow)!important;
+}
+body.season-c7s5:has(#mainView.active) .brand-title{font-family:var(--s5-heading-font)!important;font-size:clamp(16px,1.6vw,23px)!important;letter-spacing:-.035em!important;text-shadow:none!important}
+body.season-c7s5:has(#mainView.active) .tabs{border-radius:9px!important;box-shadow:inset 0 0 0 2px var(--s5-plate),0 0 0 1px var(--s5-fine)!important}
+body.season-c7s5:has(#mainView.active) .tab{border-radius:6px!important;font-family:var(--s5-heading-font)!important;letter-spacing:0!important}
+body.season-c7s5:has(#mainView.active) .search input{border-radius:10px!important;box-shadow:inset 0 2px 6px var(--s5-panel-shadow)}
+body.season-c7s5:has(#mainView.active) .playGamesBtn,
+body.season-c7s5:has(#mainView.active) .installBtn,
+body.season-c7s5:has(#mainView.active) #editGamertag{
+ background:var(--s5-plate)!important;color:var(--s5-ink)!important;
+ border:1px solid var(--s5-frame)!important;box-shadow:inset 0 1px 0 var(--s5-fine)!important;border-radius:9px!important;
+}
+/* Full-resolution scenery and real typography; never stretch raster lettering. */
+body.season-c7s5[data-c7s5-theme]:has(#mainView.active) .c7s5Banner{
+ min-height:310px!important;padding:51px 24px 47px!important;
+ display:flex;align-items:center;justify-content:center;isolation:isolate;
+ border:1px solid var(--s5-gold)!important;border-radius:11px!important;
+ background:var(--s5-plate)!important;
+ box-shadow:0 12px 32px var(--s5-shadow),0 0 0 3px var(--s5-fine)!important;
+}
+body.season-c7s5:has(#mainView.active) .c7s5Banner::after{
+ content:'';position:absolute;inset:6px;z-index:3;pointer-events:none;
+ border:1px solid #d5b16e85;border-radius:5px;
+ background:linear-gradient(var(--s5-gold),var(--s5-gold)) left top/22px 2px no-repeat,
+ linear-gradient(var(--s5-gold),var(--s5-gold)) left top/2px 22px no-repeat,
+ linear-gradient(var(--s5-gold),var(--s5-gold)) right bottom/22px 2px no-repeat,
+ linear-gradient(var(--s5-gold),var(--s5-gold)) right bottom/2px 22px no-repeat;
+}
+.c7s5Artwork{position:absolute;inset:0;display:block;z-index:-3;opacity:0;transition:opacity .6s ease;pointer-events:none;overflow:hidden}
+.c7s5Artwork img{width:100%;height:100%;object-fit:cover;object-position:50% 58%;display:block}
+body[data-c7s5-theme=map] [data-art-theme=map],
+body[data-c7s5-theme=sea] [data-art-theme=sea],
+body[data-c7s5-theme=tavern] [data-art-theme=tavern]{opacity:1}
+body.season-c7s5:has(#mainView.active) .c7s5Banner::before{
+ content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:radial-gradient(ellipse at 50% 42%,var(--s5-vignette),transparent 70%),linear-gradient(0deg,#0006,transparent 28%);
+}
+body.season-c7s5:has(#mainView.active) .c7s5BannerCopy{
+ position:relative;opacity:1!important;pointer-events:auto!important;
+ width:100%;max-width:600px!important;text-align:center;padding:0!important;z-index:2;
+}
+body.season-c7s5:has(#mainView.active) .c7s5Eyebrow{
+ display:block;font-family:var(--s5-heading-font);font-weight:600;font-size:10px!important;
+ letter-spacing:.22em!important;color:var(--s5-banner-ink)!important;text-shadow:0 1px 8px var(--s5-plate)!important;
+}
+body.season-c7s5:has(#mainView.active) .c7s5Eyebrow span{padding:0 7px;color:var(--s5-banner-glow)}
+body.season-c7s5:has(#mainView.active) .c7s5Banner h1{
+ font-family:'S5 Display',Georgia,serif!important;font-style:italic!important;font-weight:700!important;
+ font-size:clamp(48px,5.1vw,74px)!important;line-height:.82!important;letter-spacing:-.035em!important;
+ color:var(--s5-banner-ink)!important;margin:17px 0 18px!important;
+ text-transform:none!important;text-shadow:0 2px 0 var(--s5-shadow),0 0 25px var(--s5-plate)!important;
+}
+body.season-c7s5:has(#mainView.active) .c7s5Banner h1 b{display:block;font-weight:700;color:var(--s5-banner-ink)!important}
+.c7s5Ribbon{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--s5-banner-glow);font-family:var(--s5-heading-font);font-size:11px;letter-spacing:.06em}
+.c7s5Ribbon::before,.c7s5Ribbon::after{content:'✦';font-size:11px}
+.c7s5Ribbon span{border-block:1px solid currentColor;padding:5px 17px}
+body[data-c7s5-theme=map] .c7s5BannerCopy::before{content:'';position:absolute;inset:-12px -20px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse,#f5e1b9dd 0 35%,#f5e1b900 75%)}
+body[data-c7s5-theme=map] .c7s5Ribbon span{background:#f5e1b9d9;box-shadow:0 0 16px #f5e1b9b0}
+body[data-c7s5-theme=map] .c7s5Banner p{background:#f5e1b9e8;border-radius:3px;display:inline-block;padding:4px 7px}
+body.season-c7s5:has(#mainView.active) .c7s5Banner p{
+ max-width:none!important;margin:14px 0 0;font-size:10px!important;line-height:1.4;font-weight:600!important;
+ letter-spacing:.025em;color:var(--s5-banner-ink)!important;text-shadow:0 1px 5px var(--s5-plate)!important;
+}
+.c7s5Banner p span{padding:0 4px}
+body.season-c7s5:has(#mainView.active) .c7s5Notice{
+ position:absolute;bottom:12px;left:17px;z-index:4;max-width:calc(100% - 95px)!important;
+ color:var(--s5-banner-ink)!important;font:500 8px/1.5 system-ui!important;text-shadow:none!important;
+ padding:3px 5px;border-radius:3px;background:var(--s5-topbar);
+}
+body.season-c7s5:has(#mainView.active) .c7s5ThemeToggle{
+ top:14px!important;right:15px!important;max-width:calc(100% - 30px)!important;
+ font:600 10px/1.2 var(--s5-heading-font)!important;letter-spacing:.015em!important;
+ min-height:32px;padding:7px 11px!important;border:1px solid var(--s5-frame)!important;
+ background:var(--s5-topbar)!important;color:var(--s5-ink)!important;border-radius:5px!important;
+ box-shadow:0 2px 10px var(--s5-shadow),inset 0 0 0 2px var(--s5-fine)!important;
+}
+.c7s5MotionToggle{position:absolute;right:15px;bottom:10px;z-index:4;min-height:28px;min-width:65px;border:1px solid var(--s5-fine);border-radius:4px;background:var(--s5-topbar);color:var(--s5-ink);font:500 9px system-ui;box-shadow:0 1px 6px var(--s5-shadow)}
+.c7s5MotionToggle[aria-pressed=true]{opacity:.75}
+/* Collection tiles remain five independent filter controls, with no baked numbers. */
+body.season-c7s5:has(#mainView.active) #summary{
+ display:grid!important;position:relative;isolation:isolate;
+ background:var(--s5-texture),var(--s5-paper)!important;border:1px solid var(--s5-frame)!important;
+ border-radius:8px!important;box-shadow:inset 0 0 0 3px var(--s5-fine),0 8px 24px var(--s5-shadow)!important;
+}
+body.season-c7s5:has(#mainView.active) .sumTile{position:relative;min-height:95px;border-right:1px solid var(--s5-fine)!important;padding:13px 6px!important;transition:background-color .25s}
+body.season-c7s5:has(#mainView.active) .sumTile.active{background:color-mix(in srgb,var(--s5-accent) 12%,transparent)!important;box-shadow:inset 0 -3px 0 var(--s5-gold)}
+body.season-c7s5:has(#mainView.active) .sumNum{font-family:var(--s5-heading-font)!important;font-size:clamp(22px,2.4vw,34px)!important;font-weight:600!important;color:var(--s5-ink)!important}
+body.season-c7s5:has(#mainView.active) .sumLabel{font-family:var(--s5-heading-font)!important;font-size:9px!important;letter-spacing:.02em!important;font-weight:600!important}
+body.season-c7s5:has(#mainView.active) .progressCircle{border:1px solid var(--s5-frame);width:50px;height:50px;font-size:12px;box-shadow:inset 0 0 0 6px var(--s5-paper),0 0 0 3px var(--s5-fine)!important}
+body.season-c7s5:has(#mainView.active) .modeBtn{font-family:var(--s5-heading-font);font-size:11px;letter-spacing:.06em;border-radius:5px;min-width:148px;padding:13px 17px;box-shadow:0 3px 12px var(--s5-shadow)!important}
+/* Same four-column table and one shared scroller. Flexible widths remove the
+   old empty desktop gutter and expose every genre on phone screens. */
+body.season-c7s5:has(#mainView.active) .variantTable{border:1px solid var(--s5-frame)!important;border-radius:8px!important;background:var(--s5-texture),var(--s5-paper)!important;box-shadow:0 8px 30px var(--s5-shadow),0 0 0 3px var(--s5-fine)!important}
+body.season-c7s5:has(#mainView.active) .variantLegend,
+body.season-c7s5:has(#mainView.active) #familyRows,
+body.season-c7s5:has(#mainView.active) .familyRow{width:100%!important;min-width:288px!important;max-width:none!important}
+body.season-c7s5:has(#mainView.active) .variantLegend,
+body.season-c7s5:has(#mainView.active) .familyRow{grid-template-columns:minmax(180px,1.8fr) repeat(4,minmax(65px,1fr))!important;box-sizing:border-box!important;border-inline:0!important;padding-inline:0!important;column-gap:0!important}
+body.season-c7s5:has(#mainView.active) .familyHero{width:100%!important;min-width:0!important}
+body.season-c7s5:has(#mainView.active) .spriteCell,
+body.season-c7s5:has(#mainView.active) .emptyCell{width:100%!important;min-width:0!important;max-width:none!important}
+body.season-c7s5:has(#mainView.active) #mainLegend{background:var(--s5-legend)!important;border-bottom:2px solid var(--s5-gold)!important;box-shadow:inset 0 1px 0 var(--s5-fine)!important}
+body.season-c7s5:has(#mainView.active) #mainLegend .legendItem,
+body.season-c7s5:has(#mainView.active) #mainLegend .legendFamily{font-family:var(--s5-heading-font)!important;font-size:10px!important;letter-spacing:0!important;font-weight:600!important;text-transform:none!important}
+body.season-c7s5:has(#mainView.active) #mainLegend .legendFamily{display:block!important;visibility:visible!important;opacity:1!important}
+body.season-c7s5:has(#mainView.active) .familyRow{
+ background:var(--s5-texture),linear-gradient(105deg,var(--s5-row),var(--s5-row-alt))!important;
+ border-bottom:1px solid var(--s5-fine)!important;box-shadow:inset 0 1px 0 var(--s5-fine);
+}
+body.season-c7s5:has(#mainView.active) .familyRow:nth-child(even){background:var(--s5-texture),var(--s5-row)!important}
+body.season-c7s5:has(#mainView.active) .familyName{font-family:Georgia,serif!important;font-weight:700!important;letter-spacing:0!important;font-size:16px!important;text-shadow:none!important}
+body.season-c7s5:has(#mainView.active) .familyCount{font-family:system-ui!important;font-size:9px!important;font-weight:600!important;letter-spacing:.025em}
+body.season-c7s5:has(#mainView.active) .spriteCell img{border:1px solid var(--s5-fine)!important;border-radius:10px!important;box-shadow:0 2px 7px var(--s5-shadow)!important}
+body.season-c7s5:has(#mainView.active) .spriteCell:focus-visible,
+body.season-c7s5:has(#mainView.active) .familyHero:focus-visible{outline:2px solid var(--s5-focus,var(--s5-gold));outline-offset:-3px;border-radius:6px}
+/* Match the preview's frame; the existing scene/background/export pixels stay native. */
+body.season-c7s5:has(#mainView.active) #landscapeDetail .inlineInfoPanel{padding:14px!important;background:var(--s5-texture),var(--s5-paper)!important;color:var(--s5-ink)!important;border:1px solid var(--s5-frame)!important;border-radius:9px!important;box-shadow:0 8px 24px var(--s5-shadow),inset 0 0 0 3px var(--s5-fine)!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .detailTitle h1{color:var(--s5-heading)!important;font-family:var(--s5-heading-font)!important;font-size:clamp(24px,2.4vw,38px)!important;letter-spacing:-.03em!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .detailEffect{color:var(--s5-ink)!important;font-weight:600!important;font-size:13px!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .badge,
+body.season-c7s5:has(#mainView.active) #landscapeDetail .variantBtn,
+body.season-c7s5:has(#mainView.active) #landscapeDetail .fact,
+body.season-c7s5:has(#mainView.active) #landscapeDetail .sceneActionBar button{background:var(--s5-plate)!important;color:var(--s5-ink)!important;border:1px solid var(--s5-frame)!important;border-radius:7px!important;box-shadow:none!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .fact *{color:inherit!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .variantRail{background:var(--s5-row)!important;border-color:var(--s5-frame)!important}
+body.season-c7s5:has(#mainView.active) #landscapeDetail .inlineSceneCard{border:1px solid var(--s5-frame)!important;border-radius:9px!important;box-shadow:0 8px 24px var(--s5-shadow)!important}
+body.season-c7s5:has(#mainView.active) .mainLeft::after{content:'';display:block;pointer-events:none;height:clamp(150px,20vw,240px);margin-top:14px;border:1px solid var(--s5-frame);border-radius:8px;background:var(--s5-footer-art) center bottom/cover no-repeat;box-shadow:0 10px 25px var(--s5-shadow),inset 0 0 0 5px var(--s5-fine)}
+/* Motion uses bounded transform/opacity layers; only the small SVG mask repaints. */
+.c7s5Atmosphere{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;contain:paint}
+.c7s5Route{position:absolute;inset:0;width:100%;height:100%;color:#733624;display:none}
+.s5RouteDraw{stroke-dasharray:1;stroke-dashoffset:0;animation:s5-route 14s ease-in-out infinite}
+.s5TreasureX{color:#a32e27;animation:s5-x 14s ease-in-out infinite}
+body[data-c7s5-theme=map] .c7s5Route{display:block}
+.c7s5Caustics{position:absolute;inset:-15%;background:repeating-conic-gradient(from 170deg at 50% 0%,transparent 0deg 9deg,#8affee1c 10deg 14deg,transparent 15deg 25deg);opacity:.5;animation:s5-rays 17s ease-in-out infinite alternate;display:none}
+body[data-c7s5-theme=sea] .c7s5Caustics{display:block}
+.c7s5Bubbles{display:none;position:absolute;inset:0}
+body[data-c7s5-theme=sea] .c7s5Bubbles{display:block}
+.c7s5Bubbles i{position:absolute;left:calc(7% + var(--i)*12%);bottom:-18px;width:calc(3px + var(--i)*1px);height:calc(3px + var(--i)*1px);border:1px solid #c9fffba3;border-radius:50%;box-shadow:inset 1px 1px 2px #ebffff45;animation:s5-bubble calc(12s + var(--i)*1.8s) linear infinite;animation-delay:calc(var(--i)*-3s)}
+.c7s5LanternGlow{display:none;position:absolute;width:40%;height:100%;left:-12%;top:0;background:radial-gradient(ellipse,#ffbc493c,transparent 67%);animation:s5-lantern 7s ease-in-out infinite alternate}
+.c7s5Mist{display:none;position:absolute;inset:50% -25% -30%;background:radial-gradient(ellipse at 70% 65%,#ac69e137,transparent 50%),radial-gradient(ellipse at 40% 95%,#b990d52e,transparent 60%);animation:s5-mist 22s ease-in-out infinite alternate}
+body[data-c7s5-theme=tavern] .c7s5Mist,body[data-c7s5-theme=tavern] .c7s5LanternGlow{display:block}
+@keyframes s5-route{0%,8%{stroke-dashoffset:1}65%,100%{stroke-dashoffset:0}}
+@keyframes s5-x{0%,55%{opacity:.25}72%,100%{opacity:1}}
+@keyframes s5-bubble{0%{transform:translate3d(0,0,0);opacity:0}12%,80%{opacity:.6}100%{transform:translate3d(18px,-360px,0);opacity:0}}
+@keyframes s5-rays{from{transform:translate3d(-2%,0,0) rotate(-3deg);opacity:.3}to{transform:translate3d(2%,0,0) rotate(3deg);opacity:.65}}
+@keyframes s5-lantern{0%,60%,100%{opacity:.65}40%,80%{opacity:1}}
+@keyframes s5-mist{from{transform:translate3d(-5%,3%,0);opacity:.45}to{transform:translate3d(7%,-4%,0);opacity:.85}}
+body.s5-motion-paused .c7s5Atmosphere *,body.s5-atmosphere-offscreen .c7s5Atmosphere *{animation-play-state:paused!important}
+@media(max-width:760px){
+ body.season-c7s5[data-c7s5-theme]:has(#mainView.active) .c7s5Banner{min-height:278px!important;padding:56px 12px 46px!important}
+ body.season-c7s5:has(#mainView.active) .c7s5Banner h1{font-size:58px!important}
+ body.season-c7s5:has(#mainView.active) .c7s5Eyebrow{font-size:9px!important;letter-spacing:.17em!important}
+ body.season-c7s5:has(#mainView.active) .c7s5Banner p{font-size:9px!important;max-width:none!important}
+ body.season-c7s5:has(#mainView.active) .c7s5ThemeToggle{font-size:9px!important;top:13px!important;right:13px!important}
+ body.season-c7s5:has(#mainView.active) .familyName{font-size:12px!important}
+ body.season-c7s5:has(#mainView.active) .variantLegend,
+ body.season-c7s5:has(#mainView.active) .familyRow{grid-template-columns:minmax(112px,1.8fr) repeat(4,minmax(44px,1fr))!important}
+ body.season-c7s5:has(#mainView.active) .familyHero{grid-template-columns:40px minmax(0,1fr)!important;gap:4px!important}
+ body.season-c7s5:has(#mainView.active) .familyHero img{width:38px!important;height:42px!important}
+ body.season-c7s5:has(#mainView.active) .spriteCell img{width:min(50px,90%)!important;height:50px!important}
+ body.season-c7s5:has(#mainView.active) #mainLegend .legendItem{flex-direction:column!important;gap:3px!important;font-size:9px!important;overflow:visible!important}
+ body.season-c7s5:has(#mainView.active) #mainLegend .legendFamily{padding-left:8px!important;font-size:9px!important;white-space:normal!important}
+ body.season-c7s5:has(#mainView.active) .sumTile{min-height:80px;padding:10px 3px!important}
+ body.season-c7s5:has(#mainView.active) .sumNum{font-size:21px!important}
+ body.season-c7s5:has(#mainView.active) .sumLabel{font-size:8px!important}
+ body.season-c7s5:has(#mainView.active) .progressCircle{width:42px;height:42px;font-size:11px}
+ body.season-c7s5:has(#mainView.active) .mainLeft::after{height:180px}
+ .c7s5Artwork img{object-position:50% 48%}
+}
+@media(max-width:480px){
+ /* Keep every existing navigation action reachable inside the phone header. */
+ body.season-c7s5:has(#mainView.active) .top-actions{min-width:0!important;gap:5px!important}
+ body.season-c7s5:has(#mainView.active) .tabs{min-width:0!important;overflow-x:auto!important;scrollbar-width:thin!important;flex:1!important}
+ body.season-c7s5:has(#mainView.active) .tab{min-width:42px!important;padding-inline:9px!important;font-size:10px!important;flex-shrink:0}
+ body.season-c7s5:has(#mainView.active) .installBtn.compact{width:38px!important;height:42px!important;flex-shrink:0}
+ body.season-c7s5:has(#mainView.active) #editGamertag{width:36px!important;padding-inline:8px!important;flex-shrink:0}
+ body.season-c7s5:has(#mainView.active) .brand-logo{width:42px!important;height:42px!important}
+}
+@media(orientation:landscape) and (max-height:600px){
+ body.season-c7s5:has(#mainView.active) .topbar{grid-template-columns:46px minmax(100px,1fr) auto!important;gap:10px!important}
+ body.season-c7s5:has(#mainView.active) .brand-logo{width:44px!important;height:44px!important}
+ body.season-c7s5:has(#mainView.active) .search{min-width:0!important;max-width:none!important}
+ body.season-c7s5:has(#mainView.active) .top-actions{gap:7px!important}
+ body.season-c7s5:has(#mainView.active) .tab{padding-inline:13px!important;font-size:12px!important}
+ body.season-c7s5:has(#mainView.active) .installBtn{font-size:11px!important;padding:10px 12px!important;white-space:nowrap!important}
+ body.season-c7s5[data-c7s5-theme]:has(#mainView.active) .c7s5Banner{min-height:245px!important;padding-block:47px 39px!important}
+ body.season-c7s5:has(#mainView.active) .c7s5Banner h1{font-size:51px!important;margin:12px 0!important}
+ body.season-c7s5:has(#mainView.active) .c7s5Banner p{margin-top:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .c7s5Atmosphere *{animation:none!important}
+ .s5RouteDraw{stroke-dashoffset:0!important}.s5TreasureX{opacity:1!important}
+ .c7s5Bubbles{display:none!important}
+ .c7s5Artwork,body.season-c7s5:has(#mainView.active),body.season-c7s5 .sumTile,body.season-c7s5 .c7s5ThemeToggle{transition:none!important}
+ .c7s5MotionToggle{display:none}
+}

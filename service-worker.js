@@ -1,5 +1,5 @@
-// Sprite Collection Locker — v2.0.50. Cache conservatively on low-storage devices.
-const APP_VERSION = '2.0.50';
+// Sprite Collection Locker — v2.0.51. Cache conservatively on low-storage devices.
+const APP_VERSION = '2.0.51';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = ['./index.html','./manifest.webmanifest','./version.json'];
 
