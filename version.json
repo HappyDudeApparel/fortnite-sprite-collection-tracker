@@ -1,7 +1,7 @@
 {
-  "version": "2.0.54",
+  "version": "2.0.55",
   "published": "2026-11-01",
-  "notes": "Restore C7S5 authentic 512px Sprite portraits to full readable size without image borders/boxes. Use one synchronized horizontally scrolling 4-lane table, preserve all records, other season styles, tracking and assets.",
+  "notes": "Initial approved Locker Vault overhaul: dark blue/gold/cyan/pink hologram hall, authentic Llama projection, full scrollable base grid, exact live base progress, proper framed cards/names, featured background and native controls preserved. Scoped to Locker only; season functionality unchanged.",
   "artwork": {
     "kind": "unmodified source Sprite icons (WebP)",
     "count": 31,
@@ -28,5 +28,14 @@
     "live-assets-and-browser",
     "stable-responsive-image-decode-after-resize"
   ],
-  "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens"
+  "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens",
+  "design": {
+    "locker": "Approved holographic vault visual v1 implementation",
+    "assets": [
+      "assets/ui/locker-vault.css",
+      "assets/ui/locker-vault.js"
+    ],
+    "sourceConcept": "ASTRA_LOCKER_DESIGN_ADDENDUM_AND_APPROVED_REFERENCE_IMAGES_2026-11-01.zip",
+    "status": "feature branch for visual review; not yet deployed"
+  }
 }

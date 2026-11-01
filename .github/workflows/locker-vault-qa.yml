@@ -1,0 +1,47 @@
+name: Approved Locker Vault V2.0.55 QA
+on:
+  push:
+    branches: [feature/approved-locker-vault-redesign-v2055]
+    paths:
+      - assets/ui/locker-vault.css
+      - assets/ui/locker-vault.js
+      - index.html
+      - scripts/qa_locker_vault.py
+      - .github/workflows/locker-vault-qa.yml
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  functional:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Verify collection data is present
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          text=pathlib.Path('index.html').read_text()
+          start=text.index('const SPRITES=')+len('const SPRITES=')
+          end=text.index('];',start)+1
+          sprites=json.loads(text[start:end])
+          assert len(sprites)==314
+          assert len(set(s['id'] for s in sprites))==314
+          assert sum(s['season']=='C7S3' for s in sprites)==119
+          assert sum(s['season']=='C7S4' for s in sprites)==162
+          assert sum(s['season']=='C7S5' for s in sprites)==33
+          assert "const APP_VERSION='2.0.55'" in text
+          print('PASS unmodified roster 314, 119/162/33')
+          PY
+      - run: |
+          pip install --quiet playwright
+          playwright install --with-deps chromium
+      - name: Full Locker interaction and responsive image QA
+        run: python scripts/qa_locker_vault.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: locker-vault-v2055-visual-qa
+          path: qa-screenshots/
+          if-no-files-found: ignore
