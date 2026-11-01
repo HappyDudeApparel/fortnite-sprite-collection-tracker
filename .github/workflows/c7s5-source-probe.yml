@@ -11,7 +11,14 @@ jobs:
       - run: |
           python - <<'PY'
           import urllib.request,re,html
-          for url in ["https://fortnite.gg/sprites/280-halfpeel%27d","https://fortnite.gg/sprites/281-fortune-halfpeel%27d","https://fortnite.gg/sprites/301-sweet-dreams","https://fortnite.gg/sprites"]:
+          for url in [
+            "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PeelyBones_L.webp",
+            "https://images.weserv.nl/?url=fortnite.gg%2Fimg%2Fx%2Fsprites%2Ficons%2FT_Icon_BR_Creature_Sprite_PeelyBones_L.webp",
+            "https://wsrv.nl/?url=fortnite.gg%2Fimg%2Fx%2Fsprites%2Ficons%2FT_Icon_BR_Creature_Sprite_PeelyBones_L.webp",
+            "https://r.jina.ai/https://fortnite.gg/sprites/280-halfpeel%27d",
+            "https://www.fnsprites.info/",
+            "https://beebom.com/fortnite-treasure-hunters-mini-season-sprites-guide/"
+           ]:
            try:
             req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0','Accept':'text/html'})
             with urllib.request.urlopen(req,timeout=25) as x: s=x.read().decode('utf-8',errors='replace')
