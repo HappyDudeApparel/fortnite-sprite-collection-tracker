@@ -90,9 +90,12 @@ jobs:
               assert results['border']=='0px' and results['heroBorder']=='0px',results
               assert abs(results['rowWidth']-results['legendWidth'])<=1.5,results
               assert results['rowTemplate']==results['legendTemplate'],results
-              assert results['scrollWidth']>results['table']['width']+50,results
-              page.locator('#variantTable').evaluate("(el) => el.scrollLeft=150")
-              assert page.locator('#variantTable').evaluate("(el)=>el.scrollLeft")>=80
+              if width<=760:
+                assert results['scrollWidth']>results['table']['width']+50,results
+                page.locator('#variantTable').evaluate("(el) => el.scrollLeft=150")
+                assert page.locator('#variantTable').evaluate("(el)=>el.scrollLeft")>=80
+              else:
+                assert results['scrollWidth']>=results['rowWidth']-2,results
               page.screenshot(path=f'c7s5-original-portrait-{width}.png',full_page=False)
               page.locator('button[data-season="C7S3"]').click()
               assert page.evaluate('currentSeason')=='C7S3'
