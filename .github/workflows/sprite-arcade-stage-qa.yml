@@ -68,7 +68,7 @@ jobs:
             assert (prod/f).exists(),'missing production file games/'+f
           assert 'Staging' not in (prod/'index.html').read_text() and 'Staging' not in (prod/'3d/index.html').read_text()
           # Only the season collection changes; staged/production arcade game bytes stay frozen.
-          base='1da9eac49ea70eff7aca53b3c57a8cce891f4b61'
+          base='919a449c396ef7e935b78b4da67f6ab79b5e24d3'
           for path in ['games/index.html','games/catalog.json','games/2d/levels.js','games/3d/js/main.js']:
             assert subprocess.check_output(['git','show',base+':'+path])==pathlib.Path(path).read_bytes(),path
           assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']==expected_version
