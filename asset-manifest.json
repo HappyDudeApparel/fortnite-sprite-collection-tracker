@@ -1,5 +1,5 @@
 {
-  "version": "2.0.48",
+  "version": "2.0.49",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -355,6 +355,11 @@
     "assets/sprites/c7s5/sweet-dreams-fortune.webp",
     "assets/sprites/c7s5/wayfinder-base.webp",
     "assets/sprites/c7s5/wayfinder-cursed.webp",
-    "assets/sprites/c7s5/wayfinder-fortune.webp"
+    "assets/sprites/c7s5/wayfinder-fortune.webp",
+    "assets/ui/c7s5-fortune-charm.svg",
+    "assets/ui/c7s5-cursed-relic.svg",
+    "assets/ui/c7s5-map.svg",
+    "assets/ui/c7s5-sea.svg",
+    "assets/ui/c7s5-tavern.svg"
   ]
 }
