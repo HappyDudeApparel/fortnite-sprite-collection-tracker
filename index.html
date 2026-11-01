@@ -1467,7 +1467,9 @@ body.season-c7s5[data-c7s5-theme="tavern"]:has(#mainView.active){
 }
 /* Illustrated visual reference actually renders inside the native C7S5 banner.
    Preserve the native semantic title in DOM for accessibility, without duplicating it. */
-body.season-c7s5:has(#mainView.active) .c7s5Banner{
+body.season-c7s5[data-c7s5-theme="map"]:has(#mainView.active) .c7s5Banner,
+body.season-c7s5[data-c7s5-theme="sea"]:has(#mainView.active) .c7s5Banner,
+body.season-c7s5[data-c7s5-theme="tavern"]:has(#mainView.active) .c7s5Banner{
  background-image:var(--s5-hero)!important;
  background-color:var(--s5-plate)!important;
  background-position:center center!important;
