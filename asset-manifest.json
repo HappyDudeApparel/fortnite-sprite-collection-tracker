@@ -1,5 +1,5 @@
 {
-  "version": "2.0.53",
+  "version": "2.0.54",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -391,6 +391,7 @@
     "assets/ui/seasons/provenance.json",
     "assets/ui/seasons/runners-left.webp",
     "assets/ui/seasons/runners-panorama.webp",
-    "assets/ui/seasons/runners-right.webp"
+    "assets/ui/seasons/runners-right.webp",
+    "assets/ui/c7s5-original-sprite-sizing.css"
   ]
 }
