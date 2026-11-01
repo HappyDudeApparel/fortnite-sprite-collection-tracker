@@ -38,7 +38,8 @@ jobs:
           root=pathlib.Path('preview/collectors-vault/arcade')
           stage=pathlib.Path('preview/collectors-vault/index.html').read_text()
           original=pathlib.Path('index.html').read_text()
-          assert "const APP_VERSION='2.0.45'" in original
+          expected_version=json.loads(pathlib.Path('version.json').read_text())['version']
+          assert "const APP_VERSION='"+expected_version+"'" in original
           # Staging page: original look + exactly one entry point to the games.
           assert 'playGamesBtn' in stage and 'href="/preview/collectors-vault/arcade/"' in stage
           assert 'data-tab="arcade"' not in stage and 'id="arcadeView"' not in stage and 'lockerPlaySelected' not in stage
@@ -66,15 +67,17 @@ jobs:
           for f in ['index.html','catalog.json','2d/index.html','2d/levels.js','3d/index.html','3d/js/main.js','3d/js/look.js','3d/assets/characters/citrus.glb','3d/vendor/three/three.module.min.js']:
             assert (prod/f).exists(),'missing production file games/'+f
           assert 'Staging' not in (prod/'index.html').read_text() and 'Staging' not in (prod/'3d/index.html').read_text()
-          # Production root: only the approved release files differ from the v2.0.45 release commit.
+          # Only the season collection changes; staged/production arcade game bytes stay frozen.
           base='1da9eac49ea70eff7aca53b3c57a8cce891f4b61'
-          for path in ['index.html','version.json','service-worker.js','asset-manifest.json']:
+          for path in ['games/index.html','games/catalog.json','games/2d/levels.js','games/3d/js/main.js']:
             assert subprocess.check_output(['git','show',base+':'+path])==pathlib.Path(path).read_bytes(),path
+          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']==expected_version
+          assert "const APP_VERSION = '"+expected_version+"'" in pathlib.Path('service-worker.js').read_text()
           # Manifest: only start_url may differ from the release commit; the installed-app id must never change.
           old_manifest=json.loads(subprocess.check_output(['git','show',base+':manifest.webmanifest']))
           cur_manifest=json.loads(pathlib.Path('manifest.webmanifest').read_text(encoding='utf8'))
           assert cur_manifest['id']==old_manifest['id']=='./sprite-collection-locker-v2.0.30','PWA id must stay stable'
-          assert cur_manifest.pop('start_url')=='./index.html?v=2.0.45','start_url must match APP_VERSION 2.0.45'
+          assert cur_manifest.pop('start_url')=='./index.html?v='+expected_version,'start_url must match APP_VERSION'
           old_manifest.pop('start_url')
           assert old_manifest==cur_manifest,'manifest changed beyond start_url'
           match=re.search(r'<script>([\s\S]*?)</script>',game2d)
@@ -173,10 +176,11 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-          import urllib.request,time
+          import urllib.request,time,json,pathlib
+          expected_version=json.loads(pathlib.Path('version.json').read_text())['version']
           targets=[
             ('https://sprites.happydude.ca/preview/collectors-vault/',{'':'playGamesBtn','arcade/':'SPRITE <span>GAMES','arcade/2d/index.html':'drawPuppetSprite','arcade/2d/levels.js':'SPRITE_LEVELS','arcade/3d/index.html':'js/main.js','arcade/3d/js/levels.js':'sunflower-isles','arcade/catalog.json':'"entries"'}),
-            ('https://sprites.happydude.ca/',{'':'playGamesBtn','version.json':'"2.0.45"','games/':'SPRITE <span>GAMES','games/2d/levels.js':'SPRITE_LEVELS','games/3d/js/main.js':'ARENA','games/3d/js/look.js':'styleCitrus','games/3d/js/rules.js':'ARRIVAL_DEPTH','games/catalog.json':'"entries"'}),
+            ('https://sprites.happydude.ca/',{'':'playGamesBtn','version.json':'"'+expected_version+'"','games/':'SPRITE <span>GAMES','games/2d/levels.js':'SPRITE_LEVELS','games/3d/js/main.js':'ARENA','games/3d/js/look.js':'styleCitrus','games/3d/js/rules.js':'ARRIVAL_DEPTH','games/catalog.json':'"entries"'}),
           ]
           last=''
           for attempt in range(16):
