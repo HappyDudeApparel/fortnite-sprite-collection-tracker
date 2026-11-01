@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - feature/c7s5-theme-toggle-v2049
+      - feature/c7s5-illustrated-skins-v2050
     paths:
       - index.html
       - version.json
@@ -46,12 +47,17 @@ jobs:
             root=ET.parse(p).getroot()
             assert root.attrib.get('viewBox'),name
           ver=json.loads(pathlib.Path('version.json').read_text())['version']
-          assert ver=='2.0.49'
+          assert ver=='2.0.50'
           assert ver==json.loads(pathlib.Path('asset-manifest.json').read_text())['version']
           assert "const APP_VERSION='"+ver+"'" in s
           assert "const APP_VERSION = '"+ver+"'" in pathlib.Path('service-worker.js').read_text()
           assert json.loads(pathlib.Path('manifest.webmanifest').read_text())['start_url']=='./index.html?v='+ver
-          print('PASS: XML, images, active themes, four-column C7S5, preserved C7S3/C7S4, release metadata')
+          for theme in ['map','sea','tavern']:
+            for bit in ['hero','panel','footer']:
+              p=pathlib.Path('assets/ui/c7s5-illustrated-'+theme+'-'+bit+'.webp')
+              assert p.exists() and p.stat().st_size>10000,p
+              assert p.read_bytes()[:4]==b'RIFF' and p.read_bytes()[8:12]==b'WEBP',p
+          print('PASS: reference-accurate illustrated assets, XML, themes, 3 season totals, release metadata')
           PY
       - name: Install Chromium
         run: |
@@ -90,6 +96,10 @@ jobs:
                   icon:getComputedStyle(document.querySelector('.variantLegend .v-Fortune')).backgroundImage
                 })'''))
                 assert 'c7s5-fortune-charm.svg' in dims[-1]['icon']
+                banner=page.locator('.c7s5Banner').evaluate('(el)=>getComputedStyle(el).backgroundImage')
+                assert 'c7s5-illustrated-'+mode+'-hero.webp' in banner, ('Wrong illustrated theme hero',mode,banner)
+                status=page.request.get('http://127.0.0.1:8765/assets/ui/c7s5-illustrated-'+mode+'-hero.webp')
+                assert status.ok and status.body()[:4]==b'RIFF',mode+' artwork not delivered'
                 assert dims[-1]['visual']!='none'
                 assert dims[-1]['rows']==dims[-1]['legend'],(mode,dims[-1])
                 page.screenshot(path='qa-c7s5-'+name+'-'+mode+'.png',full_page=False)
