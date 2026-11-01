@@ -1,5 +1,11 @@
 {
   "version": "2.0.48",
   "published": "2026-11-01",
-  "notes": "C7S5: 33 locally hosted high-resolution cropped variants; Fortune/Cursed genre bar; pre-existing C7S3 and C7S4 preserved; family-image attribution provisional."
+  "notes": "C7S5: 33 locally hosted high-resolution cropped variants; Fortune/Cursed genre bar; pre-existing C7S3 and C7S4 preserved; family-image attribution provisional.",
+  "artwork": {
+    "kind": "locally hosted WebP crops",
+    "count": 33,
+    "source": "VICE/Epic Treasure Hunters image montage",
+    "status": "visual family mapping provisional; verified per-variant native PNG pending"
+  }
 }
