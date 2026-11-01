@@ -1,7 +1,7 @@
 {
-  "version": "2.0.49",
+  "version": "2.0.50",
   "published": "2026-11-01",
-  "notes": "C7S5 theme preview toggle: Treasure Map Glow / Deep Sea Relic / Pirate Tavern Mystic. Fortune C clover charm + Cursed C relic skull. C7S3/C7S4 intact. 33 C7S5 images remain provisional.",
+  "notes": "C7S5 three themes now use the approved original reference artwork for exact illustrated banners, ornate chest summary art and themed footer scenes; only C7S5 styling changed. Existing Sprite rosters and all ownership/mastery records unchanged.",
   "artwork": {
     "kind": "locally hosted WebP crops",
     "count": 33,
@@ -13,5 +13,6 @@
     "sea",
     "tavern"
   ],
-  "themeStorageKey": "scl_c7s5_theme_v1"
+  "themeStorageKey": "scl_c7s5_theme_v1",
+  "artworkThemeSource": "User-approved Sprite Collection Locker three-phone theme concept art"
 }
