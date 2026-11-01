@@ -30,3 +30,7 @@ After individual authentic PNG/WebP portraits become available from Fortnite.GG,
 - Inline script syntax checked in all 14 blocks.
 - A post-publish device/browser walkthrough should verify live thumbnails, mobile alignment, game-details/Locker and export card behavior.
 - No C7S3/C7S4 dataset changes, artwork rewrites, or progress-key migrations.
+
+
+## v2.0.48 local art import
+All 33 gallery crops are now stored as local WebP assets; the temporary remote crop handler was removed. The montage was published by VICE from Epic screenshots. Per-character mapping is provisional until official individual variant icons become available. All character images preserve original limbs and montage background; no destructive isolation.
