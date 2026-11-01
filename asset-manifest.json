@@ -1,5 +1,5 @@
 {
-  "version": "2.0.49",
+  "version": "2.0.50",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -360,6 +360,15 @@
     "assets/ui/c7s5-cursed-relic.svg",
     "assets/ui/c7s5-map.svg",
     "assets/ui/c7s5-sea.svg",
-    "assets/ui/c7s5-tavern.svg"
+    "assets/ui/c7s5-tavern.svg",
+    "assets/ui/c7s5-illustrated-map-hero.webp",
+    "assets/ui/c7s5-illustrated-map-panel.webp",
+    "assets/ui/c7s5-illustrated-map-footer.webp",
+    "assets/ui/c7s5-illustrated-sea-hero.webp",
+    "assets/ui/c7s5-illustrated-sea-panel.webp",
+    "assets/ui/c7s5-illustrated-sea-footer.webp",
+    "assets/ui/c7s5-illustrated-tavern-hero.webp",
+    "assets/ui/c7s5-illustrated-tavern-panel.webp",
+    "assets/ui/c7s5-illustrated-tavern-footer.webp"
   ]
 }
