@@ -1,11 +1,17 @@
 {
-  "version": "2.0.48",
+  "version": "2.0.49",
   "published": "2026-11-01",
-  "notes": "C7S5: 33 locally hosted high-resolution cropped variants; Fortune/Cursed genre bar; pre-existing C7S3 and C7S4 preserved; family-image attribution provisional.",
+  "notes": "C7S5 theme preview toggle: Treasure Map Glow / Deep Sea Relic / Pirate Tavern Mystic. Fortune C clover charm + Cursed C relic skull. C7S3/C7S4 intact. 33 C7S5 images remain provisional.",
   "artwork": {
     "kind": "locally hosted WebP crops",
     "count": 33,
     "source": "VICE/Epic Treasure Hunters image montage",
     "status": "visual family mapping provisional; verified per-variant native PNG pending"
-  }
+  },
+  "themeOptions": [
+    "map",
+    "sea",
+    "tavern"
+  ],
+  "themeStorageKey": "scl_c7s5_theme_v1"
 }
