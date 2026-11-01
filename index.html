@@ -1265,9 +1265,7 @@ function loadSource(){
   // CSS backgrounds work regardless of canvas CORS. Try CORS first for exports.
   im.crossOrigin='anonymous';im.onload=()=>{sourceImg=im;resolve(im)};
   im.onerror=()=>{
-    const f=new Image(); f.onload=()=>{sourceImg=f;resolve(f)};
-    f.onerror=()=>reject(new Error('Vice Sprite gallery image unavailable'));
-    f.src=URL;
+    reject(new Error('Treasure Hunters Sprite gallery CORS unavailable for export; use safe placeholder instead'));
   };
   im.src=URL;
  });
@@ -1280,11 +1278,11 @@ function paint(el){
  // Intrinsic-resolution sprite-card crops: single cached image, accurate sprite-specific window.
  const w=el.clientWidth||el.width||74,h=el.clientHeight||el.height||74;
  if(!w||!h)return;
- const sx=w/box.w,sy=h/box.h;
+ const scale=Math.min(w/box.w,h/box.h);const sx=scale,sy=scale;const cx=(w-box.w*scale)/2,cy=(h-box.h*scale)/2;
  el.style.backgroundImage='url("'+URL+'")';
  el.style.backgroundRepeat='no-repeat';
  el.style.backgroundSize=(1536*sx)+'px '+(864*sy)+'px';
- el.style.backgroundPosition=(-box.x*sx)+'px '+(-box.y*sy)+'px';
+ el.style.backgroundPosition=(-box.x*sx+cx)+'px '+(-box.y*sy+cy)+'px';
  el.style.backgroundColor='#e8d6af';
  el.style.borderRadius='10px';
  el.dataset.c7s5Crop=String(n);
