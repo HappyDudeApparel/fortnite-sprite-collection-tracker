@@ -79,6 +79,15 @@ jobs:
               page=browser.new_page(viewport={'width':390,'height':844} if device=='mobile' else {'width':1440,'height':900},device_scale_factor=1)
               errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
               page.goto('http://127.0.0.1:8765/',wait_until='domcontentloaded',timeout=45000)
+              # Current season first: verify C7S5 grid before the archived-season regressions.
+              page.wait_for_selector('.familyRow[data-family="Halfpeel\'d"]',timeout=30000)
+              assert page.evaluate('currentSeason')=='C7S5','C7S5 must load by default'
+              assert page.evaluate('countable().length')==33,'C7S5 33-count incorrect'
+              assert page.locator('#mainLegend .legendItem').count()==4,'C7S5 must have 4 variant columns'
+              assert page.locator('.familyRow').count()==11,'C7S5 must show all 11 families'
+              # The new season art uses an external full-res gallery crop. Test CSS wiring only here.
+              assert page.locator('.familyRow[data-family="Chester"] .spriteCell img').count()==3,'C7S5 Chester variants missing'
+              page.locator('button[data-season="C7S4"]').click()
               page.wait_for_selector('.familyRow[data-family="Honey"]',timeout=30000)
               assert page.evaluate('countable().length')==162,'C7S4 count incorrect'
               assert page.locator('#mainLegend .legendItem').count()==7,'C7S4 must have 7 variant columns'
@@ -109,7 +118,7 @@ jobs:
               else:
                 page.screenshot(path='qa-desktop-latest.png',full_page=False)
               assert not errors,'Browser JavaScript exceptions: '+str(errors[:5])
-              print('PASS:',device,'C7S4 162, C7S3 117, 17 local images decoded, Quack columns, no page errors')
+              print('PASS:',device,'C7S5 33 / four aligned genre columns, C7S4 162, C7S3 117, 17 local images decoded, Quack columns, no page errors')
               page.close()
             browser.close()
           server.shutdown()
