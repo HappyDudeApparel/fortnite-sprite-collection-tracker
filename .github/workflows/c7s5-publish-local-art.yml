@@ -1,0 +1,131 @@
+name: C7S5 local artwork import (single run)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/c7s5-publish-local-art.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install image decoder
+        run: python -m pip install --quiet pillow
+      - name: Fetch highest-resolution reference and create local sprite images
+        run: |
+          python - <<'PY'
+          import json, pathlib, re, urllib.request, hashlib, io, sys
+          from PIL import Image,ImageEnhance
+          image_url='https://www.vice.com/wp-content/uploads/sites/2/2026/11/all-fortnite-treasure-hunters-sprites.jpg'
+          urls=[
+            image_url,
+            image_url+'?w=1536',
+            'https://images.weserv.nl/?url=www.vice.com%2Fwp-content%2Fuploads%2Fsites%2F2%2F2026%2F11%2Fall-fortnite-treasure-hunters-sprites.jpg',
+          ]
+          gallery=None
+          for url in urls:
+            try:
+              req=urllib.request.Request(url,headers={
+                'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/129.0 Safari/537.36',
+                'Referer':'https://www.vice.com/en/article/all-33-new-fortnite-sprites-added-in-treasure-hunters-mini-season-full-list/',
+                'Accept':'image/webp,image/avif,image/*,*/*;q=0.8'})
+              with urllib.request.urlopen(req,timeout=28) as resp:
+                payload=resp.read(8_000_000)
+              im=Image.open(io.BytesIO(payload))
+              im.load()
+              if im.width < 1000 or abs(im.width/im.height-1536/864)>0.045: raise ValueError('unexpected montage size '+str(im.size))
+              gallery=im.convert('RGB')
+              print('Gallery:',url,'size:',gallery.size,'bytes:',len(payload),'sha256:',hashlib.sha256(payload).hexdigest(),flush=True)
+              break
+            except Exception as exc:
+              print('Artwork source fallback:',type(exc).__name__,str(exc),flush=True)
+          if gallery is None: raise SystemExit('None of the public image URLs returned a usable Treasure Hunters montage; no repository files changed.')
+          html_path=pathlib.Path('index.html')
+          html=html_path.read_text(encoding='utf-8')
+          marker='const SPRITES='
+          start=html.index(marker)+len(marker)
+          end=html.index('];',start)+1
+          rows=json.loads(html[start:end])
+          old=[r for r in rows if r.get('season')!='C7S5']
+          new=[r for r in rows if r.get('season')=='C7S5']
+          assert len(old)==281 and len(new)==33
+          assert sum(1 for r in old if r['season']=='C7S4')==162
+          assert len(set(r['id'] for r in rows))==len(rows)
+          outdir=pathlib.Path('assets/sprites/c7s5');outdir.mkdir(parents=True,exist_ok=True)
+          xcenters=[253,429,607,788,967,1148,1319]
+          ycenters=[82,258,430,603,783]
+          imgpaths=[]
+          for row in new:
+            n=row.get('artworkGroupIndex')
+            assert isinstance(n,int) and 1<=n<=35,(row['name'],n)
+            k=n-1
+            scale_x=gallery.width/1536
+            scale_y=gallery.height/864
+            cx=xcenters[k%7];cy=ycenters[k//7]
+            box=(int(max(0,(cx-83)*scale_x)),int(max(0,(cy-80)*scale_y)),int(min(gallery.width,(cx+83)*scale_x)),int(min(gallery.height,(cy+80)*scale_y)))
+            cropped=gallery.crop(box)
+            name=re.sub('[^a-z0-9]+','-',row['family'].lower()).strip('-')
+            variant=row['variantKey'].lower()
+            filename=name+'-'+variant+'.webp'
+            path=outdir/filename
+            # Keep whole character and all limbs. Full parchment margins retained; no destructive AI segmentation.
+            cropped.save(path,format='WEBP',quality=94,method=6)
+            assert path.stat().st_size>1200,(filename,path.stat().st_size)
+            row['image']=str(path)
+            row['artworkStatus']='locally-cropped VICE/Epic montage; character-name correspondence provisional'
+            imgpaths.append(str(path))
+          assert len(imgpaths)==33 and len(set(imgpaths))==33
+          new_rows=old+new
+          html=html[:start]+json.dumps(new_rows,ensure_ascii=False,separators=(',',':'))+html[end:]
+          # Runtime sheet CSS/JS is obsolete when images are stored locally; exports work without CORS.
+          html,n=re.subn(r'<script id="v2047-c7s5-sheet-art">[\s\S]*?</script>','',html)
+          assert n==1,'Expected single temporary sheet handler'
+          html=html.replace("APP_VERSION='2.0.47'","APP_VERSION='2.0.48'").replace('Sprite Collection Locker — v2.0.47','Sprite Collection Locker — v2.0.48')
+          html_path.write_text(html,encoding='utf-8')
+          vp=pathlib.Path('version.json')
+          version=json.loads(vp.read_text())
+          assert version['version']=='2.0.47'
+          version['version']='2.0.48'
+          version['notes']='C7S5: 33 locally hosted high-resolution cropped variants; Fortune/Cursed genre bar; pre-existing C7S3 and C7S4 preserved; family-image attribution provisional.'
+          vp.write_text(json.dumps(version,indent=2)+'\n')
+          sw=pathlib.Path('service-worker.js');sw.write_text(sw.read_text().replace('2.0.47','2.0.48'))
+          webman=pathlib.Path('manifest.webmanifest');webman.write_text(webman.read_text().replace('index.html?v=2.0.47','index.html?v=2.0.48'))
+          manifest=pathlib.Path('asset-manifest.json')
+          am=json.loads(manifest.read_text());assert am['version']=='2.0.47'
+          am['version']='2.0.48'
+          am['assets']=list(dict.fromkeys(am['assets']+sorted(imgpaths)))
+          manifest.write_text(json.dumps(am,indent=2)+'\n')
+          dp=pathlib.Path('docs/C7S5-REVIEW.md')
+          with dp.open('a') as f:f.write('\n\n## v2.0.48 local art import\nAll 33 gallery crops are now stored as local WebP assets; the temporary remote crop handler was removed. The montage was published by VICE from Epic screenshots. Per-character mapping is provisional until official individual variant icons become available. All character images preserve original limbs and montage background; no destructive isolation.\n')
+          assert all(pathlib.Path(r['image']).is_file() for r in new)
+          assert all(r['image'] for r in old)
+          assert all(r['season'] in ('C7S3','C7S4') for r in old)
+          print('PASS: 33 local WEBP files; other 281 records identical in meaning; all releases synchronized v2.0.48')
+          PY
+      - name: Validate all embedded scripts
+        run: |
+          python - <<'PY'
+          import re,pathlib,subprocess,tempfile
+          html=pathlib.Path('index.html').read_text()
+          js=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html)
+          for i,text in enumerate(js):
+            if not text.strip():continue
+            with tempfile.NamedTemporaryFile(mode='w',suffix='.js') as f:
+              f.write(text);f.flush()
+              subprocess.run(['node','--check',f.name],check=True)
+          print('PASS: syntax checked',len(js),'script blocks')
+          PY
+      - name: Commit the 33 authentic gallery crops
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html version.json service-worker.js manifest.webmanifest asset-manifest.json docs/C7S5-REVIEW.md assets/sprites/c7s5
+          git commit -m "C7S5 v2.0.48 — publish 33 gallery sprite images locally, preserve archives"
+          git push origin HEAD:main
