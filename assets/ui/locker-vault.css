@@ -327,3 +327,334 @@ body .tab[data-tab=locker].active{background:linear-gradient(145deg,#172a62,#632
 
 /* Labels remain whole words where they fit; long canonical names wrap safely. */
 #lockerView .lockerBaseCard>span{font-size:clamp(10px,.9vw,11px)!important;overflow-wrap:break-word!important}
+
+/* PREMIUM VAULT SECOND VISUAL PASS — target: both owner-approved Nov 1 panels.
+   Only Locker UI chrome changes. Canonical Sprite assets remain untouched. */
+#lockerView{
+ background:
+  radial-gradient(ellipse 62% 20% at 50% 89%,#7032d839,transparent 76%),
+  radial-gradient(ellipse 72% 18% at 50% 6%,#14568c65,transparent 83%),
+  linear-gradient(180deg,#020817,#04122e 43%,#040922 100%)!important;
+}
+#lockerView .lockerRedesign{padding-inline:clamp(5px,1.3vw,16px)!important}
+#lockerView .lockerVaultHero{
+ min-height:385px!important;
+ border:2px solid #c59755!important;
+ border-bottom:0!important;
+ background:radial-gradient(ellipse at 50% 92%,#17396e,#04152f 58%,#020b20 100%)!important;
+ border-radius:23px 23px 0 0!important;
+ box-shadow:inset 0 0 0 3px #0b2548,0 0 29px #2a76d64a!important;
+}
+#lockerView .vaultArchitecture{
+ background:
+  linear-gradient(90deg,#020b1c 0%,#061837e5 12%,transparent 27%,transparent 73%,#061837e5 88%,#020b1c 100%),
+  radial-gradient(ellipse 59% 74% at 50% 92%,#0d67ab60,#06152f 63%,#020915 100%)!important;
+}
+#lockerView .vaultArchitecture:before{
+ content:"";position:absolute;inset:0;z-index:0;
+ background:repeating-linear-gradient(90deg,transparent 0 62px,#63b8ff15 63px,transparent 65px),
+ linear-gradient(0deg,#3211797c 0%,transparent 20%),
+ radial-gradient(ellipse 56% 16% at 50% 100%,#08dfff51,transparent 78%);
+}
+#lockerView .vaultArchitecture:after{
+ content:"";position:absolute;left:-10%;right:-10%;bottom:-15%;height:39%;
+ background:
+  repeating-linear-gradient(90deg,transparent 0 11%,#40caff57 11.15%,transparent 11.45%),
+  repeating-linear-gradient(0deg,transparent 0 29px,#ce8aff47 30px,transparent 31px),
+  linear-gradient(180deg,#164d9b13,#0b0c35 88%);
+ transform:perspective(200px) rotateX(62deg);transform-origin:center bottom;
+ box-shadow:0 -18px 75px #0074ff38;opacity:.75;pointer-events:none;
+}
+#lockerView .vaultArch{
+ left:11%;right:11%;top:-10%;bottom:-7%;border-width:clamp(12px,1.55vw,23px)!important;
+ border-color:#173765!important;
+ border-radius:48% 48% 0 0 / 57% 57% 0 0;
+ box-shadow:inset 0 0 0 3px #2ab9ffb8,0 0 0 2px #030a21,
+   0 0 0 5px #bc885e9c,inset 0 0 36px #196cffa5,0 0 24px #0eb6ff48!important;
+ z-index:1;
+}
+#lockerView .vaultArchTwo{
+ left:20%;right:20%;top:11%;bottom:-6%;
+ border:6px solid #0d4b90!important;
+ box-shadow:inset 0 0 0 1px #46d9ff,0 0 0 2px #b67948,inset 0 0 28px #1ea8ff5c!important;
+ z-index:1;
+}
+#lockerView .vaultPillar{
+ top:25%;bottom:2%;width:2.3%;
+ background:linear-gradient(90deg,#151736,#df9c4c 26%,#fff1bc 46%,#8c492b 70%,#041731);
+ box-shadow:0 0 0 3px #111d36,0 0 24px #f2b56d8c!important;z-index:2
+}
+#lockerView .vaultPillarLeft{left:13.2%}#lockerView .vaultPillarRight{right:13.2%}
+#lockerView .vaultCabinet{
+ top:27%;bottom:2%;width:17%;
+ border:2px solid #bb8f59!important;
+ border-radius:8px 8px 2px 2px!important;
+ background:
+  repeating-linear-gradient(90deg,#07152f 0 11%,#3c6b97 11.5%,#081936 13%,#07152f 45%,#b1834c 46%,#0a1d3a 48% 95%,#d4a96a 96% 97%,#07152f 98%)!important;
+ box-shadow:0 0 0 2px #030b1d,inset 0 0 20px #020716,0 0 25px #000!important;z-index:1;
+}
+#lockerView .vaultCabinetLeft{left:-2%}#lockerView .vaultCabinetRight{right:-2%}
+#lockerView .vaultEqualizer{
+ z-index:2;bottom:19%;height:33%;width:23%;
+ background:repeating-linear-gradient(90deg,transparent 0 8px,#11e6ff 8.5px 11px,transparent 12px 14px)!important;
+ -webkit-mask-image:repeating-linear-gradient(0deg,transparent 0 4px,#000 4px 8px)!important;
+ mask-image:repeating-linear-gradient(0deg,transparent 0 4px,#000 4px 8px)!important;
+ filter:drop-shadow(0 0 4px #2eecff);
+}
+#lockerView .vaultEqualizerLeft{left:23%}
+#lockerView .vaultEqualizerRight{right:23%;background:repeating-linear-gradient(90deg,transparent 0 8px,#f05aff 8.5px 11px,transparent 12px 14px)!important;filter:drop-shadow(0 0 5px #f43eff)}
+#lockerView .vaultProjectionSubject{
+ z-index:5;bottom:15%;width:clamp(90px,17%,195px);height:48%;
+}
+#lockerView .vaultProjectionSubject img{
+ object-fit:contain!important;opacity:.94!important;
+ filter:grayscale(1) sepia(1) hue-rotate(142deg) saturate(7) brightness(1.9)
+   drop-shadow(0 0 7px #08efff) drop-shadow(0 0 13px #ee3eff)!important;
+}
+#lockerView .vaultProjectionRing{
+ z-index:4;left:27%;right:27%;bottom:9%;height:34px;
+ border:3px solid #00e9ff!important;box-shadow:0 0 16px #08e4ff,inset 0 0 18px #44ccff!important;
+}
+#lockerView .vaultProjectionRingTwo{left:32%;right:32%;bottom:11%;border-color:#ff4ff0!important;box-shadow:0 0 18px #ff53fa!important}
+#lockerView .vaultHalo{bottom:1%;left:17%;right:17%;height:37%;filter:blur(12px)}
+#lockerView .vaultFloor{bottom:0;height:21%;border-top:1px solid #49bfff}
+#lockerView .vaultIvy{position:absolute;top:-5%;width:18%;height:50%;z-index:6;filter:drop-shadow(1px 3px 5px #000)}
+#lockerView .vaultIvyLeft{left:-1%}
+#lockerView .vaultIvyRight{right:-1%;transform:scaleX(-1)}
+#lockerView .vaultBotanical{width:100%;height:100%;overflow:visible}
+#lockerView .vaultSconce{position:absolute;top:40%;width:15px;height:25px;z-index:6;
+ border:2px solid #f0c778;border-radius:6px;
+ background:linear-gradient(90deg,#432014,#ffcb48,#451523);
+ box-shadow:0 0 7px 4px #ffb44368,0 0 22px 10px #ffbd3638,inset 0 0 7px #ffecb4}
+#lockerView .vaultSconce:before{content:"";position:absolute;top:-8px;left:3px;width:4px;height:8px;background:#f8cb6b}
+#lockerView .vaultSconceLeft{left:5%}#lockerView .vaultSconceRight{right:5%}
+#lockerView .vaultVitrine{position:absolute;z-index:5;bottom:10%;width:11%;height:29%;min-width:41px;max-width:116px;
+ filter:drop-shadow(0 0 11px #f68aff83)}
+#lockerView .vaultVitrineLeft{left:10%}#lockerView .vaultVitrineRight{right:10%}
+#lockerView .vaultVitrineGlass{position:absolute;left:11%;right:11%;top:1%;bottom:16%;
+ border-radius:44% 44% 11% 11%/31% 31% 7% 7%;border:2px solid #fbd3c6;
+ background:radial-gradient(ellipse at 50% 77%,#c984ff66,#3119667a 52%,#e8c4f51f 100%);
+ box-shadow:inset 0 0 0 3px #b2e5ff35,0 0 17px #c891ff88}
+#lockerView .vaultJewel{position:absolute;left:23%;width:54%;height:69%;top:17%;filter:drop-shadow(0 0 7px #eb7aff)}
+#lockerView .vaultVitrinePlinth{position:absolute;left:0;right:0;bottom:0;height:17%;
+ border:2px solid #e2ad68;border-radius:5px;
+ background:linear-gradient(180deg,#f7d7a2,#49315e 22%,#161e3e 70%,#b78355);
+ box-shadow:0 5px 14px #000,0 0 13px #c78efe}
+#lockerView .vaultProjectionDeck{position:absolute;bottom:11%;left:24%;right:24%;height:11%;z-index:4;
+ border:1px solid #69efff;border-radius:50%;transform:perspective(150px) rotateX(49deg);
+ box-shadow:0 0 0 6px #a847ff75,0 0 0 14px #1cceff45,0 0 40px #18d5ff}
+#lockerView .lockerRedesignHeader{z-index:8!important;min-height:160px!important;padding:27px 34px 0!important}
+#lockerView .lockerKicker{font-size:clamp(11px,1.3vw,16px)!important;letter-spacing:.31em!important;color:#fff0c6!important}
+#lockerView .lockerBrandBlock h1{
+ font-size:clamp(48px,5.7vw,83px)!important;
+ letter-spacing:.035em!important;
+ line-height:1.03!important;
+ filter:drop-shadow(0 2px 2px #2a0f00) drop-shadow(0 0 10px #c7803f7d)!important;
+}
+#lockerView .lockerBrandBlock:before{
+ content:"✦  ◆  ✦";color:#f5c87c;font-size:25px;letter-spacing:.24em;
+ text-shadow:0 0 9px #ffce72;
+}
+#lockerView .lockerBrandBlock:after{
+ content:"❧    ✦    ❧";font-size:17px;letter-spacing:.34em;color:#ffdb82;
+ margin-top:3px;text-shadow:0 0 12px #e9a850;
+}
+#lockerView .lockerVaultSummary{
+ z-index:6;position:relative;
+ border:2px solid #e5b66c!important;
+ background:
+  linear-gradient(110deg,transparent 0%,#20acff1d 40%,#8536ff15 65%,transparent 100%),
+  linear-gradient(180deg,#061a37,#061026)!important;
+ box-shadow:inset 0 0 0 2px #fcd1964c,0 0 9px #f7bd6b74,0 11px 30px #0009!important;
+}
+#lockerView .lockerVaultSummary:before,#lockerView .lockerVaultSummary:after{
+ content:"";position:absolute;bottom:0;width:65px;height:58px;pointer-events:none;
+ background:linear-gradient(160deg,#92ffff,#047ded 28%,#1056b9 52%,#7717cd 80%,#f8a6ff);
+ clip-path:polygon(48% 0,64% 39%,80% 14%,96% 81%,65% 100%,23% 92%,0 66%,31% 59%);
+ filter:drop-shadow(0 0 12px #25dfff);
+ opacity:.95;
+}
+#lockerView .lockerVaultSummary:before{left:6px}
+#lockerView .lockerVaultSummary:after{right:6px;transform:scaleX(-1);filter:hue-rotate(55deg) drop-shadow(0 0 12px #ab4dff)}
+#lockerView .vaultProgressCircle{
+ background:conic-gradient(from 185deg,#28e1ff 0 34%,#9b4dff 49%,#ef49ff 73%,#2fdfff 100%)!important;
+ border:3px solid #8bdfff;box-shadow:0 0 0 3px #13325f,0 0 23px #ce59ffb8,inset 0 0 15px #000b!important;
+}
+#lockerView .vaultProgressCircle>div{background:#071833!important;box-shadow:inset 0 0 12px #08122c,0 0 0 1px #06284d!important}
+#lockerView .vaultSummaryTitle>span{letter-spacing:.32em!important}
+#lockerView .vaultSummaryItem{position:relative}
+#lockerView .vaultMetricIcon{font-size:29px!important}
+#lockerView .vaultOwnedIcon{filter:drop-shadow(0 0 9px #36dfff)}
+#lockerView .vaultCompleteIcon{filter:drop-shadow(0 0 9px #f263ff)}
+#lockerView .lockerBasePanel{border-color:#64cfff!important;box-shadow:inset 0 0 0 2px #67cdff25,0 0 20px #3ea5ff2b!important}
+#lockerView .vaultGridViewport{
+ border:1px solid #d6b278!important;
+ box-shadow:inset 0 0 0 1px #49c1ff2c,inset 0 0 28px #030b1b,0 0 12px #46c7ff28!important;
+}
+#lockerView .lockerBaseCard,#lockerView .lockerVariantCard{
+ border:2px solid var(--tile-edge)!important;
+ background:radial-gradient(ellipse at 50% 27%,#244b8278,#050e23 72%)!important;
+ box-shadow:inset 0 0 0 2px #71dbff33,inset 0 -9px 9px #06101d,0 0 10px color-mix(in srgb,var(--tile-edge),transparent 60%)!important;
+}
+#lockerView :is(.lockerBaseCard,.lockerVariantCard):after{
+ content:"";position:absolute;z-index:3;inset:3px;pointer-events:none;
+ border:1px solid color-mix(in srgb,var(--tile-edge),transparent 33%);
+ clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px);
+}
+#lockerView .lockerBaseCard img{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--tile-edge),transparent 57%))!important}
+#lockerView .lockerBaseCard>span{color:#fff!important;text-shadow:0 1px 4px #000,0 0 6px #000!important}
+#lockerView .lockerVaultFooter{position:relative;padding:14px 0 16px!important;margin-top:16px!important;
+ border-top:1px solid #1fd9ff6a;
+ background:radial-gradient(ellipse at 50% 100%,#177ef858,transparent 69%);
+}
+#lockerView .lockerVaultFooter strong{
+ border:2px solid #edbe76!important;clip-path:polygon(15px 0,calc(100% - 15px) 0,100% 50%,calc(100% - 15px) 100%,15px 100%,0 50%);
+ box-shadow:inset 0 0 11px #a06eff70,0 0 9px #f4bb6540!important;
+}
+#lockerView .lockerFeaturePanel{
+ padding:clamp(10px,1.5vw,18px)!important;
+ border:2px solid #e6b970!important;
+ box-shadow:inset 0 0 0 2px #26dbff4a,0 0 24px #ba49ff52!important;
+}
+#lockerView .vaultFeaturedComposition{
+ display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+ min-height:315px;gap:14px;align-items:stretch;margin-bottom:16px;
+}
+#lockerView .vaultFeaturedComposition .lockerFeatureStage{
+ position:relative;min-width:0!important;min-height:0!important;
+ height:auto!important;aspect-ratio:16/11!important;border-radius:12px!important;
+ background:#070f2c!important;overflow:hidden!important;
+ border:2px solid #d3a866!important;
+}
+#lockerView .lockerFeatureStage>canvas{display:none!important}
+#lockerView .vaultLiveScene{position:absolute;inset:0;z-index:1;overflow:hidden;background:#030e23}
+#lockerView .vaultLiveBackdrop{
+ position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center;
+ filter:saturate(1.17) contrast(1.05);
+}
+#lockerView .vaultLiveScene:after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:radial-gradient(ellipse at center,transparent 50%,#040927b0 100%),
+  linear-gradient(0deg,#194bc134,transparent 40%);
+}
+#lockerView .vaultLiveSprite{
+ position:absolute;z-index:3;max-width:66%;height:68%;object-fit:contain;object-position:center;
+ transform:translate(-50%,-50%);
+ filter:drop-shadow(0 0 10px #23c7ffb0) drop-shadow(0 9px 9px #000a);
+ animation:vaultLiveHover 6s ease-in-out infinite;
+}
+#lockerView .vaultLiveFloorGlow{
+ position:absolute;z-index:2;bottom:4%;left:17%;right:17%;height:15%;
+ border-radius:50%;border:3px solid #08e5ff;
+ transform:perspective(90px) rotateX(60deg);
+ box-shadow:0 0 0 8px #df45fa7b,0 0 15px #15d5ff,0 0 35px #bd54ff;
+ opacity:.75;pointer-events:none;
+}
+#lockerView .vaultLiveSparkle{position:absolute;z-index:4;color:#fff;top:10%;right:15%;
+ text-shadow:0 0 10px #fff,0 0 14px #bc74ff;font-size:16px;pointer-events:none}
+#lockerView .vaultFeaturedComposition .lockerStageArrow{z-index:6!important;
+ color:#ffe7b9!important;background:#0c2149c4!important;border-color:#a7caff!important}
+#lockerView .vaultFeaturedComposition .lockerFeatureHead{
+ min-width:0!important;display:flex!important;flex-direction:column!important;
+ justify-content:space-around!important;align-items:stretch!important;
+ padding:12px 10px!important;gap:11px!important;
+}
+#lockerView .vaultFeaturedComposition .lockerKicker{
+ color:#73e3ff!important;font-weight:850!important;font-size:11px!important;letter-spacing:.16em!important}
+#lockerView .vaultFeaturedComposition .lockerFeatureHead h2{
+ color:#fff2ce!important;font-size:clamp(19px,2.6vw,34px)!important;
+ white-space:normal!important;overflow-wrap:break-word!important;
+}
+#lockerView .vaultFeaturedComposition .lockerFeatureHead p{margin:8px 0!important}
+#lockerView .vaultSelectedDescription{
+ font:500 clamp(12px,1.4vw,16px)/1.55 system-ui,sans-serif!important;
+ color:#e4ebff;border-top:1px solid #d4b77d7a;padding-top:9px;
+}
+#lockerView .vaultSelectedStatus{
+ align-self:flex-end;text-align:center;min-width:110px;
+ border-radius:30px;border:2px solid #a4bfd9;padding:8px 14px;
+ font-size:11px;font-weight:900;letter-spacing:.045em;
+ background:#152846;color:#fff;
+ box-shadow:0 0 10px #83b0c459;
+}
+#lockerView .vaultSelectedStatus[data-ownership="owned"],
+#lockerView .vaultSelectedStatus[data-ownership="mastered"]{
+ border-color:#65fa55;color:#baffae;
+ background:linear-gradient(180deg,#125333,#081c2a);
+ box-shadow:0 0 14px #3dfb6a8f;
+}
+#lockerView .vaultSelectedStatus[data-ownership="preview"]{border-color:#dfb15e;color:#ffe1a2}
+#lockerView .vaultFeaturedComposition .lockerFeatureActions{
+ display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;
+}
+#lockerView .vaultFeaturedComposition .lockerFeatureActions button{font-size:12px!important;min-height:38px!important}
+#lockerView .lockerBackgroundPanelBelow{
+ border:1px solid #aa81fc!important;box-shadow:0 0 15px #ac57ff41,inset 0 0 0 1px #5d67c145!important
+}
+#lockerView .lockerBgCard{
+ border-width:2px!important;box-shadow:inset 0 0 0 1px #64baff6c!important}
+#lockerView .lockerBgCard.active{
+ box-shadow:0 0 0 2px #e96dff,0 0 18px #ef5bffde!important;
+}
+@keyframes vaultLiveHover{0%,100%{translate:0 2px}50%{translate:0 -4px}}
+@media(max-width:759px){
+ #lockerView .lockerVaultHero{min-height:245px!important;border-radius:15px 15px 0 0!important}
+ #lockerView .lockerRedesignHeader{min-height:96px!important;padding:9px 38px 0!important}
+ #lockerView .lockerBrandBlock h1{font-size:clamp(35px,10vw,52px)!important}
+ #lockerView .lockerBrandBlock:before{font-size:15px;line-height:11px}
+ #lockerView .lockerBrandBlock:after{font-size:10px;line-height:12px}
+ #lockerView .vaultProjectionSubject{bottom:14%;height:47%;width:clamp(67px,25%,110px)}
+ #lockerView .vaultProjectionRing{bottom:7%;height:23px}
+ #lockerView .vaultProjectionRingTwo{bottom:9%;height:18px}
+ #lockerView .vaultVitrine{bottom:12%;width:13%;height:31%}
+ #lockerView .vaultVitrineLeft{left:7%}#lockerView .vaultVitrineRight{right:7%}
+ #lockerView .vaultEqualizer{bottom:20%;height:26%;width:20%}
+ #lockerView .vaultEqualizerLeft{left:25%}#lockerView .vaultEqualizerRight{right:25%}
+ #lockerView .vaultSconce{top:41%;width:9px;height:18px}
+ #lockerView .vaultBotanical{transform:translateY(-4%)}
+ #lockerView .lockerVaultSummary{min-height:108px!important;padding:9px 10px!important;gap:5px!important}
+ #lockerView .lockerVaultSummary:before,#lockerView .lockerVaultSummary:after{width:24px;height:26px;bottom:0}
+ #lockerView .vaultProgressCircle{width:74px!important;height:74px!important}
+ #lockerView .vaultSummaryTitle h2{font-size:clamp(17px,4.6vw,23px)!important}
+ #lockerView .vaultSummaryItem strong{font-size:clamp(13px,3.8vw,18px)!important}
+ #lockerView .vaultMetricIcon{font-size:19px!important}
+ #lockerView .vaultFeaturedComposition{gap:8px;min-height:240px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #lockerView .vaultFeaturedComposition .lockerFeatureHead{padding:4px!important;gap:5px!important}
+ #lockerView .vaultFeaturedComposition .lockerFeatureHead h2{font-size:clamp(15px,4vw,22px)!important}
+ #lockerView .vaultFeaturedComposition .lockerFeatureHead p{font-size:10px!important;margin:4px 0!important}
+ #lockerView .vaultSelectedDescription{font-size:11px!important;line-height:1.35!important;padding-top:4px}
+ #lockerView .vaultSelectedStatus{min-width:0;font-size:10px;padding:5px 8px}
+ #lockerView .vaultFeaturedComposition .lockerFeatureActions button{font-size:10px!important;min-height:31px!important;padding:5px 8px!important}
+}
+@media(max-width:360px){
+ #lockerView .vaultFeaturedComposition{grid-template-columns:1fr 1fr;min-height:235px}
+ #lockerView .vaultFeaturedComposition .lockerFeatureHead h2{font-size:15px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #lockerView .vaultLiveSprite{animation:none!important}
+ #lockerView .vaultProjectionDeck,#lockerView .vaultVitrineGlass{animation:none!important}
+}
+@media(max-width:760px){
+ body:has(#lockerView.active) .topbar{
+   grid-template-columns:minmax(0,1fr)!important;gap:3px!important;
+   padding:5px 7px!important;
+ }
+ body:has(#lockerView.active) .topbar>.brand,
+ body:has(#lockerView.active) .topbar>.search{display:none!important}
+ body:has(#lockerView.active) .topbar>.top-actions{
+   display:flex!important;flex-wrap:wrap!important;gap:5px!important;
+   justify-content:flex-end!important;min-width:0!important
+ }
+ body:has(#lockerView.active) .topbar>.top-actions .tabs{
+   order:0!important;width:100%!important;flex:0 0 100%;
+   margin:0!important;padding:3px!important;
+ }
+ body:has(#lockerView.active) .topbar>.top-actions .tab{
+   min-height:39px!important;height:39px!important;padding:2px!important
+ }
+ body:has(#lockerView.active) .topbar>.top-actions>.installBtn,
+ body:has(#lockerView.active) .topbar>.top-actions>button:not(.tab){
+   width:auto!important;min-width:36px!important;height:29px!important;min-height:29px!important;
+   font-size:11px!important;padding:0 9px!important;border-radius:7px!important
+ }
+}
