@@ -50,6 +50,27 @@ with sync_playwright() as p:
     lastScroll:document.querySelector('#lockerBaseGrid .lockerBaseCard:last-child').getBoundingClientRect().top,
   })""")
   assert nums['displayed']==f"{nums['actualOwned']} / {nums['familyCount']}",nums
+  # Approved art direction is Locker-only. Real nav remains functional;
+  # the mobile bar is compact to leave room for the actual scrollable grid.
+  if width<=760:
+   assert page.locator('#sclHeader>.brand').evaluate('(e)=>getComputedStyle(e).display')=='none', 'Avoid redundant header over the Locker art'
+   assert page.locator('#sclHeader>.tabs').is_visible()
+   assert page.locator('#sclHeader>.top-actions').is_visible()
+  assert page.locator('#lockerView .vaultVitrine').count()==2
+  assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
+  assert page.locator('#lockerView .vaultFeaturedComposition').count()==1
+  live_img=page.locator('#lockerView .vaultLiveSprite')
+  assert live_img.count()==1
+  assert live_img.evaluate('(e)=>e.complete && e.naturalWidth>0'), 'Real featured Sprite art must load'
+  assert page.evaluate("""() => {
+     const featured=document.querySelector('#lockerView .vaultLiveSprite');
+     const sprite=byId(selectedId);
+     return featured.getAttribute('src')===sprite.image;
+  }"""), 'Featured stage must use canonical selected Sprite portrait'
+  assert page.evaluate("""() => {
+     const bg=document.querySelector('#lockerView .vaultLiveBackdrop');
+     return bg.getAttribute('src')===BACKGROUNDS[bgIndex].file && bg.naturalWidth>0;
+  }"""), 'Featured backdrop must use selected official app background'
   page.screenshot(path=f'qa-screenshots/locker-top-{width}.png')
   last=page.locator('#lockerBaseGrid .lockerBaseCard').last
   viewport.evaluate('(e)=>e.scrollTop=0')
@@ -84,6 +105,7 @@ with sync_playwright() as p:
   bg=page.locator('#lockerBackgroundGrid .lockerBgCard')
   bg.last.click()
   assert bg.last.get_attribute('aria-current')=='true'
+  assert page.evaluate("""() => document.querySelector('#lockerView .vaultLiveBackdrop').getAttribute('src')===BACKGROUNDS[bgIndex].file"""), 'Changing background should update live featured stage'
   page.locator('#lockerShareBtn').click()
   assert 'open' in page.locator('#exportOverlay').get_attribute('class')
   page.locator('#closeExport').click()
