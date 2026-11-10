@@ -799,3 +799,44 @@ body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
  }
  body:has(#lockerView.active) #sclHeader>.playGamesBtn.inbar{display:none!important}
 }
+
+/* Corrected DOM audit: #sclHeader>.tabs is a DIRECT child. The inline
+   shell's older control-order script does not move it into .top-actions. */
+@media(max-width:760px){
+ body:has(#lockerView.active) #sclHeader{
+  display:flex!important;flex-direction:column!important;gap:5px!important;
+  height:auto!important;min-height:0!important;padding:6px 8px!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.tabs{
+  order:0!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  height:43px!important;min-height:43px!important;margin:0!important;
+  padding:4px!important;gap:3px!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.top-actions{
+  order:1!important;display:flex!important;flex-direction:row!important;
+  flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-end!important;
+  min-height:30px!important;height:30px!important;width:100%!important;
+  gap:6px!important;padding:0!important;overflow:visible!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.top-actions>.playGamesBtn{
+  display:inline-flex!important;order:0!important;flex:0 1 auto!important;
+  width:auto!important;max-width:calc(100% - 92px)!important;min-width:0!important;
+  padding:0 9px!important;white-space:nowrap!important;
+  font-size:11px!important;line-height:1!important;
+  height:29px!important;min-height:29px!important;
+ }
+ body:has(#lockerView.active) #sclHeader #installBtn{
+  display:inline-flex!important;order:1!important;flex:0 0 38px!important;
+  width:38px!important;max-width:38px!important;min-width:38px!important;
+  height:29px!important;min-height:29px!important;
+  grid-row:auto!important;grid-column:auto!important;
+ }
+ body:has(#lockerView.active) #sclHeader #editGamertag{
+  display:inline-flex!important;order:2!important;flex:0 0 38px!important;
+  width:38px!important;max-width:38px!important;min-width:38px!important;
+  height:29px!important;min-height:29px!important;
+  grid-row:auto!important;grid-column:auto!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.playGamesBtn.inbar{display:none!important}
+}
