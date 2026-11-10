@@ -11,3 +11,5 @@ This is a review-only branch built on current main v2.0.55. Do not merge until b
 6. Use local responsive CSS and minimal wrapper JS, never bake the approved concept PNG into an inert page background.
 7. QA at 320, 360, 390, 430, 768, 1024 and 1440 widths: screenshot top/middle/end/featured, confirm scrollHeight > viewport, last record reachable, search/filter, live images, selection, backgrounds, export dialog and navigation. Also verify long names, colors, no overlap or cropped portraits.
 8. Review artifacts and visually compare with BOTH original approved concept images. CI success alone is not visual sign-off. Live main remains unchanged pending review.
+
+Review refinement: enforce one-column continuous vertically arranged Locker at every viewport (approved lower featured concept remains below the variants), 8 cards across at wide desktop, 6 at tablet, 3 at 360–449px, 2 under 360px for readable long Sprite names. Central viewport remains separately scrollable.
