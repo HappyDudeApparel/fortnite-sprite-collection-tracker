@@ -88,6 +88,72 @@
   const layout=root.querySelector('.lockerRedesignLayout');
   layout.after(footer);
 
+
+  // Premium vault fixtures: architectural accents, no fabricated Sprite art.
+  const plantSVG='<svg class="vaultBotanical" viewBox="0 0 130 150" aria-hidden="true" preserveAspectRatio="xMidYMin meet"><path d="M63 2 Q38 46 45 143" fill="none" stroke="#977a3b" stroke-width="3"/><path d="M63 4 Q79 40 73 132" fill="none" stroke="#7c6736" stroke-width="2"/>'+
+    Array.from({length:11},(_,i)=>{const y=16+i*11,side=i%2?1:-1,cx=side>0?78:43;return '<ellipse cx="'+cx+'" cy="'+y+'" rx="'+(16+i%3*3)+'" ry="9" fill="'+(i%3===0?'#668a25':i%3===1?'#295d34':'#b5ae40')+'" stroke="#c7b66b" stroke-width=".75" transform="rotate('+(side*29)+' '+cx+' '+y+')" />'}).join('')+'</svg>';
+  const crystalSVG='<svg class="vaultJewel" viewBox="0 0 90 120" aria-hidden="true"><defs><linearGradient id="vaultJewelFacet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6baff"/><stop offset=".35" stop-color="#d665ff"/><stop offset=".72" stop-color="#592bb3"/><stop offset="1" stop-color="#53edff"/></linearGradient></defs><path d="M45 2 73 36 80 92 46 117 10 88 16 35Z" fill="url(#vaultJewelFacet)" stroke="#ffedff" stroke-width="2"/><path d="M45 2 41 43 46 117 16 35Z" fill="#eae0ff" opacity=".45"/><path d="M45 2 73 36 41 43 16 35M41 43 80 92 46 117" stroke="#fff9ff" opacity=".7" fill="none"/><path d="M41 43 73 36 80 92 46 117Z" fill="#811ce2" opacity=".45"/></svg>';
+  const architecture=atmosphere.querySelector('.vaultArchitecture');
+  architecture.insertAdjacentHTML('beforeend',
+    '<div class="vaultIvy vaultIvyLeft">'+plantSVG+'</div><div class="vaultIvy vaultIvyRight">'+plantSVG+'</div>'+
+    '<div class="vaultSconce vaultSconceLeft"><span></span></div><div class="vaultSconce vaultSconceRight"><span></span></div>'+
+    '<div class="vaultVitrine vaultVitrineLeft"><div class="vaultVitrineGlass">'+crystalSVG+'</div><div class="vaultVitrinePlinth"></div></div>'+
+    '<div class="vaultVitrine vaultVitrineRight"><div class="vaultVitrineGlass">'+crystalSVG+'</div><div class="vaultVitrinePlinth"></div></div>'+
+    '<div class="vaultProjectionDeck" aria-hidden="true"></div>');
+
+  // Keep the real underlying export poster and export engine untouched.
+  // This is a separate visual composition of the current authentic background
+  // and Sprite, laid out like the APPROVED second Locker image.
+  const featurePanel=root.querySelector('.lockerFeaturePanel');
+  const featureHead=featurePanel.querySelector('.lockerFeatureHead');
+  const featureStage=featurePanel.querySelector('#lockerFeatureStage');
+  const composition=document.createElement('div');
+  composition.className='vaultFeaturedComposition';
+  featureHead.before(composition);
+  composition.append(featureStage,featureHead);
+  const liveScene=document.createElement('div');
+  liveScene.className='vaultLiveScene';
+  liveScene.setAttribute('aria-label','Selected Sprite on its currently selected collection background');
+  liveScene.innerHTML='<img class="vaultLiveBackdrop" alt=""/><div class="vaultLiveFloorGlow" aria-hidden="true"></div><img class="vaultLiveSprite" alt=""/><span class="vaultLiveSparkle" aria-hidden="true">✦</span>';
+  featureStage.prepend(liveScene);
+  featureHead.firstElementChild.insertAdjacentHTML('beforeend',
+    '<div class="vaultSelectedDescription" id="vaultSelectedDescription"></div>'+
+    '<div class="vaultSelectedStatus" id="vaultSelectedStatus" aria-live="polite"></div>');
+  function paintFeatured(){
+    if(!canRun()||typeof byId!=='function'||typeof BACKGROUNDS==='undefined')return;
+    const entry=byId(selectedId);
+    const background=BACKGROUNDS[bgIndex];
+    if(!entry||!background)return;
+    const backdrop=liveScene.querySelector('.vaultLiveBackdrop');
+    const image=liveScene.querySelector('.vaultLiveSprite');
+    if(backdrop.getAttribute('src')!==background.file)backdrop.src=background.file;
+    if(image.getAttribute('src')!==entry.image)image.src=entry.image;
+    image.alt=entry.name;
+    backdrop.alt=background.title;
+    const cfg=background.overrides||{};
+    const bx=Number(background.width)||1448, by=Number(background.height)||1086;
+    const anchorX=Number.isFinite(Number(cfg.anchorX))?Number(cfg.anchorX):bx/2;
+    const anchorY=Number.isFinite(Number(cfg.anchorY))?Number(cfg.anchorY):by*.7;
+    const hover=Number.isFinite(Number(cfg.hover))?Number(cfg.hover):0;
+    const heroWidth=Number.isFinite(Number(cfg.heroWidth))?Number(cfg.heroWidth):244;
+    image.style.left=Math.max(22,Math.min(78,100*anchorX/bx))+'%';
+    image.style.top=Math.max(35,Math.min(78,100*(anchorY-hover)/by))+'%';
+    image.style.width=Math.max(33,Math.min(56,100*heroWidth/bx*2.5))+'%';
+    featureHead.querySelector('#vaultSelectedDescription').textContent=entry.description||entry.effect||'';
+    const status=featureHead.querySelector('#vaultSelectedStatus');
+    let stateText='NOT COLLECTED',type='missing';
+    if(entry.preview || entry.releaseState==='unreleased'){stateText='UNRELEASED';type='preview';}
+    else if(isMastered(entry)){stateText='✦ MASTERED';type='mastered';}
+    else if(isAcquired(entry)){stateText='✓ OWNED';type='owned';}
+    status.textContent=stateText;
+    status.dataset.ownership=type;
+  }
+  const featureTitle=root.querySelector('#lockerSelectedName');
+  const backgroundTitle=root.querySelector('#lockerBackgroundName');
+  new MutationObserver(paintFeatured).observe(featureTitle,{childList:true,characterData:true,subtree:true});
+  new MutationObserver(paintFeatured).observe(backgroundTitle,{childList:true,characterData:true,subtree:true});
+  paintFeatured();
+
   const panelHead=basePanel.querySelector('.lockerPanelHead');
   if(panelHead)panelHead.classList.add('vaultBaseHeading');
 
