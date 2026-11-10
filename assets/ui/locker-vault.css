@@ -658,3 +658,88 @@ body .tab[data-tab=locker].active{background:linear-gradient(145deg,#172a62,#632
    font-size:11px!important;padding:0 9px!important;border-radius:7px!important
  }
 }
+
+/* Navigation/branding geometry matches the approved Locker phone header only.
+   Other seasons' top bars retain their existing behavior and styling. */
+body:has(#lockerView.active) #sclHeader>.tabs{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ gap:4px!important;padding:4px!important;
+ background:linear-gradient(180deg,#061a36,#040d22)!important;
+ border:1px solid #255b98!important;border-radius:14px!important
+}
+body:has(#lockerView.active) #sclHeader>.tabs .tab{
+ min-width:0!important;min-height:45px!important;
+ height:auto!important;padding:3px 5px!important;
+ border:1px solid #40bdfa!important;border-radius:9px!important;
+ color:#e6f6ff!important;background:linear-gradient(180deg,#061326,#0a244b)!important;
+ box-shadow:inset 0 0 8px #24b8ff35,0 0 7px #36caff35!important;
+ font-family:Georgia,serif!important;line-height:1.12!important;
+}
+body:has(#lockerView.active) #sclHeader>.tabs .tab.active{
+ border:2px solid #ff95ff!important;
+ background:linear-gradient(180deg,#40135b,#260d4b 72%,#390b62)!important;
+ box-shadow:inset 0 0 0 1px #efb4ff,0 0 14px #f94effbd,0 0 5px #fff!important;
+ color:#fff6f9!important;
+}
+body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
+ outline:2px solid #fff3c1!important;outline-offset:2px!important;
+}
+#lockerView .lockerBrandBlock{position:relative}
+#lockerView .lockerBrandBlock>div{
+ position:relative;z-index:2;display:inline-block;
+ background:linear-gradient(90deg,transparent,#02142dbd 17%,#011127bd 83%,transparent);
+ padding-inline:clamp(7px,1.8vw,26px);
+}
+#lockerView .vaultLaurelPair{position:absolute;inset:0;z-index:1;pointer-events:none}
+#lockerView .vaultLaurelPair>span{
+ position:absolute;top:13%;height:95px;width:85px;
+ filter:drop-shadow(0 0 7px #ffcf7577)
+}
+#lockerView .vaultLaurelPair svg{height:100%;width:100%;overflow:visible}
+#lockerView .vaultLaurelLeft{left:15%}
+#lockerView .vaultLaurelRight{right:15%;transform:scaleX(-1)}
+#lockerView .vaultGridViewport:focus-visible{outline:2px solid #f2e5be!important}
+@media(max-width:760px){
+ body:has(#lockerView.active) #sclHeader{
+   display:flex!important;flex-direction:column!important;gap:4px!important;
+   align-items:stretch!important;justify-content:center!important;
+   padding:6px 8px!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.brand,
+ body:has(#lockerView.active) #sclHeader>.search{display:none!important}
+ body:has(#lockerView.active) #sclHeader>.tabs{
+   order:0!important;flex:none!important;width:100%!important;
+   margin:0!important;grid-column:auto!important;grid-row:auto!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.tabs .tab{
+   height:43px!important;min-height:43px!important;padding:3px 2px!important;
+   font-size:clamp(13px,3.4vw,16px)!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.top-actions{
+   display:flex!important;align-items:center!important;
+   justify-content:flex-end!important;gap:5px!important;
+   width:100%!important;height:28px!important;order:1!important;
+   grid-column:auto!important;grid-row:auto!important
+ }
+ body:has(#lockerView.active) #sclHeader>.top-actions>.installBtn{
+   padding:0 8px!important;font-size:11px!important;min-height:27px!important;height:27px!important;
+   width:auto!important;max-width:84px!important;border-radius:9px!important
+ }
+ body:has(#lockerView.active) #sclHeader>.top-actions>.iconBtn,
+ body:has(#lockerView.active) #sclHeader>.top-actions>.playGamesBtn{
+   display:inline-flex!important;align-items:center!important;justify-content:center!important;
+   padding:0 8px!important;font-size:11px!important;min-height:27px!important;
+   height:27px!important;width:auto!important;border-radius:9px!important;
+ }
+ body:has(#lockerView.active) #sclHeader>.playGamesBtn.inbar{display:none!important}
+ #lockerView .vaultLaurelPair>span{width:43px;height:65px;top:22%}
+ #lockerView .vaultLaurelLeft{left:9%}
+ #lockerView .vaultLaurelRight{right:9%}
+ #lockerView .lockerBrandBlock>div{
+  padding-inline:8px;
+  background:linear-gradient(90deg,transparent,#02142de6 20%,#02142de6 80%,transparent)
+ }
+}
+@media(min-width:761px) and (max-width:1100px){
+ #lockerView .vaultLaurelLeft{left:11%}#lockerView .vaultLaurelRight{right:11%}
+}
