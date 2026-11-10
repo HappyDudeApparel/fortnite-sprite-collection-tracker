@@ -1,0 +1,62 @@
+{
+  "fetched": "2026-11-09",
+  "source": "Fortnite.GG original individual 512px WebP portrait assets",
+  "newImages": [
+    {
+      "id": 534,
+      "name": "Lil' Uzi Vert Jr. Sprite",
+      "sourcePage": "https://fortnite.gg/sprites/308-lil'-uzi-vert-jr.",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_L.webp",
+      "target": "assets/sprites/c7s5/lil-uzi-vert-jr-base.webp",
+      "bytes": 23308,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "02242c536718fc9f86f8aabfbff1caa3c03a3bc4137105f19bfbad1e5a33389e",
+      "hasAlpha": true
+    },
+    {
+      "id": 535,
+      "name": "Fortune Lil' Uzi Vert Jr. Sprite",
+      "sourcePage": "https://fortnite.gg/sprites/310-fortune-lil'-uzi-vert-jr.",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_Jeweled_L.webp",
+      "target": "assets/sprites/c7s5/lil-uzi-vert-jr-fortune.webp",
+      "bytes": 29786,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "d2b1b7dff42385648316b6bc742ae22a0b979857f1a923b8916db866af3fab78",
+      "hasAlpha": true
+    },
+    {
+      "id": 536,
+      "name": "Cursed Lil' Uzi Vert Jr. Sprite",
+      "sourcePage": "https://fortnite.gg/sprites/309-cursed-lil'-uzi-vert-jr.",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_Cursed_L.webp",
+      "target": "assets/sprites/c7s5/lil-uzi-vert-jr-cursed.webp",
+      "bytes": 24984,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "6b1ab68a272c07ed3e3fe3c193eaa0aed5c4a221814a06da66e589cb97a97f25",
+      "hasAlpha": true
+    },
+    {
+      "id": 537,
+      "name": "Transponder Snail Sprite",
+      "sourcePage": "https://fortnite.gg/sprites/314-transponder-snail",
+      "source": "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_FeedJet_L.webp",
+      "target": "assets/sprites/c7s5/transponder-snail-base.webp",
+      "bytes": 22156,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256": "1745817ff6e2297611b026b4cc5d63640c556ca0d957f7f488f4f75c6edaf5c6",
+      "hasAlpha": true
+    }
+  ]
+}\n
