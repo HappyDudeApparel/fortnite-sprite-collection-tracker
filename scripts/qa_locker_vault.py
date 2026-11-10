@@ -38,8 +38,9 @@ with sync_playwright() as p:
   assert page.evaluate('document.documentElement.scrollHeight')>page.evaluate('innerHeight')+150
   assert page.locator('#lockerView .lockerBaseCard').last.is_visible()
   assert page.locator('#lockerView .lockerBaseCard img').first.evaluate('(e)=>e.naturalWidth>0')
-  assert not page.evaluate("""() => Array.from(document.querySelectorAll('#lockerBaseGrid .lockerBaseCard span'))
-      .filter(el => el.scrollWidth > el.clientWidth+2).map(el => el.textContent)"""), 'Sprite names must not overflow their cards'
+  overflow_names=page.evaluate("""() => Array.from(document.querySelectorAll('#lockerBaseGrid .lockerBaseCard span'))
+      .filter(el => el.scrollWidth > el.clientWidth+2).map(el => el.textContent)""")
+  assert not overflow_names, (width,'Sprite names must not overflow',overflow_names)
   nums=page.evaluate("""() => ({
     displayed: document.querySelector('#vaultOwned').textContent.trim(),
     actualOwned: lockerFamilyEntries().filter(e=>isAcquired(e.sprite)).length,
