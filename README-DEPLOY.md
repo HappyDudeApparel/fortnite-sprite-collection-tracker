@@ -10,13 +10,13 @@ The production branch is `main`. GitHub Pages serves the repository root. No man
 - **C7S4 Override: 162 collectibles** (archived and still playable).
 - **C7S3 Runners: 117 collectibles** (archived; 119 total stored data records including Legacy).
 - All 281 pre-existing C7S3/C7S4 records, image paths, ownership IDs and mastery progress keys remain intact.
-- C7S5 is a separate collection. 31 pre-existing local portraits were previously verified against individual Fortnite.GG detail entries and remain unchanged; four new authenticated individual portraits (Lil' Uzi Vert Jr. Base/Fortune/Cursed and Transponder Snail Base) currently use verified HTTPS Fortnite.GG image URLs pending local archival. The two unsupported Fortune/Cursed Sweet Dreams catalogue entries have been excluded without changing legitimate Sprite IDs.
+- C7S5 is a separate collection. 31 pre-existing local portraits were previously verified against individual Fortnite.GG detail entries and remain unchanged; four new authenticated individual portraits (Lil' Uzi Vert Jr. Base/Fortune/Cursed and Transponder Snail Base) have now been downloaded as unchanged 512px WebP bytes to local assets and validated against their individual Fortnite.GG detail pages; all 35 catalogue portraits are locally served. The two unsupported Fortune/Cursed Sweet Dreams catalogue entries have been excluded without changing legitimate Sprite IDs.
 
 ## Troubleshooting
 If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.55**. The app service worker cache name rotates with the version.
 
 ## Follow-up image QA
-Preserve the 31 verified locally hosted C7S5 icons. Before production release, mirror the four new individually verified remote WebP portraits into the local `assets/sprites/c7s5/` directory and confirm canvas export / transition animations work without CORS errors. Do not alter C7S3 or C7S4.
+Preserve the 31 verified locally hosted C7S5 icons. All four newly verified 512px source WebP portraits are now stored under `assets/sprites/c7s5/`; complete the browser-level scene export, transitions, variant selection and portrait/mobile checks before production deployment. Do not alter C7S3 or C7S4.
 
 ## Sources
 https://www.vice.com/en/article/all-33-new-fortnite-sprites-added-in-treasure-hunters-mini-season-full-list/
