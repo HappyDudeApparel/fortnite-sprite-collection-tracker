@@ -87,8 +87,8 @@ def browser_smoke(base_url, version, output):
                 page.wait_for_selector('.familyRow[data-family="Chester"]', timeout=45000)
                 assert page.evaluate('APP_VERSION') == version
                 assert page.evaluate('currentSeason') == 'C7S5'
-                assert page.evaluate('countable().length') == 33
-                assert page.locator('.familyRow').count() == 11
+                assert page.evaluate('countable().length') == 34
+                assert page.locator('.familyRow').count() == 13
                 assert page.locator('#mainLegend .legendItem').count() == 4
                 initial_progress = page.evaluate('''()=>Object.fromEntries(Object.entries(localStorage).filter(([k])=>k!=='scl_c7s5_theme_v1'))''')
                 for theme in THEMES:
@@ -121,7 +121,7 @@ def browser_smoke(base_url, version, output):
                     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
                     page.screenshot(path=str(output / f'live-{name}-{season}.png'))
                 assert not errors, errors
-                report[name] = {'themes': list(THEMES), 'sprites': 33, 'families': 11, 'columns': 4, 'javascript_errors': errors}
+                report[name] = {'themes': list(THEMES), 'sprites': 34, 'families': 13, 'columns': 4, 'javascript_errors': errors}
                 print(f'PASS live browser: {name}, all three themes, responsive grid, local art, no JavaScript errors', flush=True)
                 page.close()
         finally:
