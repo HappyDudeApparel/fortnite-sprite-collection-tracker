@@ -90,6 +90,17 @@
 
 
   // Premium vault fixtures: architectural accents, no fabricated Sprite art.
+  // Symmetric gold laurels are decorative, not collectible images.
+  const laurelLeaves=Array.from({length:7},(_,i)=>{
+    const y=12+i*11,ang=-24+i*8;
+    return '<ellipse cx="'+(27+i*3)+'" cy="'+y+'" rx="9" ry="3.8" transform="rotate('+ang+' '+(27+i*3)+' '+y+')" fill="'+(i%2?'#e0a64f':'#ffdf91')+'" stroke="#fff0bc" stroke-width=".5"/>';
+  }).join('');
+  const laurel='<svg viewBox="0 0 76 106" aria-hidden="true"><path d="M27 8 Q6 57 51 101" fill="none" stroke="#f1b761" stroke-width="2.6"/>'+laurelLeaves+'</svg>';
+  const pair=document.createElement('span');
+  pair.className='vaultLaurelPair';
+  pair.setAttribute('aria-hidden','true');
+  pair.innerHTML='<span class="vaultLaurelLeft">'+laurel+'</span><span class="vaultLaurelRight">'+laurel+'</span>';
+  hero.querySelector('.lockerBrandBlock').appendChild(pair);
   const plantSVG='<svg class="vaultBotanical" viewBox="0 0 130 150" aria-hidden="true" preserveAspectRatio="xMidYMin meet"><path d="M63 2 Q38 46 45 143" fill="none" stroke="#977a3b" stroke-width="3"/><path d="M63 4 Q79 40 73 132" fill="none" stroke="#7c6736" stroke-width="2"/>'+
     Array.from({length:11},(_,i)=>{const y=16+i*11,side=i%2?1:-1,cx=side>0?78:43;return '<ellipse cx="'+cx+'" cy="'+y+'" rx="'+(16+i%3*3)+'" ry="9" fill="'+(i%3===0?'#668a25':i%3===1?'#295d34':'#b5ae40')+'" stroke="#c7b66b" stroke-width=".75" transform="rotate('+(side*29)+' '+cx+' '+y+')" />'}).join('')+'</svg>';
   const crystalSVG='<svg class="vaultJewel" viewBox="0 0 90 120" aria-hidden="true"><defs><linearGradient id="vaultJewelFacet" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6baff"/><stop offset=".35" stop-color="#d665ff"/><stop offset=".72" stop-color="#592bb3"/><stop offset="1" stop-color="#53edff"/></linearGradient></defs><path d="M45 2 73 36 80 92 46 117 10 88 16 35Z" fill="url(#vaultJewelFacet)" stroke="#ffedff" stroke-width="2"/><path d="M45 2 41 43 46 117 16 35Z" fill="#eae0ff" opacity=".45"/><path d="M45 2 73 36 41 43 16 35M41 43 80 92 46 117" stroke="#fff9ff" opacity=".7" fill="none"/><path d="M41 43 73 36 80 92 46 117Z" fill="#811ce2" opacity=".45"/></svg>';
