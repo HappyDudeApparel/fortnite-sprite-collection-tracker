@@ -22,7 +22,6 @@ VIEWPORTS = ((320, 640, 'small'), (360, 800, 'phone'), (390, 844, 'portrait'), (
 ROSTER_HASHES = {
     'C7S3': '5c368302ab277cc7ce89af3742d5f479c3959b7d771d86f93ac651c929e243d2',
     'C7S4': '1484e8a334c313e3e0c71be91a2af4976e3776b4bc8454e03aefbeb8325663d4',
-    'C7S5': 'e219d002808309d176e2f9b55f61b67329de15de1a7d403594f724f0ec7b55bb',
 }
 ICON_HASHES = {
     'fortune-charm': '63234520fa2bddc3010a55a91187c00076a96a2f68ae1613254cc6a9b66008b2',
@@ -34,7 +33,7 @@ def static_checks():
     html = (ROOT / 'index.html').read_text()
     start = html.index('const SPRITES=') + len('const SPRITES=')
     roster = json.loads(html[start:html.index('];', start) + 1])
-    assert len(roster) == len({x['id'] for x in roster}) == 314
+    assert len(roster) == len({x['id'] for x in roster}) == 316
     for season, expected in ROSTER_HASHES.items():
         records = [x for x in roster if x['season'] == season]
         digest = hashlib.sha256(json.dumps(records, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
@@ -56,7 +55,7 @@ def static_checks():
                 im.verify()
             with Image.open(art) as im:
                 assert im.width >= (1400 if shape == 'wide' else 700), (art, im.size)
-    print('PASS static: all 314 records unchanged, approved icons unchanged, artwork decoded, release metadata consistent')
+    print('PASS static: archived C7S3/C7S4 records unchanged and 316 unique internal records, approved icons unchanged, artwork decoded, release metadata consistent')
     return version
 
 
@@ -112,11 +111,11 @@ def browser_checks(base_url, output, version):
             page.goto(base_url, wait_until='domcontentloaded')
             loaded(page)
             assert page.evaluate('currentSeason') == 'C7S5'
-            assert page.evaluate('countable().length') == 33
-            assert page.locator('.familyRow').count() == 11
+            assert page.evaluate('countable().length') == 34
+            assert page.locator('.familyRow').count() == 13
             assert page.locator('#mainLegend .legendItem').count() == 4
-            assert page.locator('.familyRow .spriteCell').count() == 33
-            assert page.locator('.familyRow .c7s5Await').count() == 11
+            assert page.locator('.familyRow .spriteCell').count() == 35
+            assert page.locator('.familyRow .c7s5Await').count() == 13
             initial_storage = storage_state(page)
             theme_geometry = []
             for theme in THEMES:
@@ -171,7 +170,7 @@ def browser_checks(base_url, output, version):
             page.locator('#searchInput').fill('Chester')
             assert page.locator('.familyRow').count() == 1
             page.locator('#clearSearch').click()
-            assert page.locator('.familyRow').count() == 11
+            assert page.locator('.familyRow').count() == 13
             page.locator('.sumTile[data-mode="found"]').click()
             assert page.locator('.familyRow').count() == 1
             page.locator('.sumTile[data-mode="all"]').first.click()
@@ -221,7 +220,7 @@ def browser_checks(base_url, output, version):
             assert not animations, ('Motion runs despite reduced-motion preference', animations)
             assert not errors, errors
             report[name] = {'themes': 3, 'geometry': theme_geometry[0], 'export': png, 'errors': errors}
-            print('PASS', name, '3 themes; 33 sprites / 4 columns; persisted mastery; detail; Locker; background; PNG export; archived seasons; reduced motion')
+            print('PASS', name, '3 themes; 34 obtainable / 35 images / 4 columns; persisted mastery; detail; Locker; background; PNG export; archived seasons; reduced motion')
             page.close()
         # Also check the default motion mode, distinct from reduced-motion screenshot tests.
         page = browser.new_page(viewport={'width':1440,'height':900}, service_workers='block')
