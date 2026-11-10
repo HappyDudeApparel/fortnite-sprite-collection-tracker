@@ -324,3 +324,6 @@ body .tab[data-tab=locker].active{background:linear-gradient(145deg,#172a62,#632
 @media(max-width:599px){
   #lockerView .lockerBaseGrid.vaultListMode{grid-template-columns:minmax(0,1fr)!important}
 }
+
+/* Labels remain whole words where they fit; long canonical names wrap safely. */
+#lockerView .lockerBaseCard>span{font-size:clamp(10px,.9vw,11px)!important;overflow-wrap:break-word!important}
