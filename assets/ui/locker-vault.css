@@ -840,3 +840,12 @@ body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
  }
  body:has(#lockerView.active) #sclHeader>.playGamesBtn.inbar{display:none!important}
 }
+
+/* Honest collection progress: a luminous but EMPTY track at 0%, filling only
+   to the real persisted ownership percentage, never the concept's demo 76%. */
+#lockerView .vaultProgressCircle{
+ background:conic-gradient(from -90deg,
+   #21dfff 0%,#b750ff var(--vault-pct),
+   #152c53 var(--vault-pct),#0d1d39 100%)!important;
+ box-shadow:0 0 0 2px #34cfff9c,0 0 17px #945afa8d,inset 0 0 11px #091025!important;
+}
