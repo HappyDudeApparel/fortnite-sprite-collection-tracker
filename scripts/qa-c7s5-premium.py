@@ -115,7 +115,7 @@ def browser_checks(base_url, output, version):
             assert page.locator('.familyRow').count() == 13
             assert page.locator('#mainLegend .legendItem').count() == 4
             assert page.locator('.familyRow .spriteCell').count() == 35
-            assert page.locator('.familyRow .c7s5Await').count() == 13
+            assert page.locator('.familyRow .c7s5Await').count() == 17  # 13 families × 4 slots minus 35 illustrated variants
             initial_storage = storage_state(page)
             theme_geometry = []
             for theme in THEMES:
