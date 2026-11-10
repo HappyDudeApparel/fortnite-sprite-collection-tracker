@@ -28,9 +28,18 @@ with sync_playwright() as p:
   assert viewport.evaluate('(e)=>e.clientHeight<=595'), 'Viewport should not show every Sprite at once'
   assert page.locator('#lockerFeatureStage').evaluate("(e)=>!document.querySelector('.vaultGridViewport').contains(e)")
   assert page.locator('#lockerBackgroundGrid').evaluate("(e)=>!document.querySelector('.vaultGridViewport').contains(e)")
+  # Featured and background section is a continuation below the whole collection,
+  # not a desktop sidebar alongside it.
+  assert page.evaluate("""() => {
+    const selection=document.querySelector('#lockerView .lockerSelectionColumn').getBoundingClientRect();
+    const feature=document.querySelector('#lockerView .lockerFeaturePanel').getBoundingClientRect();
+    return feature.top>=selection.bottom-4;
+  }"""), 'Featured section must follow the central collection on every viewport'
   assert page.evaluate('document.documentElement.scrollHeight')>page.evaluate('innerHeight')+150
   assert page.locator('#lockerView .lockerBaseCard').last.is_visible()
   assert page.locator('#lockerView .lockerBaseCard img').first.evaluate('(e)=>e.naturalWidth>0')
+  assert not page.evaluate("""() => Array.from(document.querySelectorAll('#lockerBaseGrid .lockerBaseCard span'))
+      .filter(el => el.scrollWidth > el.clientWidth+2).map(el => el.textContent)"""), 'Sprite names must not overflow their cards'
   nums=page.evaluate("""() => ({
     displayed: document.querySelector('#vaultOwned').textContent.trim(),
     actualOwned: lockerFamilyEntries().filter(e=>isAcquired(e.sprite)).length,
