@@ -56,6 +56,16 @@ with sync_playwright() as p:
    assert page.locator('#sclHeader>.brand').evaluate('(e)=>getComputedStyle(e).display')=='none', 'Avoid redundant header over the Locker art'
    assert page.locator('#sclHeader>.tabs').is_visible()
    assert page.locator('#sclHeader>.top-actions').is_visible()
+   assert page.evaluate("""() => {
+       const nav=document.querySelector('#sclHeader .top-actions .tabs');
+       const controls=['#installBtn','#editGamertag','#sclHeader .top-actions .playGamesBtn']
+         .map(sel=>document.querySelector(sel)).filter(el=>el && getComputedStyle(el).display!=='none');
+       const box=nav.getBoundingClientRect();
+       return controls.every(el=>{
+         const b=el.getBoundingClientRect();
+         return b.top>=box.bottom-1 && b.right<=innerWidth+1 && b.left>=-1;
+       });
+   }"""), 'Mobile nav must not overlap install/edit/games controls or clip them'
   assert page.locator('#lockerView .vaultVitrine').count()==2
   assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
   assert page.locator('#lockerView .vaultFeaturedComposition').count()==1
