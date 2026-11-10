@@ -55,9 +55,10 @@ with sync_playwright() as p:
   if width<=760:
    assert page.locator('#sclHeader>.brand').evaluate('(e)=>getComputedStyle(e).display')=='none', 'Avoid redundant header over the Locker art'
    assert page.locator('#sclHeader>.tabs').is_visible()
+   assert page.locator('#sclHeader>.top-actions>.playGamesBtn').is_visible(), 'Games link must remain usable in compact Locker header'
    assert page.locator('#sclHeader>.top-actions').is_visible()
    assert page.evaluate("""() => {
-       const nav=document.querySelector('#sclHeader .top-actions .tabs');
+       const nav=document.querySelector('#sclHeader>.tabs');
        const controls=['#installBtn','#editGamertag','#sclHeader .top-actions .playGamesBtn']
          .map(sel=>document.querySelector(sel)).filter(el=>el && getComputedStyle(el).display!=='none');
        const box=nav.getBoundingClientRect();
