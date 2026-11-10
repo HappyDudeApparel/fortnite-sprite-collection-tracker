@@ -1,13 +1,21 @@
 {
-  "version": "2.0.54",
-  "published": "2026-11-01",
-  "notes": "Restore C7S5 authentic 512px Sprite portraits to full readable size without image borders/boxes. Use one synchronized horizontally scrolling 4-lane table, preserve all records, other season styles, tracking and assets.",
+  "version": "2.0.55",
+  "published": "2026-11-09",
+  "notes": "Reconcile the November 8 C7S5 Treasure Hunters catalogue: 34 obtainable entries across 13 families, plus one unreleased Cursed Kelper (35 listed), without changing C7S3/C7S4 sprites, stored ownership/mastery IDs, approved layouts, icons or backgrounds. Four missing Sprites added, two unsupported Sweet Dreams variants retired.",
   "artwork": {
-    "kind": "unmodified source Sprite icons (WebP)",
-    "count": 31,
+    "kind": "original individual Fortnite.GG WebP icons; no stylization or cropping",
+    "locallyHostedExisting": 31,
+    "verifiedRemoteNew": 4,
+    "remoteNewIds": [
+      534,
+      535,
+      536,
+      537
+    ],
     "source": "Fortnite.GG",
-    "status": "31 verified by exact matching named Fortnite.GG sprite detail page; 2 unverified Sweet Dreams variants remain pending and are NOT claimed authentic",
-    "manifest": "docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json"
+    "status": "31 existing local canonical portraits unchanged; 4 new individually verified portraits currently loaded from original URLs until locally mirrored",
+    "manifest": "docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json",
+    "newSources": "docs/C7S5-NOV-09-2026-ROSTER-AUDIT.md"
   },
   "themeOptions": [
     "map",
@@ -26,7 +34,12 @@
     "independent-season-persistence",
     "registered-atmosphere",
     "live-assets-and-browser",
-    "stable-responsive-image-decode-after-resize"
+    "stable-responsive-image-decode-after-resize",
+    "C7S3/C7S4 dataset byte preservation",
+    "C7S5 34 collectible / 35 catalogued + unreleased Kelper",
+    "unique ID and persisted progress key checks",
+    "inline JavaScript parse validation",
+    "remote image CORS and browser export still require manual browser QA"
   ],
   "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens"
 }
