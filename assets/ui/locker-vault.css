@@ -295,3 +295,32 @@ body .tab[data-tab=locker].active{background:linear-gradient(145deg,#172a62,#632
 @media(max-width:360px){
   #lockerView .vaultGridViewport{height:clamp(310px,49svh,420px);padding-inline:4px}
 }
+
+/* Reference image layout: one continuous vertical Locker on every viewport.
+   The collection frame alone scrolls, with variant/detail/background sections below.
+   A narrower centered desktop reading width keeps the approved 8-column rhythm. */
+#lockerView .lockerRedesign{max-width:1100px!important}
+#lockerView .lockerRedesignLayout{grid-template-columns:minmax(0,1fr)!important;gap:16px!important}
+#lockerView .lockerSelectionColumn{order:0!important}
+#lockerView .lockerFeaturePanel{order:2!important}
+#lockerView .lockerBaseGrid{grid-template-columns:repeat(8,minmax(0,1fr))!important}
+#lockerView .lockerBaseCard>span{
+  overflow-wrap:normal!important;word-break:normal!important;
+  hyphens:none!important;line-height:1.13!important;
+}
+#lockerView .lockerBaseGrid.vaultListMode{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media(max-width:999px){
+  #lockerView .lockerBaseGrid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+}
+@media(max-width:679px){
+  #lockerView .lockerBaseGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:449px){
+  #lockerView .lockerBaseGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:359px){
+  #lockerView .lockerBaseGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:599px){
+  #lockerView .lockerBaseGrid.vaultListMode{grid-template-columns:minmax(0,1fr)!important}
+}
