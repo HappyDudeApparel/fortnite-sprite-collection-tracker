@@ -28,19 +28,19 @@ jobs:
           a=s.index('const SPRITES=')+len('const SPRITES=')
           b=s.index('];',a)+1
           records=json.loads(s[a:b])
-          assert len(records)==314
-          assert sum(x['season']=='C7S5' for x in records)==33
+          assert len(records)==316
+          assert sum(x['season']=='C7S5' for x in records)==35
           assert sum(x['season']=='C7S3' for x in records)==119
           assert sum(x['season']=='C7S4' for x in records)==162
-          assert len(set(x['id'] for x in records))==314
+          assert len(set(x['id'] for x in records))==316
           assert all(pathlib.Path(x['image']).exists() for x in records if x['season']=='C7S5')
           css=pathlib.Path('assets/ui/c7s5-original-sprite-sizing.css').read_text()
           assert 'border: 0 !important' in css
           assert 'object-fit: contain !important' in css
           assert 'body.season-c7s5:has(#mainView.active)' in css
-          assert "const APP_VERSION='2.0.54'" in s
-          assert json.loads(pathlib.Path('version.json').read_text())['version']=='2.0.54'
-          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']=='2.0.54'
+          assert "const APP_VERSION='2.0.55'" in s
+          assert json.loads(pathlib.Path('version.json').read_text())['version']=='2.0.55'
+          assert json.loads(pathlib.Path('asset-manifest.json').read_text())['version']=='2.0.55'
           print('PASS: canonical images, three rosters, stable script data, complete 4-lane CSS, PWA version')
           PY
       - name: Install Chromium
@@ -63,7 +63,7 @@ jobs:
               page.goto('http://127.0.0.1:8766/',wait_until='domcontentloaded')
               page.wait_for_selector('#familyRows .familyRow',timeout=25000)
               assert page.evaluate('currentSeason')=='C7S5'
-              assert page.locator('#familyRows .familyRow').count()==11
+              assert page.locator('#familyRows .familyRow').count()==13
               assert page.locator('#mainLegend .legendItem').count()==4
               results=page.evaluate("""async () => {
                 await Promise.all(Array.from(document.querySelectorAll('#familyRows .familyRow img')).slice(0,12).map(img => img.decode().catch(() => {})));
@@ -104,7 +104,7 @@ jobs:
               assert page.evaluate('currentSeason')=='C7S4'
               assert page.locator('#familyRows .familyRow').count()>10
               page.locator('button[data-season="C7S5"]').click()
-              assert page.locator('#familyRows .familyRow').count()==11
+              assert page.locator('#familyRows .familyRow').count()==13
               assert not errs,errs[:5]
               print('PASS',width,'image=',results['sprite'],'hero=',results['hero'],'header/row=',round(results['rowWidth']),'shared scrolling OK')
               page.close()

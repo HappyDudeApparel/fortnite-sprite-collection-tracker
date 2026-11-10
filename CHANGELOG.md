@@ -1,3 +1,13 @@
+## v2.0.55 — November 9, 2026 (review branch)
+
+- Reconciled C7S5 to the live Fortnite.GG **34 obtainable / 35 catalogued** Treasure Hunters entries, of which Cursed Kelper is explicitly unreleased. Overall collectible count is **313** (117 + 162 + 34), not the alert's 312.
+- Added Lil' Uzi Vert Jr. Base, Fortune and Cursed (new IDs 534–536) and Transponder Snail Base (new ID 537) with individually verified authentic source portraits. The four new images are verified individual 512px source WebPs, now downloaded, checksum-verified and stored under local assets.
+- Kept all nine other Cursed variants collectible and preserved all prior legitimate IDs, owned/mastered state keys, variant columns, artwork, approved icons and background behavior.
+- Retained verified Cursed Kelper art and metadata, marked it Unreleased and non-counting while leaving it viewable in the family row/detail/Locker.
+- Removed unverified Fortune and Cursed Sweet Dreams catalogue records without deleting storage keys or existing asset files.
+- Left all 281 C7S3/C7S4 records byte-identical, updated version manifest/service worker and did static syntax and roster integrity checks. See `docs/C7S5-NOV-09-2026-ROSTER-AUDIT.md` for sources, scope and remaining manual QA.
+- **Review branch:** real browser tests underway; merge when interactions, transitions, ownership/mastery and PNG export pass.
+
 ## v2.0.52 — November 1, 2026
 
 - Implemented the approved Runners and Override overview treatments from the supplied working sources, with real canonical Sprite images and native live collection controls.

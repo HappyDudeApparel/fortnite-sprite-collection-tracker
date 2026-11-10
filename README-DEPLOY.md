@@ -1,4 +1,4 @@
-# Sprite Collection Locker — v2.0.52 Approved Season Designs (November 1, 2026)
+# Sprite Collection Locker — v2.0.55 Treasure Hunters Roster Update (November 9, 2026)
 
 ## Live site
 https://sprites.happydude.ca/
@@ -6,17 +6,17 @@ https://sprites.happydude.ca/
 The production branch is `main`. GitHub Pages serves the repository root. No manual ZIP upload is required.
 
 ## Collection state
-- **C7S5 Treasure Hunters (default): 33 collectible Sprites** — 11 families × Base, Fortune and Cursed. A fourth **Gold** column is visible for the officially scheduled November 12 release; Gold records are not yet counted.
+- **C7S5 Treasure Hunters (default): 34 collectible Sprites** across 13 families; the full C7S5 catalogue has 35 records including **unreleased Cursed Kelper** (not collectible and not in the denominator). The existing fourth **Gold** column remains empty pending confirmation of variants; no Gold records were invented.
 - **C7S4 Override: 162 collectibles** (archived and still playable).
 - **C7S3 Runners: 117 collectibles** (archived; 119 total stored data records including Legacy).
 - All 281 pre-existing C7S3/C7S4 records, image paths, ownership IDs and mastery progress keys remain intact.
-- C7S5 is a separate local collection. All 33 portraits are locally hosted WebP crops from the 1536×864 VICE/Epic montage with limbs retained; image-to-name attribution remains provisional until independent portrait sources are available.
+- C7S5 is a separate collection. 31 pre-existing local portraits were previously verified against individual Fortnite.GG detail entries and remain unchanged; four new authenticated individual portraits (Lil' Uzi Vert Jr. Base/Fortune/Cursed and Transponder Snail Base) have now been downloaded as unchanged 512px WebP bytes to local assets and validated against their individual Fortnite.GG detail pages; all 35 catalogue portraits are locally served. The two unsupported Fortune/Cursed Sweet Dreams catalogue entries have been excluded without changing legitimate Sprite IDs.
 
 ## Troubleshooting
-If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.52**. The app service worker cache name rotates with the version.
+If a phone still opens the previous season, refresh the browser or close/reopen the installed PWA. Check the bottom-left release badge for **v2.0.55**. The app service worker cache name rotates with the version.
 
 ## Follow-up image QA
-Replace VICE collage cutouts with individually verified transparent PNG/WebP artwork from an authentic source when available. Verify the visual family assignments before declaring final art complete; never alter C7S3 or C7S4 in that work.
+Preserve the 31 verified locally hosted C7S5 icons. All four newly verified 512px source WebP portraits are now stored under `assets/sprites/c7s5/`; complete the browser-level scene export, transitions, variant selection and portrait/mobile checks before production deployment. Do not alter C7S3 or C7S4.
 
 ## Sources
 https://www.vice.com/en/article/all-33-new-fortnite-sprites-added-in-treasure-hunters-mini-season-full-list/

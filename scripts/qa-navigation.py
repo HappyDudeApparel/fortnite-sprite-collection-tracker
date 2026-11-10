@@ -112,10 +112,10 @@ def browser_checks(base_url, output):
                 assert page.locator('#editGamertag').count() == 1
                 assert page.locator('#installBtn').count() == 1
                 assert page.locator('.topbar a[href="/games/"]:visible').count() == 1
-                assert page.evaluate('SPRITES.length') == 314
+                assert page.evaluate('SPRITES.length') == 316
                 initial_collection = page.evaluate('''()=>({favorites:[...favorites],levels:{...levels},bg:bgIndex})''')
                 checks = {}
-                for season, count in [('C7S3',117), ('C7S4',162), ('C7S5',33)]:
+                for season, count in [('C7S3',117), ('C7S4',162), ('C7S5',34)]:
                     page.locator(f'.tabs .tab[data-season="{season}"]').click()
                     assert page.evaluate('currentSeason') == season
                     assert page.evaluate('activeTab') == 'main'
@@ -155,10 +155,10 @@ def browser_checks(base_url, output):
                 page.locator('#searchInput').fill('Chester')
                 assert page.locator('#familyRows .familyRow').count() == 1
                 page.locator('#clearSearch').click()
-                assert page.locator('#familyRows .familyRow').count() == 11
+                assert page.locator('#familyRows .familyRow').count() == 13
                 page.locator('.tabs .tab[data-tab="locker"]').click()
                 assert page.locator('#lockerView').is_visible()
-                assert page.locator('#lockerBaseGrid .lockerBaseCard').count() == 65
+                assert page.locator('#lockerBaseGrid .lockerBaseCard').count() == 67
                 assert page.locator('.tabs .tab.active[data-tab="locker"]').count() == 1
                 checks['Locker'] = assert_geometry(page, f'{name}/Locker')
                 page.screenshot(path=str(output / f'{name}-Locker.png'))
