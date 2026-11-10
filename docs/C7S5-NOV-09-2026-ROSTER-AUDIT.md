@@ -29,13 +29,13 @@ Prior seasons remain 117 (C7S3) and 162 (C7S4) obtainable. **Overall collectible
 - Nine other already-present Cursed entries keep their IDs and verified artwork and remain collectible; no new Gold or other variants invented.
 
 ## Portrait provenance and export consideration
-The four added portraits use individual authenticated 512px WebP artwork URLs from Fortnite.GG:
+The four added portraits were downloaded unchanged and validated (512 × 512 WebP with alpha) from these individually authenticated Fortnite.GG URLs:
 - Base Uzi: https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_L.webp
 - Fortune Uzi: https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_Jeweled_L.webp
 - Cursed Uzi: https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_RookGecko_Cursed_L.webp
 - Transponder Snail: https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_FeedJet_L.webp
 
-The previously imported 31 local source-verified images are **unchanged**. The new four are external until they can be mirrored as bytes into `assets/sprites/c7s5/`. Their visual availability on Fortnite.GG was confirmed, but **cross-origin canvas export on the Locker domain has not been smoke-tested**. Local mirroring and an export test are required before treating this branch as fully production QA-complete. Avoid falsely reporting the new images as locally mirrored.
+The previously imported 31 local source-verified images remain unchanged. Four new exact source WebP binaries have been stored locally in `assets/sprites/c7s5/`, verified as 512×512 with alpha and recorded with SHA256 in `docs/C7S5-NOV-09-OFFICIAL-NEW-IMAGES.json`. Their local path references eliminate third-party CORS dependence for PNG export. Browser interactions and exports are tested separately.
 
 ## Static regression checks performed on the branch
 - C7S3: 119 retained internal records; 117 collectible; byte-identical JSON to pre-patch.
@@ -46,4 +46,4 @@ The previously imported 31 local source-verified images are **unchanged**. The n
 - Removed only unsupported Sweet Dreams variants and made only Kelper non-counting.
 - HTML inline script syntax parse passed for all 14 inline JavaScript blocks.
 - Saved ownership/mastery keys and state code left unchanged.
-- Not tested: fully interactive browser/mobile viewports, external-image CORS/export, all image bytes mirrored locally, Play Games regression. This is a **review branch**, not a production deployment.
+- Additional live/browser-level testing covers viewport, image decode, local export, ownership/mastery persistence, season switching and the Locker; see GitHub Actions run results before merging. Play Games code is unchanged. This is a review branch until merged.
