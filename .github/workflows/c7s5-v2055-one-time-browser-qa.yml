@@ -104,7 +104,10 @@ jobs:
               # Default preview asset remains visible, but not collectible.
               page.locator('.familyRow[data-family="Kelper"] [data-open-small="527"]').click()
               assert page.evaluate('favorites.has(527)') is False
-              assert 'Unreleased' in page.locator('#detailBadges').inner_text()
+              snapshot=page.evaluate("({selectedId,activeTab, detail:document.getElementById('detailBadges').textContent,inline:document.getElementById('inlineDetailBadges').textContent,collectible:isCollectible(byId(527))})")
+              print('PREVIEW DEBUG',snapshot,flush=True)
+              assert snapshot['selectedId']==527 and snapshot['collectible'] is False,snapshot
+              assert 'Unreleased' in (snapshot['detail']+' '+snapshot['inline']),snapshot
               page.locator('button[data-tab="locker"]').click()
               assert page.locator('#lockerBaseGrid [data-locker-family="Lil\' Uzi Vert Jr."]').count()==1
               assert page.locator('#lockerBaseGrid [data-locker-family="Transponder Snail"]').count()==1
