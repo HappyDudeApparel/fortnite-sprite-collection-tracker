@@ -64,7 +64,7 @@ with sync_playwright() as p:
   page.locator('#lockerBaseGrid .lockerBaseCard').last.scroll_into_view_if_needed()
   previous_grid_scroll=viewport.evaluate('(e)=>e.scrollTop')
   page.locator('#lockerBaseGrid .lockerBaseCard').last.click()
-  assert viewport.evaluate('(e)=>e.scrollTop>=previous_grid_scroll-30'), 'Selecting a Sprite must preserve scroll'
+  assert viewport.evaluate('(e,previous)=>e.scrollTop>=previous-30', previous_grid_scroll), 'Selecting a Sprite must preserve scroll'
   page.wait_for_timeout(800)
   # Any selected Sprite must still have its native variant and feature controls.
   assert page.locator('#lockerVariantGrid .lockerVariantCard').count()>=1
