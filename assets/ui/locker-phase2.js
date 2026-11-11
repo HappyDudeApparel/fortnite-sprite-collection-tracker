@@ -74,6 +74,7 @@
   bgPanel.append(hint);
 
   let lastScroll=0;
+  let selectedBackground=bgGrid.querySelector('.lockerBgCard[aria-current="true"]')?.dataset.lockerBg || '0';
   const maxScroll=()=>Math.max(0,bgGrid.scrollWidth-bgGrid.clientWidth);
   const reflectArrows=()=>{
     const max=maxScroll();
@@ -102,6 +103,20 @@
   const observer=new MutationObserver(()=>{
     const desired=Math.max(0,Math.min(lastScroll,maxScroll()));
     if(Math.abs(bgGrid.scrollLeft-desired)>3)bgGrid.scrollLeft=desired;
+    // A background change should bring that actual selected card into view.
+    // A Sprite-only re-render should retain the user's current browsing offset.
+    const current=bgGrid.querySelector('.lockerBgCard[aria-current="true"]');
+    if(current && current.dataset.lockerBg!==selectedBackground){
+      selectedBackground=current.dataset.lockerBg;
+      const viewport=bgGrid.getBoundingClientRect();
+      const selected=current.getBoundingClientRect();
+      if(selected.left<viewport.left+5){
+        bgGrid.scrollLeft-=viewport.left+7-selected.left;
+      } else if(selected.right>viewport.right-5){
+        bgGrid.scrollLeft+=selected.right-viewport.right+7;
+      }
+    }
+    lastScroll=bgGrid.scrollLeft;
     reflectArrows();
   });
   observer.observe(bgGrid,{childList:true});
