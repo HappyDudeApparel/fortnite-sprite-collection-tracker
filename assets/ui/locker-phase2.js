@@ -10,6 +10,22 @@
      root.dataset.vaultPhase2==='ready') return;
   root.dataset.vaultPhase2='ready';
 
+  // Phase 3 fix: the original app boots in C7S5 and initially normalizes its
+  // in-memory selectedId to that season, even when STORE.selected contains a
+  // previously chosen C7S3/C7S4 Sprite. Restore only when opening the global
+  // Locker, without changing season navigation or protected game code.
+  const lockerTab=document.querySelector('button[data-tab="locker"]');
+  if(lockerTab)lockerTab.addEventListener('click',()=>{
+    if(typeof STORE==='undefined'||typeof storage==='undefined'||
+       typeof SPRITES==='undefined'||typeof selectedId==='undefined')return;
+    const saved=Number(storage.getItem(STORE.selected));
+    if(Number.isInteger(saved) && saved>0 &&
+       SPRITES.some(s=>s.id===saved) && selectedId!==saved){
+      selectedId=saved;
+    }
+  },{capture:true});
+
+
   const redesign=root.querySelector('.lockerRedesign');
   const layout=root.querySelector('.lockerRedesignLayout');
   const selection=root.querySelector('.lockerSelectionColumn');
