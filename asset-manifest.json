@@ -413,6 +413,8 @@
     "assets/ui/locker-art/locker-card-approved-violet.png",
     "assets/ui/locker-art/locker-card-approved-teal.png",
     "assets/ui/locker-art/locker-summary-panel-frame.png",
-    "assets/ui/locker-art/locker-floor-approved.webp"
+    "assets/ui/locker-art/locker-floor-approved.webp",
+    "assets/ui/locker-phase2.css",
+    "assets/ui/locker-phase2.js"
   ]
 }
