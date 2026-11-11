@@ -1100,3 +1100,19 @@ body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
  #lockerView .lockerBaseGrid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
  #lockerView .vaultGridViewport{height:270px!important}
 }
+
+/* Visual QA correction: inherited diamond pseudo-element had translateX(-50%);
+   it shifted HALF of each illustrated card frame off the Sprite. Prevent
+   inherited span min-height from moving canonical labels into portrait art. */
+#lockerView .lockerBaseCard:before{
+ transform:none!important;left:-2px!important;right:-2px!important;
+ top:-2px!important;bottom:-2px!important;
+ width:auto!important;height:auto!important;
+}
+#lockerView .lockerBaseCard>span{
+ min-height:0!important;height:auto!important;max-height:27%!important;
+ bottom:8%!important;display:block!important;
+ white-space:normal!important;
+}
+#lockerView .lockerBaseCard{transform:none!important;justify-self:stretch!important;align-self:stretch!important}
+#lockerView .lockerBaseCard img{max-height:58%!important;height:58%!important}
