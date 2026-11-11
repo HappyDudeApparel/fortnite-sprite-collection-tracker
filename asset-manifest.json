@@ -398,6 +398,11 @@
     "assets/sprites/c7s5/lil-uzi-vert-jr-cursed.webp",
     "assets/sprites/c7s5/transponder-snail-base.webp",
     "assets/ui/locker-vault.css",
-    "assets/ui/locker-vault.js"
+    "assets/ui/locker-vault.js",
+    "assets/ui/locker-architecture.svg",
+    "assets/ui/locker-card-cyan.svg",
+    "assets/ui/locker-card-gold.svg",
+    "assets/ui/locker-card-violet.svg",
+    "assets/ui/locker-card-teal.svg"
   ]
 }
