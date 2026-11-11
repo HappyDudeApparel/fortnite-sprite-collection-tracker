@@ -75,7 +75,7 @@ with sync_playwright() as p:
     const bg=getComputedStyle(p,'::after');
     return p.querySelector('img').naturalWidth>0 &&
            p.style.getPropertyValue('--vault-authentic-llama').includes(p.querySelector('img').getAttribute('src')) &&
-           bg.maskImage!=='none';
+           bg.maskImage!=='none' && bg.maskImage.includes(p.querySelector('img').src);
   }"""), 'Real Llama portrait must drive the holographic grid mask'
   if width<=679:
    assert page.evaluate("""() => {
