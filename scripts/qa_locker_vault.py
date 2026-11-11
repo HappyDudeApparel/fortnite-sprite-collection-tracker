@@ -69,6 +69,23 @@ with sync_playwright() as p:
    }"""), 'Mobile nav must not overlap install/edit/games controls or clip them'
   assert page.locator('#lockerView .vaultVitrine').count()==2
   assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
+  # The authentic Llama portrait is the only silhouette driving holo art.
+  assert page.evaluate("""() => {
+    const p=document.querySelector('#lockerView .vaultProjectionSubject');
+    const bg=getComputedStyle(p,'::after');
+    return p.querySelector('img').naturalWidth>0 &&
+           p.style.getPropertyValue('--vault-authentic-llama').includes(p.querySelector('img').getAttribute('src')) &&
+           bg.maskImage!=='none';
+  }"""), 'Real Llama portrait must drive the holographic grid mask'
+  if width<=679:
+   assert page.evaluate("""() => {
+      const items=[...document.querySelectorAll('#lockerView .lockerVaultSummary>:is(.vaultSummaryTitle,.vaultProgressCircle,.vaultSummaryItem)')];
+      const rects=items.map(x=>x.getBoundingClientRect());
+      return rects.length===4 &&
+        rects.every((r,i)=>i===0 || Math.abs((r.top+r.bottom)/2-(rects[0].top+rects[0].bottom)/2)<23) &&
+        rects[3].left>rects[2].left+15;
+   }"""), 'All four progress elements must share one readable row on phones'
+
   assert page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .vaultArchitecture')).backgroundImage.includes(innerWidth>=1200 ? 'locker-hall-wide-approved.webp' : 'locker-hall-mobile-approved.webp')"""), 'Approved high-resolution architectural artwork must load at this viewport'
   art_sources=[
      'locker-hall-mobile-approved.webp','locker-hall-wide-approved.webp',
