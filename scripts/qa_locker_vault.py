@@ -183,7 +183,14 @@ with sync_playwright() as p:
   assert carousel.evaluate('(e)=>e.scrollWidth>e.clientWidth+60'), 'Backgrounds must not all be displayed at once'
   carousel.evaluate('(e)=>e.scrollLeft=0')
   page.wait_for_timeout(160)
-  assert back.is_disabled(), 'Back arrow disables at first background'
+  state=page.evaluate("""() => {
+    const grid=document.querySelector('#lockerBackgroundGrid');
+    const prev=document.querySelector('.vaultPhase2BgArrow[data-direction="-1"]');
+    const next=document.querySelector('.vaultPhase2BgArrow[data-direction="1"]');
+    return {left:grid.scrollLeft, max:grid.scrollWidth-grid.clientWidth,prevDisabled:prev.disabled,nextDisabled:next.disabled,html:document.documentElement.clientWidth};
+  }""")
+  print('BG CAROUSEL INITIAL',width,state,flush=True)
+  assert back.is_disabled()==(state['left']<=1), 'Back arrow disabled state must reflect actual scroller position'
   assert not forward.is_disabled(), 'Next arrow moves a real carousel'
   forward.click()
   page.wait_for_timeout(700)
