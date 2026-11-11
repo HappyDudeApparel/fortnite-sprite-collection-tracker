@@ -313,13 +313,25 @@ with sync_playwright() as p:
  # decode the output and check the PNG itself.
  p3.evaluate("""() => {
    window.__phase3Downloads=[];
+   window.__phase3Save={clicked:0,started:0,finished:0,error:''};
+   document.querySelector('#downloadExport').addEventListener('click',()=>window.__phase3Save.clicked++,true);
+   const previous=saveCanvas;
+   saveCanvas=async function(...args){
+     window.__phase3Save.started++;
+     try{const result=await previous(...args);window.__phase3Save.finished++;return result;}
+     catch(e){window.__phase3Save.error=String(e);throw e;}
+   };
    HTMLAnchorElement.prototype.click=function(){
      window.__phase3Downloads.push({name:this.download,href:this.href});
    };
  }""")
  p3.locator('#downloadExport').click()
- p3.wait_for_function("""() => window.__phase3Downloads && window.__phase3Downloads.length>0""",timeout=30000)
- anchor=p3.evaluate("""() => window.__phase3Downloads[0]""")
+ p3.wait_for_timeout(3000)
+ status=p3.evaluate("() => ({save:window.__phase3Save,downloads:window.__phase3Downloads,dims:document.querySelector('#exportDims').textContent,disabled:document.querySelector('#downloadExport').disabled})")
+ print('PHASE3 SAVE BUTTON DIAGNOSTIC',status,flush=True)
+ assert status['save']['clicked']>0 and status['save']['started']>0,status
+ assert status['downloads'],'Actual Save button did not issue a PNG download anchor'
+ anchor=status['downloads'][0]
  assert anchor['name'].endswith('.png') and anchor['href'].startswith('blob:'),anchor
  png=pathlib.Path('qa-screenshots/phase3-actual-saved-image.png')
  pngb64=p3.evaluate("""async () => {
