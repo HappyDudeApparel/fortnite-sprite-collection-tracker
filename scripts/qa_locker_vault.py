@@ -200,6 +200,12 @@ with sync_playwright() as p:
   bg.last.click()
   assert bg.last.get_attribute('aria-current')=='true'
   assert carousel.evaluate('(e)=>e.scrollLeft')>=scroll_advanced-10, 'Selecting last background must preserve its scroll position'
+  assert page.evaluate("""() => {
+      const selected=document.querySelector('#lockerBackgroundGrid .lockerBgCard[aria-current="true"]');
+      const view=document.querySelector('#lockerBackgroundGrid').getBoundingClientRect();
+      const rect=selected.getBoundingClientRect();
+      return rect.left>=view.left-3 && rect.right<=view.right+3;
+  }"""), 'Actual selected background must remain visible after re-render'
   assert page.evaluate("""() => document.querySelector('#lockerView .vaultLiveBackdrop').getAttribute('src')===BACKGROUNDS[bgIndex].file"""), 'Selecting last background changes real featured backdrop'
   page.locator('#lockerView .vaultPhase2Background').scroll_into_view_if_needed()
   page.screenshot(path=f'qa-screenshots/locker-backgrounds-{width}.png')
