@@ -1,6 +1,6 @@
 # Phase 2 — Live Locker Sections Integration (2026-11-11)
 
-**Current status:** Implemented on the unpublished review branch; browser QA in progress. This file is the independent cross-model handoff. The user has authorized Phase 2, **not** a production merge or deploy.
+**Current status:** Phase 2 implemented on the unpublished review branch; **all seven-viewport functional/browser QA and independent C7S4 regression passed** at code commit `055b01f09669c3348f4c0268c74c5c828983077d`. This file is the independent cross-model handoff. The user has authorized Phase 2, **not** a production merge or deploy.
 
 ## Source of truth and branch
 - Repository: `HappyDudeApparel/fortnite-sprite-collection-tracker`
@@ -31,7 +31,7 @@
 - A new `.vaultPhase2BackgroundRail` wraps the **existing native** `#lockerBackgroundGrid` with accessible previous/next scroll arrows; arrow presses scroll the collection **without changing the chosen background**.
 - Users can swipe or scroll through every genuine background, and click any original `.lockerBgCard` button to set the native selected background.
 - The existing `#lockerBackgroundName` live title remains bound to the actual chosen background; the Featured scene updates through the Phase 1 observer.
-- Native re-rendering replaces the background button children, never the strip itself. A small MutationObserver preserves the strip's horizontal scroll offset and arrow state.
+- Native re-rendering replaces the background button children, never the strip itself. A small MutationObserver preserves the strip's horizontal scroll offset and arrow state. **When the chosen background changes**, it scrolls that genuine selected thumbnail into view; an unrelated Sprite change preserves browsing offset.
 - The background image files and descriptions are not modified, regenerated or substituted with fictional reference-demo entries.
 
 ## Files changed or added
@@ -55,3 +55,11 @@
 Phase 3 = comprehensive visual + end-to-end regression acceptance against both approved images. Phase 4 = a verified standalone working staging URL followed by owner-directed production publication. Neither has been authorized for this change. **Do not merge PR #22 or update `main` yet.**
 
 For independent review, start with this document, the two approved reference PNGs, the source `index.html`, `assets/ui/locker-vault.{js,css}`, `assets/ui/locker-phase2.{js,css}`, and latest GitHub Actions Locker QA run screenshots. Do not rebuild from old v1.0.39 or archived v2.0.4 ZIPs: the working base is the live v2.0.55 branch ancestry with all 316 canonical data rows.
+
+## Verified CI and visual evidence
+- Locker browser run: `https://github.com/HappyDudeApparel/fortnite-sprite-collection-tracker/actions/runs/42976664318` — **success** (SHA `055b01f09669c3348f4c0268c74c5c828983077d`).
+- Independent C7S4 responsive regression: `https://github.com/HappyDudeApparel/fortnite-sprite-collection-tracker/actions/runs/42976673632` — **success** at same SHA.
+- The Locker run's `locker-scroll-20261110-visual-qa` artifact includes screenshots at **320, 360, 390, 430, 768, 1024, 1440** CSS pixels; top/last/featured/background/full-page captures.
+- Manually inspected the rendered full mobile (390px), desktop (1440px), and mobile background-selector captures after tests. The gallery and both lower sections share a consistent ornamental frame. The actual selected background is visible and marked in the selector in the background capture.
+- QA covers full base-family count, independent gallery scroll with last item reachable, real image loading, search and filters, list/grid, variant buttons, selected portrait/background live binding, carousel arrow operation and selection visibility, Save/Share overlay and three season navigation destinations. No application page exceptions were reported.
+- **This is Phase 2 validation, not the comprehensive owner visual acceptance (Phase 3).** Differences from the November 1 concept remain subject to that later independent audit, and production remains untouched.
