@@ -69,14 +69,28 @@ with sync_playwright() as p:
    }"""), 'Mobile nav must not overlap install/edit/games controls or clip them'
   assert page.locator('#lockerView .vaultVitrine').count()==2
   assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
-  assert page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .vaultArchitecture')).backgroundImage.includes('locker-architecture.svg')"""), 'Architectural painting must load, not fall back to CSS-only approximation'
+  assert page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .vaultArchitecture')).backgroundImage.includes(innerWidth>=1200 ? 'locker-hall-wide-approved.webp' : 'locker-hall-mobile-approved.webp')"""), 'Approved high-resolution architectural artwork must load at this viewport'
+  art_sources=[
+     'locker-hall-mobile-approved.webp','locker-hall-wide-approved.webp',
+     'locker-card-approved-cyan.png','locker-card-approved-gold.png',
+     'locker-card-approved-violet.png','locker-card-approved-teal.png',
+     'locker-summary-panel-frame.png','locker-feature-panel-frame.png',
+     'locker-background-panel-frame.png','locker-floor-approved.webp']
+  assert page.evaluate("""async paths=>{
+     const loaded=await Promise.all(paths.map(path=>new Promise(resolve=>{
+       const im=new Image(); im.onload=()=>resolve(im.naturalWidth>0 && im.naturalHeight>0);
+       im.onerror=()=>resolve(false);
+       im.src='assets/ui/locker-art/'+path;
+     })));
+     return loaded.every(Boolean);
+  }""",art_sources), 'All approved art layers must load as real local images'
   actual_columns=page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .lockerBaseGrid')).gridTemplateColumns.split(' ').length""")
   expected_columns=6 if width<360 else 8
   assert actual_columns==expected_columns,(width,'gallery column count must match approved compact concept',actual_columns,expected_columns)
   assert page.evaluate("""() => {
     const a=document.querySelector('#lockerView .lockerBaseCard');
-    return getComputedStyle(a,'::before').backgroundImage.includes('locker-card-cyan.svg');
-  }"""), 'Approved illustrated card frames must be active'
+    return getComputedStyle(a,'::before').backgroundImage.includes('locker-card-approved-cyan.png');
+  }"""), 'Exact-approved transparent ornamental card frames must be active'
 
   assert page.locator('#lockerView .vaultFeaturedComposition').count()==1
   live_img=page.locator('#lockerView .vaultLiveSprite')
