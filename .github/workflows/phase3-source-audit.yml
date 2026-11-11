@@ -1,0 +1,25 @@
+name: Phase 3 source checkout artifact for private browser audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/locker-approved-scroll-2026-11-10]
+    paths:
+      - .github/workflows/phase3-source-audit.yml
+permissions: { contents: read }
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create private source snapshot
+        run: |
+          mkdir -p /tmp/release-audit
+          tar -czf /tmp/release-audit/locker-phase3-source.tgz --exclude='.git' --exclude='qa-screenshots' .
+          sha256sum /tmp/release-audit/locker-phase3-source.tgz
+          ls -lh /tmp/release-audit/locker-phase3-source.tgz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase3-source-unpublished
+          path: /tmp/release-audit/locker-phase3-source.tgz
+          retention-days: 3
