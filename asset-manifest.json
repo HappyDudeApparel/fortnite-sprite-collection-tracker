@@ -403,6 +403,16 @@
     "assets/ui/locker-card-cyan.svg",
     "assets/ui/locker-card-gold.svg",
     "assets/ui/locker-card-violet.svg",
-    "assets/ui/locker-card-teal.svg"
+    "assets/ui/locker-card-teal.svg",
+    "assets/ui/locker-art/locker-hall-mobile-approved.webp",
+    "assets/ui/locker-art/locker-hall-wide-approved.webp",
+    "assets/ui/locker-art/locker-feature-panel-frame.png",
+    "assets/ui/locker-art/locker-background-panel-frame.png",
+    "assets/ui/locker-art/locker-card-approved-cyan.png",
+    "assets/ui/locker-art/locker-card-approved-gold.png",
+    "assets/ui/locker-art/locker-card-approved-violet.png",
+    "assets/ui/locker-art/locker-card-approved-teal.png",
+    "assets/ui/locker-art/locker-summary-panel-frame.png",
+    "assets/ui/locker-art/locker-floor-approved.webp"
   ]
 }
