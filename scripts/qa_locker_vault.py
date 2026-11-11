@@ -237,6 +237,9 @@ with sync_playwright() as p:
  p3=context.new_page()
  phase_errors=[]
  p3.on('pageerror',lambda e:phase_errors.append(str(e)))
+ p3.on('console',lambda msg:print('PHASE3 BROWSER CONSOLE',msg.type,msg.text,flush=True) if msg.type=='error' else None)
+ p3.on('dialog',lambda d:(print('PHASE3 BROWSER DIALOG',d.type,d.message,flush=True),d.dismiss()))
+
  p3.goto('http://127.0.0.1:8799/',wait_until='domcontentloaded')
  p3.locator('button[data-tab="locker"]').click()
  p3.locator('#lockerBaseGrid [data-locker-family="Water"]').click()
@@ -293,8 +296,20 @@ with sync_playwright() as p:
     let c=document.querySelector('#exportCanvas');
     return c && c.width>=700 && c.height>=500;
  }""",timeout=30000)
- with p3.expect_download(timeout=55000) as download:
+
+ p3.wait_for_function("""() => document.querySelector('#exportDims').textContent.includes('PNG') &&
+                                !document.querySelector('#downloadExport').disabled""",timeout=30000)
+ size=p3.evaluate("""async () => {
+   try{
+     const b=await canvasBlob();
+     return {size:b.size,type:b.type};
+   }catch(e){return {error:String(e),message:e.message};}
+ }""")
+ print('PHASE3 EXPORT BLOB',size,'render',p3.locator('#exportDims').inner_text(),flush=True)
+ assert size.get('size',0)>10000,'Export Blob must be non-empty PNG'
+ with p3.expect_download(timeout=15000) as download:
     p3.locator('#downloadExport').click()
+
  png=pathlib.Path('qa-screenshots/phase3-actual-saved-image.png')
  download.value.save_as(str(png))
  with Image.open(png) as im:
