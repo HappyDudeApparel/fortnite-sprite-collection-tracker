@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Browser QA of approved Locker vault. No user storage or roster writes."""
 import pathlib,threading,http.server,time,json
+from PIL import Image
 from playwright.sync_api import sync_playwright
 server=http.server.ThreadingHTTPServer(('127.0.0.1',8799),http.server.SimpleHTTPRequestHandler)
 threading.Thread(target=server.serve_forever,daemon=True).start()
@@ -225,8 +226,90 @@ with sync_playwright() as p:
   assert page.evaluate('currentSeason')=='C7S5'
   page.locator('button[data-tab="locker"]').click()
   assert page.locator('#lockerView .lockerVaultHero').count()==1
+  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'),(width,'horizontal page overflow')
   assert not errors,(width,errors[:5])
   print('PASS LOCKER',width,'base=',actual,'selected=',name,'liveowned=',nums['actualOwned'],flush=True)
   page.close()
+
+ # PHASE3 END TO END: native ownership/mastery, reload, background and export.
+ context=browser.new_context(viewport={'width':390,'height':844},device_scale_factor=1,
+                             accept_downloads=True,service_workers='block',reduced_motion='reduce')
+ p3=context.new_page()
+ phase_errors=[]
+ p3.on('pageerror',lambda e:phase_errors.append(str(e)))
+ p3.goto('http://127.0.0.1:8799/',wait_until='domcontentloaded')
+ p3.locator('button[data-tab="locker"]').click()
+ p3.locator('#lockerBaseGrid [data-locker-family="Water"]').click()
+ p3.wait_for_function("() => byId(selectedId).family==='Water' && byId(selectedId).variantKey==='Base'",timeout=20000)
+ assert p3.evaluate('selectedId')==1
+ var=p3.locator('#lockerVariantGrid .lockerVariantCard')
+ assert var.count()>=2
+ var.nth(1).click()
+ p3.wait_for_function("() => selectedId!==1 && byId(selectedId).family==='Water'",timeout=20000)
+ selected=p3.evaluate('selectedId')
+ assert p3.evaluate("""() => document.querySelector('.vaultLiveSprite').getAttribute('src')===byId(selectedId).image""")
+ bg=p3.locator('#lockerBackgroundGrid .lockerBgCard')
+ assert bg.count()==58
+ bg.last.click()
+ assert bg.last.get_attribute('aria-current')=='true'
+ assert p3.evaluate('bgIndex')==57
+ assert p3.evaluate("""() => {
+   let card=document.querySelector('#lockerBackgroundGrid .lockerBgCard[aria-current="true"]').getBoundingClientRect();
+   let view=document.querySelector('#lockerBackgroundGrid').getBoundingClientRect();
+   return card.left>=view.left-3 && card.right<=view.right+3;
+ }"""), 'Selected background clipped'
+ assert p3.evaluate("""() => document.querySelector('.vaultLiveBackdrop').getAttribute('src')===BACKGROUNDS[bgIndex].file""")
+ p3.reload(wait_until='domcontentloaded')
+ p3.locator('button[data-tab="locker"]').click()
+ assert p3.evaluate('selectedId')==selected
+ assert p3.evaluate('bgIndex')==57
+ assert p3.locator('#lockerBackgroundGrid .lockerBgCard[aria-current="true"]').get_attribute('data-locker-bg')=='57'
+ assert p3.evaluate("""() => {
+   let card=document.querySelector('#lockerBackgroundGrid .lockerBgCard[aria-current="true"]').getBoundingClientRect();
+   let view=document.querySelector('#lockerBackgroundGrid').getBoundingClientRect();
+   return card.left>=view.left-3 && card.right<=view.right+3;
+ }"""), 'Selected background clipped after reload'
+ p3.locator('button[data-season="C7S3"]').click()
+ p3.locator('[data-small="1"]').click()
+ assert p3.evaluate('isAcquired(byId(1))')
+ assert p3.evaluate('JSON.parse(localStorage.getItem(STORE.favorites)).includes(1)')
+ p3.locator('button[data-tab="locker"]').click()
+ assert p3.locator('#vaultOwned').inner_text().strip()=='1 / 67'
+ p3.locator('#vaultLockerFilter').select_option('owned')
+ assert p3.locator('#lockerBaseGrid .lockerBaseCard:visible').count()==1
+ p3.locator('#vaultLockerFilter').select_option('missing')
+ assert p3.locator('#lockerBaseGrid .lockerBaseCard:visible').count()==66
+ p3.locator('#vaultLockerFilter').select_option('all')
+ p3.locator('button[data-season="C7S3"]').click()
+ p3.locator('[data-level-id="1"][data-level="5"]').first.click()
+ assert p3.evaluate('isMastered(byId(1))')
+ p3.reload(wait_until='domcontentloaded')
+ p3.locator('button[data-tab="locker"]').click()
+ assert p3.evaluate('isAcquired(byId(1)) && isMastered(byId(1))')
+ assert p3.locator('#vaultOwned').inner_text().strip()=='1 / 67'
+ p3.locator('#lockerShareBtn').click()
+ assert 'open' in p3.locator('#exportOverlay').get_attribute('class')
+ p3.wait_for_function("""() => {
+    let c=document.querySelector('#exportCanvas');
+    return c && c.width>=700 && c.height>=500;
+ }""",timeout=30000)
+ with p3.expect_download(timeout=55000) as download:
+    p3.locator('#downloadExport').click()
+ png=pathlib.Path('qa-screenshots/phase3-actual-saved-image.png')
+ download.value.save_as(str(png))
+ with Image.open(png) as im:
+    im.load()
+    assert im.width>=700 and im.height>=500
+    assert im.getbbox() is not None
+ p3.locator('#closeExport').click()
+ for season,total in [('C7S3',119),('C7S4',162),('C7S5',35)]:
+    p3.locator('button[data-season="'+season+'"]').click()
+    assert p3.evaluate('ACTIVE.length')==total,(season,total)
+ assert p3.evaluate("""() => ['John Wick','Ironmouse','Pollo','Vini Jr'].every(n=>
+    SPRITES.some(s=>s.name.includes(n))) && SPRITES.some(s=>s.name==='Gem Llama Sprite')""")
+ assert not phase_errors,phase_errors[:6]
+ print('PASS PHASE3 native ownership/mastery, reload, variants, background, PNG, 3 seasons',flush=True)
+ p3.close()
+ context.close()
  browser.close()
 server.shutdown()
