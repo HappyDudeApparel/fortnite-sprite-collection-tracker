@@ -48,7 +48,7 @@
       img.alt='';img.loading='eager';img.decoding='async';img.src=llama.sprite.image;
       // A mask made FROM the verified repository image gives the projected
       // neon wireframe its genuine silhouette (never AI-generated mock art).
-      logo.style.setProperty('--vault-authentic-llama',`url("${llama.sprite.image}")`);
+      logo.style.setProperty('--vault-authentic-llama',`url("${img.src}")`);
       logo.append(img);
     }
   }
