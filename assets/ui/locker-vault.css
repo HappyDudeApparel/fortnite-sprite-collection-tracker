@@ -1255,3 +1255,87 @@ body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
 @media(prefers-reduced-motion:reduce){
   #lockerView .vaultProjectionSubject img{animation:none!important}
 }
+
+
+/* Phase 1 final micro-treatment: authentic Llama holographic lattice.
+   Real Llama portrait is the alpha mask, not an invented illustrated animal. */
+#lockerView .vaultProjectionSubject{isolation:isolate!important}
+#lockerView .vaultProjectionSubject img{
+  opacity:.27!important;
+  filter:grayscale(1) sepia(1) hue-rotate(144deg) saturate(9) brightness(1.2)
+    drop-shadow(0 0 6px #16deff)!important;
+}
+#lockerView .vaultProjectionSubject::after{
+ content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+ background:
+   repeating-linear-gradient(0deg,transparent 0 5px,#70fcffbe 5.5px 6.5px,transparent 7px 11px),
+   repeating-linear-gradient(90deg,transparent 0 8px,#56e9ff78 8.5px 9.5px,transparent 10px 15px),
+   linear-gradient(105deg,#22eaff 0%,#13c6ff 37%,#2bd4ff 51%,#ba47ff 69%,#f76aff 100%);
+ background-blend-mode:screen,screen,normal;
+ -webkit-mask:var(--vault-authentic-llama) center / contain no-repeat;
+ mask:var(--vault-authentic-llama) center / contain no-repeat;
+ filter:drop-shadow(0 0 4px #18f8ff) drop-shadow(0 0 7px #ea4aff);
+ opacity:.92;
+ animation:vaultMaskFlicker 6.3s ease-in-out infinite alternate;
+}
+@keyframes vaultMaskFlicker{from{opacity:.81}to{opacity:1}}
+@media(max-width:679px){
+ #lockerView .lockerVaultSummary{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.16fr) 75px minmax(0,.86fr) minmax(0,.86fr)!important;
+  grid-template-rows:1fr!important;grid-auto-flow:column!important;
+  column-gap:3px!important;row-gap:0!important;
+  align-items:center!important;min-height:76px!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultSummaryTitle{
+  grid-column:1!important;grid-row:1!important;
+  justify-self:start!important;min-width:0!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultProgressCircle{
+  grid-column:2!important;grid-row:1!important;
+  width:68px!important;height:68px!important;
+  justify-self:center!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultSummaryItem:nth-child(3){
+  grid-column:3!important;grid-row:1!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultSummaryItem:nth-child(4){
+  grid-column:4!important;grid-row:1!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultSummaryItem{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;gap:3px!important;
+  min-width:0!important;max-width:100%!important;
+  border-left:1px solid #b7b6dc44!important;
+  padding:0 1px!important;text-align:center!important;
+ }
+ #lockerView .vaultMetricIcon{
+  display:block!important;font-size:17px!important;line-height:1!important;
+  flex:none!important
+ }
+ #lockerView .vaultMetricCaption{
+  font-size:clamp(7px,1.9vw,9px)!important;
+  letter-spacing:0!important;white-space:nowrap!important;
+ }
+ #lockerView .vaultSummaryItem strong{
+  font-size:clamp(11px,3.3vw,17px)!important;
+  line-height:1!important;white-space:nowrap!important;
+ }
+ #lockerView .vaultSummaryTitle h2{
+  font-size:clamp(14px,4vw,20px)!important;
+  white-space:normal!important;line-height:1.09!important;
+ }
+ #lockerView .vaultSummaryTitle>span{font-size:7px!important;letter-spacing:.12em!important}
+}
+@media(max-width:359px){
+ #lockerView .lockerVaultSummary{
+   grid-template-columns:minmax(0,1fr) 61px minmax(0,.78fr) minmax(0,.78fr)!important;
+   gap:1px!important;
+ }
+ #lockerView .lockerVaultSummary>.vaultProgressCircle{width:59px!important;height:59px!important}
+ #lockerView .vaultSummaryTitle h2{font-size:13px!important}
+ #lockerView .vaultMetricIcon{font-size:14px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #lockerView .vaultProjectionSubject::after{animation:none!important;opacity:.9!important}
+}
