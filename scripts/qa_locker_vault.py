@@ -69,6 +69,15 @@ with sync_playwright() as p:
    }"""), 'Mobile nav must not overlap install/edit/games controls or clip them'
   assert page.locator('#lockerView .vaultVitrine').count()==2
   assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
+  assert page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .vaultArchitecture')).backgroundImage.includes('locker-architecture.svg')"""), 'Architectural painting must load, not fall back to CSS-only approximation'
+  actual_columns=page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .lockerBaseGrid')).gridTemplateColumns.split(' ').length""")
+  expected_columns=6 if width<360 else 8
+  assert actual_columns==expected_columns,(width,'gallery column count must match approved compact concept',actual_columns,expected_columns)
+  assert page.evaluate("""() => {
+    const a=document.querySelector('#lockerView .lockerBaseCard');
+    return getComputedStyle(a,'::before').backgroundImage.includes('locker-card-cyan.svg');
+  }"""), 'Approved illustrated card frames must be active'
+
   assert page.locator('#lockerView .vaultFeaturedComposition').count()==1
   live_img=page.locator('#lockerView .vaultLiveSprite')
   assert live_img.count()==1
@@ -121,6 +130,11 @@ with sync_playwright() as p:
   assert 'open' in page.locator('#exportOverlay').get_attribute('class')
   page.locator('#closeExport').click()
   assert 'open' not in page.locator('#exportOverlay').get_attribute('class')
+  # Pre-existing season pages are still reachable and their proper data active.
+  page.locator('button[data-season="C7S3"]').click()
+  assert page.evaluate('currentSeason')=='C7S3', 'C7S3 restored navigation'
+  page.locator('button[data-season="C7S4"]').click()
+  assert page.evaluate('currentSeason')=='C7S4', 'C7S4 restored navigation'
   page.locator('button[data-season="C7S5"]').click()
   assert page.evaluate('currentSeason')=='C7S5'
   page.locator('button[data-tab="locker"]').click()
