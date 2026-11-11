@@ -1116,3 +1116,142 @@ body:has(#lockerView.active) #sclHeader>.tabs .tab:focus-visible{
 }
 #lockerView .lockerBaseCard{transform:none!important;justify-self:stretch!important;align-self:stretch!important}
 #lockerView .lockerBaseCard img{max-height:58%!important;height:58%!important}
+
+
+/* PHASE 1 — 2026-11-11 — exact November 1 approved illustrated material.
+   These local image layers derive from owner-approved design references,
+   stripped of mock portraits, names, progress, selection and thumbnails.
+   Real Sprite art / Llama image, counts, controls and labels remain DOM-backed.
+   Do not replace individual items with illustrative mockup characters. */
+#lockerView .lockerVaultHero{
+  min-height:0!important;height:clamp(118px,36.74vw,443px)!important;
+  aspect-ratio:auto!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;background:#05152b!important;overflow:hidden!important;
+}
+#lockerView .vaultArchitecture{
+  background:#050f2a url("./locker-art/locker-hall-mobile-approved.webp")
+     center center / 100% 100% no-repeat!important;
+}
+#lockerView .vaultArchitecture:before,
+#lockerView .vaultArchitecture:after{display:none!important}
+#lockerView .vaultArchitecture>:not(.vaultProjectionSubject){display:none!important}
+#lockerView .lockerBrandBlock{
+  opacity:0!important;pointer-events:none!important;
+  /* Keep original semantic heading accessible; raster gold title is decorative. */
+}
+#lockerView .lockerRedesignHeader{
+  z-index:8!important;padding:4px 35px 0!important;
+  border:0!important;box-shadow:none!important;background:none!important;
+}
+#lockerView .vaultProjectionSubject{
+  display:grid!important;z-index:5!important;
+  width:16.8%!important;height:41%!important;
+  left:50%!important;bottom:16.5%!important;
+  transform:translateX(-50%)!important;opacity:.99!important;
+}
+#lockerView .vaultProjectionSubject img{
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center!important;
+  opacity:.94!important;mix-blend-mode:screen!important;
+  filter:grayscale(1) sepia(1) hue-rotate(141deg) saturate(8) brightness(1.9)
+     drop-shadow(0 0 4px #00d9ff) drop-shadow(0 0 9px #e74bff)!important;
+}
+#lockerView .lockerVaultSummary{
+  position:relative!important;isolation:isolate!important;
+  border:0!important;border-radius:0!important;
+  background:#07142d url("./locker-art/locker-summary-panel-frame.png")
+    center center / 100% 100% no-repeat!important;
+  box-shadow:none!important;min-height:clamp(72px,13.7vw,155px)!important;
+  margin:0 0 10px!important;padding:clamp(6px,1.7vw,22px) clamp(10px,2.5vw,30px)!important;
+}
+#lockerView .lockerVaultSummary:before,#lockerView .lockerVaultSummary:after{
+  display:none!important;
+}
+#lockerView .lockerBaseCard{
+  position:relative!important;aspect-ratio:106 / 148!important;
+  border:0!important;border-radius:0!important;background:#07152f!important;
+  box-shadow:none!important;overflow:visible!important;isolation:isolate!important;
+}
+#lockerView .lockerBaseCard:before{
+  content:""!important;display:block!important;
+  position:absolute!important;inset:-2px!important;
+  top:-2px!important;bottom:-2px!important;left:-2px!important;right:-2px!important;
+  transform:none!important;width:auto!important;height:auto!important;
+  pointer-events:none!important;z-index:3!important;
+  background:transparent url("./locker-art/locker-card-approved-cyan.png")
+    center center / 100% 100% no-repeat!important;
+  filter:drop-shadow(0 0 4px #23bcff7d)!important;
+}
+#lockerView .lockerBaseCard:nth-child(4n+2):before{
+  background-image:url("./locker-art/locker-card-approved-gold.png")!important;
+  filter:drop-shadow(0 0 4px #f8a74375)!important;
+}
+#lockerView .lockerBaseCard:nth-child(4n+3):before{
+  background-image:url("./locker-art/locker-card-approved-violet.png")!important;
+  filter:drop-shadow(0 0 4px #cc51ff88)!important;
+}
+#lockerView .lockerBaseCard:nth-child(4n+4):before{
+  background-image:url("./locker-art/locker-card-approved-teal.png")!important;
+  filter:drop-shadow(0 0 4px #4efeff7d)!important;
+}
+#lockerView .lockerBaseCard.active:before{
+  filter:drop-shadow(0 0 6px #e9d8ff) drop-shadow(0 0 9px #f15dff)!important;
+}
+#lockerView .lockerBaseCard:after{display:none!important}
+#lockerView .lockerBaseCard img{
+  position:absolute!important;z-index:2!important;display:block!important;
+  max-width:81%!important;width:81%!important;height:61%!important;max-height:61%!important;
+  top:16%!important;left:50%!important;transform:translateX(-50%)!important;
+  object-fit:contain!important;object-position:center!important;
+}
+#lockerView .lockerBaseCard>span{
+  position:absolute!important;z-index:4!important;display:block!important;
+  left:5%!important;right:5%!important;bottom:7%!important;
+  width:auto!important;max-height:25%!important;min-height:0!important;
+  margin:0!important;text-align:center!important;
+  color:#fff!important;text-shadow:0 1px 3px #000,0 0 4px #000!important;
+}
+#lockerView .lockerFeaturePanel{
+  position:relative!important;isolation:isolate!important;
+  border:0!important;box-shadow:none!important;
+  background:
+   url("./locker-art/locker-feature-panel-frame.png") center / 100% 100% no-repeat,
+   radial-gradient(ellipse at 43% 80%,#0b3062,#061329 74%)!important;
+  border-radius:0!important;
+}
+#lockerView .lockerBackgroundPanelBelow{
+  position:relative!important;isolation:isolate!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  background:
+   url("./locker-art/locker-background-panel-frame.png") center / 100% 100% no-repeat,
+   linear-gradient(145deg,#081a39,#060f2a)!important;
+}
+#lockerView .lockerRedesign::after{
+  content:"";display:block;position:relative;width:100%;
+  height:clamp(48px,10.7vw,115px);
+  margin:0 auto;pointer-events:none;
+  background:url("./locker-art/locker-floor-approved.webp")
+    center center / 100% 100% no-repeat;
+}
+@media(min-width:1200px){
+  #lockerView .lockerVaultHero{height:clamp(350px,30vw,443px)!important}
+  #lockerView .vaultArchitecture{
+    background-image:url("./locker-art/locker-hall-wide-approved.webp")!important;
+  }
+}
+@media(max-width:767px){
+  #lockerView .lockerVaultHero{
+    min-height:0!important;height:36.74vw!important;
+    max-height:none!important;
+  }
+  #lockerView .lockerVaultSummary{padding:3px 6px!important}
+  #lockerView .vaultProjectionSubject{
+    width:16.8%!important;height:42%!important;bottom:17%!important;
+  }
+  #lockerView .lockerFeaturePanel{
+    background-size:100% 100%,100% 100%!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #lockerView .vaultProjectionSubject img{animation:none!important}
+}
