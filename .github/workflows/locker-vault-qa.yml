@@ -35,7 +35,7 @@ jobs:
           assert sum(s['season']=='C7S3' for s in sprites)==119
           assert sum(s['season']=='C7S4' for s in sprites)==162
           assert sum(s['season']=='C7S5' for s in sprites)==35
-          assert "const APP_VERSION='2.0.55'" in text
+          assert "const APP_VERSION='2.0.56'" in text
           print('PASS preserved roster 316, 119/162/35')
           PY
       - run: |
@@ -57,7 +57,7 @@ jobs:
               assert items(main,key)==items(head,key),f'PROTECTED DATA MODIFIED: {key}'
           import re
           clean=re.sub(r'^.*(?:locker-vault|locker-phase2)\.(?:css|js).*\n','',head,flags=re.M)
-          assert clean==main,'index.html differs from protected main beyond Locker resource links'
+          assert clean.replace('Sprite Collection Locker — v2.0.56</title>','Sprite Collection Locker — v2.0.55</title>').replace("const APP_VERSION='2.0.56'","const APP_VERSION='2.0.55'")==main,'index.html differs from main beyond Locker resource links and release badge'
           sprites=items(head,'SPRITES'); backgrounds=items(head,'BACKGROUNDS')
           assert len(sprites)==316 and len(backgrounds)==58
           assert len({s['id'] for s in sprites})==316
