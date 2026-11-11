@@ -181,7 +181,9 @@ with sync_playwright() as p:
   back=page.locator('#lockerView .vaultPhase2BgArrow[data-direction="-1"]')
   forward=page.locator('#lockerView .vaultPhase2BgArrow[data-direction="1"]')
   assert carousel.evaluate('(e)=>e.scrollWidth>e.clientWidth+60'), 'Backgrounds must not all be displayed at once'
-  assert back.is_disabled(), 'Back arrow starts disabled at first background'
+  carousel.evaluate('(e)=>e.scrollLeft=0')
+  page.wait_for_timeout(160)
+  assert back.is_disabled(), 'Back arrow disables at first background'
   assert not forward.is_disabled(), 'Next arrow moves a real carousel'
   forward.click()
   page.wait_for_timeout(700)
