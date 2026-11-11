@@ -39,8 +39,49 @@ jobs:
           print('PASS preserved roster 316, 119/162/35')
           PY
       - run: |
-          pip install --quiet playwright
+          pip install --quiet playwright pillow
           playwright install --with-deps chromium
+      - name: Phase 3 protected-data and image-integrity audit
+        run: |
+          git fetch --quiet origin main --depth=1
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import json, subprocess
+          main=subprocess.check_output(['git','show','FETCH_HEAD:index.html'],text=True)
+          head=Path('index.html').read_text()
+          def items(text,name):
+              a=text.index('const '+name+'=')+len('const '+name+'=')
+              return json.loads(text[a:text.index('];',a)+1])
+          for key in ['SPRITES','BACKGROUNDS']:
+              assert items(main,key)==items(head,key),f'PROTECTED DATA MODIFIED: {key}'
+          import re
+          clean=re.sub(r'^.*(?:locker-vault|locker-phase2)\.(?:css|js).*\n','',head,flags=re.M)
+          assert clean==main,'index.html differs from protected main beyond Locker resource links'
+          sprites=items(head,'SPRITES'); backgrounds=items(head,'BACKGROUNDS')
+          assert len(sprites)==316 and len(backgrounds)==58
+          assert len({s['id'] for s in sprites})==316
+          assert {q:sum(s['season']==q for s in sprites) for q in ['C7S3','C7S4','C7S5']}=={'C7S3':119,'C7S4':162,'C7S5':35}
+          remote=[]
+          for s in sprites:
+              path=s['image']
+              if path.startswith('https://'):
+                  remote.append(s['id']); continue
+              with Image.open(path) as im:
+                  im.verify()
+              with Image.open(path) as im:
+                  im.load()
+                  assert im.width>0 and im.height>0
+                  if im.mode=='RGBA':
+                      assert im.getchannel('A').getbbox() is not None,s['name']
+          for b in backgrounds:
+              with Image.open(b['file']) as im: im.verify()
+          for asset in ['locker-hall-mobile-approved.webp','locker-hall-wide-approved.webp','locker-card-approved-cyan.png','locker-card-approved-gold.png','locker-card-approved-violet.png','locker-card-approved-teal.png','locker-summary-panel-frame.png','locker-feature-panel-frame.png','locker-background-panel-frame.png','locker-floor-approved.webp']:
+              with Image.open('assets/ui/locker-art/'+asset) as im: im.verify()
+          print('PASS PROTECTED main index and arrays unchanged, 316 distinct sprites, 58 backgrounds, 293 local images and 10 artwork files')
+          print('INFO: 23 C7S4 external portrait URLs cannot be offline-verified:',remote)
+          assert len(remote)==23
+          PY
       - name: Full Locker interaction and responsive image QA
         run: python scripts/qa_locker_vault.py
       - name: Probe independent branch-backed interactive staging URL (nonblocking)
