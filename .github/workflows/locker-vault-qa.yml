@@ -5,6 +5,7 @@ on:
     paths:
       - assets/ui/locker-vault.css
       - assets/ui/locker-vault.js
+      - 'assets/ui/locker-*.svg'
       - index.html
       - scripts/qa_locker_vault.py
       - .github/workflows/locker-vault-qa.yml
@@ -39,6 +40,21 @@ jobs:
           playwright install --with-deps chromium
       - name: Full Locker interaction and responsive image QA
         run: python scripts/qa_locker_vault.py
+      - name: Probe independent branch-backed interactive staging URL (nonblocking)
+        run: |
+          printf '\\nChecking whether public branch HTML can render through a MIME-correct preview host.\\n'
+          URL="https://raw.githack.com/HappyDudeApparel/fortnite-sprite-collection-tracker/locker-stage/index.html"
+          if curl --location --silent --show-error --fail --max-time 25 --dump-header /tmp/locker-stage-headers --output /tmp/locker-stage-content "$URL"; then
+            echo "Stage HTTP fetched; bytes: $(wc -c </tmp/locker-stage-content)"
+            grep -iE '^HTTP/|^content-type:|^location:' /tmp/locker-stage-headers | tail -8
+            if grep -q 'Sprite Collection Locker' /tmp/locker-stage-content && grep -qi 'text/html' /tmp/locker-stage-headers; then
+              echo "PASS staging entry HTML served with proper MIME; external host may still require first-visit confirmation"
+            else
+              echo "STAGE_HOSTED_CHECK_UNVERIFIED"
+            fi
+          else
+            echo "STAGE_HOST_UNAVAILABLE — do not claim a verified staging link"
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
