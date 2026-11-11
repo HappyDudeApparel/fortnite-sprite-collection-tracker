@@ -5,6 +5,9 @@ on:
     paths:
       - assets/ui/locker-vault.css
       - assets/ui/locker-vault.js
+      - assets/ui/locker-phase2.css
+      - assets/ui/locker-phase2.js
+      - 'assets/ui/locker-art/**'
       - 'assets/ui/locker-*.svg'
       - index.html
       - scripts/qa_locker_vault.py
