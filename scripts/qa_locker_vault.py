@@ -69,6 +69,28 @@ with sync_playwright() as p:
    }"""), 'Mobile nav must not overlap install/edit/games controls or clip them'
   assert page.locator('#lockerView .vaultVitrine').count()==2
   assert page.locator('#lockerView .vaultLaurelPair svg').count()==2
+  # Phase 2 must retain live native sections in one vertical reading order.
+  assert page.locator('#lockerView[data-vault-phase2="ready"]').count()==1
+  assert page.locator('#lockerView .vaultPhase2Layout').count()==1
+  assert page.locator('#lockerView .vaultPhase2FeatureBanner').count()==1
+  assert page.locator('#lockerView .vaultPhase2BackgroundRail').count()==1
+  assert page.locator('#lockerView .vaultPhase2BgArrow').count()==2
+  assert page.locator('#lockerView .vaultCompactVariantSection').count()==1
+  assert page.evaluate("""() => {
+    const root=document.querySelector('#lockerView');
+    const frame=root.querySelector('.vaultGridViewport').getBoundingClientRect();
+    const footer=root.querySelector('.lockerVaultFooter').getBoundingClientRect();
+    const variant=root.querySelector('.vaultCompactVariantSection').getBoundingClientRect();
+    const feature=root.querySelector('.vaultPhase2Feature').getBoundingClientRect();
+    const bg=root.querySelector('.vaultPhase2Background').getBoundingClientRect();
+    return footer.top>=frame.bottom-4 && variant.top>=footer.bottom-4 &&
+           feature.top>=variant.bottom-4 && bg.top>=feature.top && bg.bottom<=feature.bottom+2;
+  }"""), 'Gallery, collection footer, variants, featured scene and backgrounds must follow the approved vertical order'
+  assert page.evaluate("""() => {
+    const g=document.querySelector('#lockerVariantGrid');
+    return getComputedStyle(g).overflowX==='auto' && g.querySelectorAll('.lockerVariantCard').length>0;
+  }"""), 'Every authentic variant stays accessible in its compact horizontal ribbon'
+
   # The authentic Llama portrait is the only silhouette driving holo art.
   assert page.evaluate("""() => {
     const p=document.querySelector('#lockerView .vaultProjectionSubject');
@@ -154,8 +176,26 @@ with sync_playwright() as p:
   page.locator('#lockerFeatureStage').scroll_into_view_if_needed()
   page.screenshot(path=f'qa-screenshots/locker-feature-{width}.png')
   bg=page.locator('#lockerBackgroundGrid .lockerBgCard')
+  # Test the actual carousel controls, not only native background selection.
+  carousel=page.locator('#lockerView #lockerBackgroundGrid')
+  back=page.locator('#lockerView .vaultPhase2BgArrow[data-direction="-1"]')
+  forward=page.locator('#lockerView .vaultPhase2BgArrow[data-direction="1"]')
+  assert carousel.evaluate('(e)=>e.scrollWidth>e.clientWidth+60'), 'Backgrounds must not all be displayed at once'
+  assert back.is_disabled(), 'Back arrow starts disabled at first background'
+  assert not forward.is_disabled(), 'Next arrow moves a real carousel'
+  forward.click()
+  page.wait_for_timeout(700)
+  scroll_advanced=carousel.evaluate('(e)=>e.scrollLeft')
+  assert scroll_advanced>25, 'Carousel next arrow must move'
+  assert not back.is_disabled()
   bg.last.click()
   assert bg.last.get_attribute('aria-current')=='true'
+  assert carousel.evaluate('(e)=>e.scrollLeft')>=scroll_advanced-10, 'Selecting last background must preserve its scroll position'
+  assert page.evaluate("""() => document.querySelector('#lockerView .vaultLiveBackdrop').getAttribute('src')===BACKGROUNDS[bgIndex].file"""), 'Selecting last background changes real featured backdrop'
+  page.locator('#lockerView .vaultPhase2Background').scroll_into_view_if_needed()
+  page.screenshot(path=f'qa-screenshots/locker-backgrounds-{width}.png')
+  page.screenshot(path=f'qa-screenshots/locker-full-{width}.png',full_page=True)
+
   assert page.evaluate("""() => document.querySelector('#lockerView .vaultLiveBackdrop').getAttribute('src')===BACKGROUNDS[bgIndex].file"""), 'Changing background should update live featured stage'
   page.locator('#lockerShareBtn').click()
   assert 'open' in page.locator('#exportOverlay').get_attribute('class')
