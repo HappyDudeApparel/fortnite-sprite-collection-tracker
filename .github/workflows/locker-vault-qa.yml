@@ -84,6 +84,24 @@ jobs:
           PY
       - name: Full Locker interaction and responsive image QA
         run: python scripts/qa_locker_vault.py
+      - name: Verify real working staging page and authentic Sprite image
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          url='https://raw.githack.com/HappyDudeApparel/fortnite-sprite-collection-tracker/locker-stage/index.html'
+          with sync_playwright() as pw:
+              browser=pw.chromium.launch(args=['--no-sandbox'])
+              page=browser.new_page(viewport={'width':390,'height':844})
+              page.goto(url,wait_until='domcontentloaded',timeout=45000)
+              page.locator('button[data-tab="locker"]').click()
+              page.locator('#lockerBaseGrid .lockerBaseCard').first.wait_for(timeout=30000)
+              assert page.locator('#lockerBaseGrid .lockerBaseCard').count()==67
+              assert page.locator('#lockerBaseGrid .lockerBaseCard img').first.evaluate('(e)=>e.complete && e.naturalWidth>0')
+              assert page.locator('.vaultGridViewport').evaluate('(e)=>e.scrollHeight>e.clientHeight')
+              assert page.locator('#lockerBackgroundGrid .lockerBgCard').count()==58
+              print('PASS external working staging page: 67 families, real portrait, inner scroll, 58 backgrounds')
+              browser.close()
+          PY
       - name: Probe independent branch-backed interactive staging URL (nonblocking)
         run: |
           printf '\\nChecking whether public branch HTML can render through a MIME-correct preview host.\\n'
