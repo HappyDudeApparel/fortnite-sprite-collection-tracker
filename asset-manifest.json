@@ -1,5 +1,5 @@
 {
-  "version": "2.0.55",
+  "version": "2.0.56",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -396,6 +396,25 @@
     "assets/sprites/c7s5/lil-uzi-vert-jr-base.webp",
     "assets/sprites/c7s5/lil-uzi-vert-jr-fortune.webp",
     "assets/sprites/c7s5/lil-uzi-vert-jr-cursed.webp",
-    "assets/sprites/c7s5/transponder-snail-base.webp"
+    "assets/sprites/c7s5/transponder-snail-base.webp",
+    "assets/ui/locker-vault.css",
+    "assets/ui/locker-vault.js",
+    "assets/ui/locker-architecture.svg",
+    "assets/ui/locker-card-cyan.svg",
+    "assets/ui/locker-card-gold.svg",
+    "assets/ui/locker-card-violet.svg",
+    "assets/ui/locker-card-teal.svg",
+    "assets/ui/locker-art/locker-hall-mobile-approved.webp",
+    "assets/ui/locker-art/locker-hall-wide-approved.webp",
+    "assets/ui/locker-art/locker-feature-panel-frame.png",
+    "assets/ui/locker-art/locker-background-panel-frame.png",
+    "assets/ui/locker-art/locker-card-approved-cyan.png",
+    "assets/ui/locker-art/locker-card-approved-gold.png",
+    "assets/ui/locker-art/locker-card-approved-violet.png",
+    "assets/ui/locker-art/locker-card-approved-teal.png",
+    "assets/ui/locker-art/locker-summary-panel-frame.png",
+    "assets/ui/locker-art/locker-floor-approved.webp",
+    "assets/ui/locker-phase2.css",
+    "assets/ui/locker-phase2.js"
   ]
 }

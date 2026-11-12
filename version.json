@@ -1,7 +1,7 @@
 {
-  "version": "2.0.55",
-  "published": "2026-11-09",
-  "notes": "C7S5 catalogue reconciled to 34 obtainable / 35 listed, including unreleased Cursed Kelper, with 35 locally hosted authentic individual portraits; C7S3/C7S4 assets and progress preserved.",
+  "version": "2.0.56",
+  "published": "2026-11-11",
+  "notes": "Approved Sprite Collection Locker Vault redesign: real 67-family scrolling gallery, gold/indigo illustrated architecture, authentic holographic Llama, interactive selected Sprite and all 58 backgrounds, preserved Season C7S3/C7S4/C7S5 catalogues, and PWA cache rotation.",
   "artwork": {
     "kind": "verified individual Fortnite.GG source WebP icons (512 x 512)",
     "localC7S5PortraitCount": 35,
@@ -35,5 +35,12 @@
     "inline JavaScript parse validation",
     "4 newly imported 512px WebP verified by individual source page and SHA256"
   ],
-  "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens"
+  "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens",
+  "lockerRelease": {
+    "phase": "approved artwork and Phase 2 integration",
+    "phase3": "comprehensive acceptance",
+    "images": "authentic original sources",
+    "sourceDataUnchanged": true,
+    "storageKeysUnchanged": true
+  }
 }

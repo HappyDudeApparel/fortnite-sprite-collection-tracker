@@ -1,3 +1,7 @@
+# Sprite Collection Locker — v2.0.56 Vault Redesign (November 11, 2026)
+
+Production release candidate for the owner-approved November 1 Locker. Original 316 canonical Sprite records, 58 backgrounds, C7S3/C7S4/C7S5 gameplay and saved collection keys remain unchanged. The central 67-family Locker grid scrolls independently, with authentic artwork, a compact variant ribbon, live featured scene and horizontally browseable background selector. Release QA is recorded in `docs/LOCKER-PHASE3-ACCEPTANCE-2026-11-11.md`. GitHub Pages deploys from main. Cache name and app release badge change to v2.0.56. Until release validation and merge, this text is only on the review branch.
+
 # Sprite Collection Locker — v2.0.55 Treasure Hunters Roster Update (November 9, 2026)
 
 ## Live site
