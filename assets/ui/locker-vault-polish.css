@@ -179,3 +179,28 @@
 @media(prefers-reduced-motion:reduce){
  #lockerView .vaultGallerySection .lockerBaseCard{transition:none!important}
 }
+
+/* Phone acceptance refinement: three generously sized portraits per row
+   through 430px; maintains 3 visible rows and independent scroll. */
+@media(max-width:480px){
+ #lockerView .vaultGallerySection .lockerBaseGrid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:359px){
+ /* Give the search box its own readable row on narrow phones. */
+ #lockerView .vaultGallerySection .lockerVaultToolbar{
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;
+  row-gap:5px!important;
+ }
+ #lockerView .vaultGallerySection .lockerVaultToolbar .vaultSearchWrap{
+  grid-column:1/-1!important;grid-row:1!important;
+ }
+ #lockerView .vaultGallerySection .lockerVaultToolbar .vaultFilterWrap{
+  grid-column:1!important;grid-row:2!important;
+ }
+ #lockerView .vaultGallerySection .lockerVaultToolbar .vaultLayoutSwitch{
+  grid-column:2!important;grid-row:2!important;
+ }
+}
