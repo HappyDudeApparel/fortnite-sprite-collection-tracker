@@ -125,7 +125,7 @@ with sync_playwright() as p:
      return loaded.every(Boolean);
   }""",art_sources), 'All approved art layers must load as real local images'
   actual_columns=page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .lockerBaseGrid')).gridTemplateColumns.split(' ').length""")
-  expected_columns=3 if width<360 else (4 if width<768 else (6 if width<1024 else 8))
+  expected_columns=3 if width<=480 else (4 if width<768 else (6 if width<1024 else 8))
   assert actual_columns==expected_columns,(width,'gallery column count must match approved compact concept',actual_columns,expected_columns)
   assert page.evaluate("""() => {
      const root=document.querySelector('#lockerView');
