@@ -8,6 +8,8 @@ on:
       - assets/ui/locker-vault-polish.css
       - 'assets/ui/locker-art/**'
       - asset-manifest.json
+      - version.json
+      - service-worker.js
       - '.github/workflows/locker-polish-qa.yml'
   workflow_dispatch:
 permissions:
@@ -35,7 +37,10 @@ jobs:
               assert a(base,k)==a(current,k),k
           assert len(a(current,'SPRITES'))==316 and len(a(current,'BACKGROUNDS'))==58
           stripped=re.sub(r'^.*locker-vault-polish.css.*\n','',current,flags=re.M)
-          assert stripped==base, 'Original site markup changed outside additive polish stylesheet link'
+          normalized=stripped.replace('Sprite Collection Locker — v2.0.57</title>','Sprite Collection Locker — v2.0.56</title>').replace("const APP_VERSION='2.0.57'","const APP_VERSION='2.0.56'")
+          assert normalized==base, 'Original site markup changed outside additive Locker stylesheet and intended version bump'
+          versions=(json.loads(pathlib.Path('version.json').read_text())['version'],json.loads(pathlib.Path('asset-manifest.json').read_text())['version'],re.search(r"const APP_VERSION = '([^']+)'",pathlib.Path('service-worker.js').read_text()).group(1),re.search(r"const APP_VERSION='([^']+)'",current).group(1))
+          assert versions==('2.0.57',)*4, versions
           assert all(x in json.loads(pathlib.Path('asset-manifest.json').read_text())['assets'] for x in ['assets/ui/locker-vault-polish.css','assets/ui/locker-art/locker-gallery-border-polish.svg','assets/ui/locker-art/locker-gallery-plinth-approved.webp'])
           print('PASS: all 316 Sprite rows and 58 backgrounds byte-identical; entire base markup preserved')
           PY
