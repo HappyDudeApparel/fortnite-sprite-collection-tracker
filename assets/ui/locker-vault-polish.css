@@ -204,3 +204,20 @@
   grid-column:2!important;grid-row:2!important;
  }
 }
+
+/* Keep the compact phone toolbar readable with the larger artwork. */
+@media(min-width:360px) and (max-width:480px){
+ #lockerView .vaultGallerySection .lockerVaultToolbar{
+   grid-template-columns:minmax(0,1.45fr) minmax(80px,.7fr) 68px!important;
+   column-gap:4px!important;
+ }
+ #lockerView .vaultGallerySection .vaultSearchWrap{
+   min-width:0!important;
+ }
+ #lockerView .vaultGallerySection .vaultFilterWrap{
+   min-width:80px!important;
+ }
+ #lockerView .lockerVaultFooter strong{
+   font-size:9px!important;
+ }
+}
