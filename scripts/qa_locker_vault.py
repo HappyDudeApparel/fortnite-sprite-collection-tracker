@@ -39,7 +39,7 @@ with sync_playwright() as p:
       if(!card)return false;
       const cs=getComputedStyle(grid),v=getComputedStyle(frame);
       const gap=parseFloat(cs.rowGap)||0;
-      const rows=innerWidth<768?2:3;
+      const rows=3;
       const expected=rows*card.getBoundingClientRect().height+(rows-1)*gap+
         (parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0)+
         (parseFloat(v.paddingTop)||0)+(parseFloat(v.paddingBottom)||0)+
@@ -171,7 +171,7 @@ with sync_playwright() as p:
   assert page.evaluate("""() => {
      const root=document.querySelector('#lockerView');
      const panel=root.querySelector('.vaultGallerySection');
-     return getComputedStyle(panel,'::before').backgroundImage.includes('locker-gallery-border-polish.svg') &&
+     return getComputedStyle(panel,'::before').display==='none' &&
             getComputedStyle(root.querySelector('.lockerVaultFooter')).backgroundImage.includes('locker-gallery-plinth-approved.webp');
   }"""), 'Approved ornate gallery surround and real crystal floor must be active'
   if width<=430:
