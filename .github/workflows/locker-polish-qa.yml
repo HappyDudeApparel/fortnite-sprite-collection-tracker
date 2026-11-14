@@ -1,7 +1,7 @@
-name: Locker v2.0.57 ornate mobile polish QA
+name: Locker v2.0.58 approved ornate gallery fidelity QA
 on:
   push:
-    branches: [fix/locker-concept-fidelity-mobile-v2057]
+    branches: [fix/locker-final-ornament-fidelity-v2058]
     paths:
       - index.html
       - scripts/qa_locker_vault.py
@@ -37,11 +37,10 @@ jobs:
           for k in ['SPRITES','BACKGROUNDS']:
               assert a(base,k)==a(current,k),k
           assert len(a(current,'SPRITES'))==316 and len(a(current,'BACKGROUNDS'))==58
-          stripped=re.sub(r'^.*locker-vault-polish.css.*\n','',current,flags=re.M)
-          normalized=stripped.replace('Sprite Collection Locker — v2.0.57</title>','Sprite Collection Locker — v2.0.56</title>').replace("const APP_VERSION='2.0.57'","const APP_VERSION='2.0.56'").replace('assets/ui/locker-vault.js?v=2.0.57-frame-fit','assets/ui/locker-vault.js?v=20261110-scroll-review')
+          normalized=current.replace('Sprite Collection Locker — v2.0.58</title>','Sprite Collection Locker — v2.0.57</title>').replace("const APP_VERSION='2.0.58'","const APP_VERSION='2.0.57'").replace('locker-vault-polish.css?v=2.0.58','locker-vault-polish.css?v=2.0.57')
           assert normalized==base, 'Original site markup changed outside additive Locker stylesheet and intended version bump'
           versions=(json.loads(pathlib.Path('version.json').read_text())['version'],json.loads(pathlib.Path('asset-manifest.json').read_text())['version'],re.search(r"const APP_VERSION = '([^']+)'",pathlib.Path('service-worker.js').read_text()).group(1),re.search(r"const APP_VERSION='([^']+)'",current).group(1))
-          assert versions==('2.0.57',)*4, versions
+          assert versions==('2.0.58',)*4, versions
           assert all(x in json.loads(pathlib.Path('asset-manifest.json').read_text())['assets'] for x in ['assets/ui/locker-vault-polish.css','assets/ui/locker-art/locker-gallery-border-polish.svg','assets/ui/locker-art/locker-gallery-plinth-approved.webp'])
           print('PASS: all 316 Sprite rows and 58 backgrounds byte-identical; entire base markup preserved')
           PY
@@ -53,7 +52,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: locker-v2057-mobile-large-ornate-screenshots
+          name: locker-v2058-final-approved-fidelity-screenshots
           path: qa-screenshots/
           retention-days: 7
           if-no-files-found: ignore

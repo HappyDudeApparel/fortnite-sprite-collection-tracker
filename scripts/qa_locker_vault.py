@@ -62,6 +62,22 @@ with sync_playwright() as p:
     return feature.top>=selection.bottom-4;
   }"""), 'Featured section must follow the central collection on every viewport'
   assert page.evaluate('document.documentElement.scrollHeight')>page.evaluate('innerHeight')+150
+  # Visual fidelity: every original artwork element and the full base label
+  # must remain inside its OWN chrome, not over adjacent frames or the plinth.
+  assert page.evaluate("""() => {
+    const cards=[...document.querySelectorAll('#lockerView .lockerBaseGrid .lockerBaseCard')]
+      .filter(el=>!el.hidden);
+    return cards.length>0 && cards.every(card=>{
+      const c=card.getBoundingClientRect();
+      const img=card.querySelector('img').getBoundingClientRect();
+      const title=card.querySelector('span').getBoundingClientRect();
+      const within=r=>r.left>=c.left-1.1 && r.right<=c.right+1.1 &&
+        r.top>=c.top-1.1 && r.bottom<=c.bottom+1.1;
+      return within(img)&&within(title)&&
+        (img.bottom<=title.top+2) &&
+        getComputedStyle(card,'::before').backgroundImage.includes('locker-card-approved-');
+    });
+  }"""),(width,'Every native portrait and label must be contained in its own approved ornament')
   assert page.locator('#lockerView .lockerBaseCard').last.is_visible()
   assert page.locator('#lockerView .lockerBaseCard img').first.evaluate('(e)=>e.naturalWidth>0')
   overflow_names=page.evaluate("""() => Array.from(document.querySelectorAll('#lockerBaseGrid .lockerBaseCard span'))
