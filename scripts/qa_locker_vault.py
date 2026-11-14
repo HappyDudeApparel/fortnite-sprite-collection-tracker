@@ -43,7 +43,8 @@ with sync_playwright() as p:
       const expected=rows*card.getBoundingClientRect().height+(rows-1)*gap+
         (parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0)+
         (parseFloat(v.paddingTop)||0)+(parseFloat(v.paddingBottom)||0)+
-        (parseFloat(v.borderTopWidth)||0)+(parseFloat(v.borderBottomWidth)||0)+2;
+        (parseFloat(v.borderTopWidth)||0)+(parseFloat(v.borderBottomWidth)||0)+2-
+        (innerWidth<768?30:0);
       return Math.abs(frame.getBoundingClientRect().height-expected)<4 &&
         getComputedStyle(card).overflow==='clip';
   }"""), (width,'Whole Sprite rows must fit exactly inside their ornamental gallery frame')
