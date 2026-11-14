@@ -39,7 +39,7 @@ with sync_playwright() as p:
       if(!card)return false;
       const cs=getComputedStyle(grid),v=getComputedStyle(frame);
       const gap=parseFloat(cs.rowGap)||0;
-      const rows=innerWidth<768?2:3;
+      const rows=3;
       const expected=rows*card.getBoundingClientRect().height+(rows-1)*gap+
         (parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0)+
         (parseFloat(v.paddingTop)||0)+(parseFloat(v.paddingBottom)||0)+
