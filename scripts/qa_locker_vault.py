@@ -23,6 +23,31 @@ with sync_playwright() as p:
   assert page.locator('#lockerView .lockerFeatureStage canvas').count()>=1
   assert page.locator('#lockerView #lockerBackgroundGrid .lockerBgCard').count()>4
   viewport=page.locator('#lockerView .vaultGridViewport')
+  # Regression: the old toolbar accidentally lived INSIDE the inner scroll,
+  # and clipped portraits were rendered at the gallery frame boundary.
+  assert page.evaluate("""() => {
+      const frame=document.querySelector('#lockerView .vaultGridViewport');
+      const toolbar=document.querySelector('#lockerView .lockerVaultToolbar');
+      return toolbar && frame && !frame.contains(toolbar) &&
+        toolbar.getBoundingClientRect().bottom <= frame.getBoundingClientRect().top+3;
+  }"""), (width,'Toolbar must remain visible outside the collection scroller')
+  page.wait_for_timeout(140)
+  assert page.evaluate("""() => {
+      const frame=document.querySelector('#lockerView .vaultGridViewport');
+      const grid=document.querySelector('#lockerView .lockerBaseGrid');
+      const card=grid.querySelector('.lockerBaseCard:not([hidden])');
+      if(!card)return false;
+      const cs=getComputedStyle(grid),v=getComputedStyle(frame);
+      const gap=parseFloat(cs.rowGap)||0;
+      const rows=innerWidth<768?2:3;
+      const expected=rows*card.getBoundingClientRect().height+(rows-1)*gap+
+        (parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0)+
+        (parseFloat(v.paddingTop)||0)+(parseFloat(v.paddingBottom)||0)+
+        (parseFloat(v.borderTopWidth)||0)+(parseFloat(v.borderBottomWidth)||0)+2-
+        (innerWidth<768?30:0);
+      return Math.abs(frame.getBoundingClientRect().height-expected)<4 &&
+        getComputedStyle(card).overflow==='clip';
+  }"""), (width,'Whole Sprite rows must fit exactly inside their ornamental gallery frame')
   assert viewport.count()==1
   assert viewport.evaluate('(e)=>getComputedStyle(e).overflowY')=='auto'
   assert viewport.evaluate('(e)=>e.scrollHeight>e.clientHeight+40'), 'All collection rows should scroll'
@@ -125,8 +150,20 @@ with sync_playwright() as p:
      return loaded.every(Boolean);
   }""",art_sources), 'All approved art layers must load as real local images'
   actual_columns=page.evaluate("""() => getComputedStyle(document.querySelector('#lockerView .lockerBaseGrid')).gridTemplateColumns.split(' ').length""")
-  expected_columns=6 if width<360 else 8
+  expected_columns=3 if width<=480 else (4 if width<768 else (6 if width<1024 else 8))
   assert actual_columns==expected_columns,(width,'gallery column count must match approved compact concept',actual_columns,expected_columns)
+  assert page.evaluate("""() => {
+     const root=document.querySelector('#lockerView');
+     const panel=root.querySelector('.vaultGallerySection');
+     return getComputedStyle(panel,'::before').backgroundImage.includes('locker-gallery-border-polish.svg') &&
+            getComputedStyle(root.querySelector('.lockerVaultFooter')).backgroundImage.includes('locker-gallery-plinth-approved.webp');
+  }"""), 'Approved ornate gallery surround and real crystal floor must be active'
+  if width<=430:
+    cardWidth=page.locator('#lockerView .lockerBaseCard').first.evaluate("(e)=>e.getBoundingClientRect().width")
+    assert cardWidth>=72, (width,'Phone Sprite artwork must be significantly larger than eight-across layout',cardWidth)
+    cardImage=page.locator('#lockerView .lockerBaseCard img').first.evaluate("(e)=>e.getBoundingClientRect().width")
+    assert cardImage>=56,(width,'Portrait must fill most of each upgraded card',cardImage)
+
   assert page.evaluate("""() => {
     const a=document.querySelector('#lockerView .lockerBaseCard');
     return getComputedStyle(a,'::before').backgroundImage.includes('locker-card-approved-cyan.png');

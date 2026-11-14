@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" preserveAspectRatio="none">
+ <defs>
+ <linearGradient id="brass" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#5b290f"/><stop offset=".14" stop-color="#f3bf72"/><stop offset=".24" stop-color="#fff5bc"/><stop offset=".36" stop-color="#93613b"/><stop offset=".55" stop-color="#fff4c4"/><stop offset=".75" stop-color="#d79a48"/><stop offset="1" stop-color="#3c3158"/></linearGradient>
+ <linearGradient id="led" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#66faff"/><stop offset=".18" stop-color="#23a1ff"/><stop offset=".5" stop-color="#ec65ff"/><stop offset=".84" stop-color="#186ce9"/><stop offset="1" stop-color="#59eeff"/></linearGradient>
+ <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff4e0"/><stop offset=".25" stop-color="#83fbff"/><stop offset=".47" stop-color="#195ef4"/><stop offset=".72" stop-color="#ea8bff"/><stop offset="1" stop-color="#531798"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="a"/><feMerge><feMergeNode in="a"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ </defs>
+ <path d="M38 9H962L993 36V625L965 653H35L7 625V36Z" fill="none" stroke="#1a72dd" stroke-width="14" opacity=".65" filter="url(#glow)"/>
+ <path d="M40 14H960L986 39V621L962 646H38L14 621V39Z" fill="none" stroke="url(#brass)" stroke-width="7"/>
+ <path d="M46 24H953L976 45V615L957 637H42L24 615V45Z" fill="none" stroke="url(#led)" stroke-width="3.5" filter="url(#glow)"/>
+ <path d="M59 35H939L964 53V601L947 624H56L37 602V54Z" fill="none" stroke="#ffffff" stroke-opacity=".33" stroke-width="1.5"/>
+ <path d="M75 31H385M615 31H923M69 629H391M609 629H932" stroke="#ffe4a4" stroke-width="3" filter="url(#glow)"/>
+ <path d="M397 30H602M397 630H602" stroke="#256ac4" stroke-width="4" opacity=".8"/>
+ <path d="M500 1L516 24L500 47L484 24Z" fill="url(#gem)" stroke="#ffe5b9" stroke-width="4" filter="url(#glow)"/>
+ <path d="M500 9L507 24L500 40L493 24Z" fill="#fff4ee" opacity=".72"/>
+ <path d="M500 612L513 631L500 655L487 631Z" fill="url(#gem)" stroke="#ffe2ba" stroke-width="3.5" filter="url(#glow)"/>
+ <path d="M16 97H38M16 556H38M964 97H985M964 556H985" stroke="#ffd17d" stroke-width="5" filter="url(#glow)"/>
+ <path d="M28 87V573M972 87V573" stroke="url(#led)" stroke-width="3" filter="url(#glow)" opacity=".85"/>
+ <g fill="url(#gem)" stroke="#ffdfaa" stroke-width="2.4" filter="url(#glow)">
+  <path d="M42 17L58 36L41 55L24 36Z"/><path d="M959 17L975 36L958 55L942 36Z"/>
+  <path d="M42 606L58 626L41 644L24 626Z"/><path d="M959 606L975 626L958 644L942 626Z"/>
+ </g>
+ <g stroke="#e7a654" fill="none" stroke-width="2.3">
+  <path d="M53 59Q80 55 92 33M948 59Q922 55 909 33M53 600Q80 603 92 625M948 600Q922 603 909 625"/>
+  <path d="M44 73l19-19m893 19l-19-19M44 589l19 18m893-18l-19 18"/>
+ </g>
+ <g fill="#ffd5ac" filter="url(#glow)"><circle cx="30" cy="201" r="4"/><circle cx="30" cy="459" r="4"/><circle cx="970" cy="201" r="4"/><circle cx="970" cy="459" r="4"/></g>
+</svg>
