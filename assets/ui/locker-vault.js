@@ -243,7 +243,8 @@
       rows*cardHeight+(rows-1)*px(gridCSS.rowGap)+
       px(gridCSS.paddingTop)+px(gridCSS.paddingBottom)+
       px(frameCSS.paddingTop)+px(frameCSS.paddingBottom)+
-      px(frameCSS.borderTopWidth)+px(frameCSS.borderBottomWidth)+2);
+      px(frameCSS.borderTopWidth)+px(frameCSS.borderBottomWidth)+2-
+      (window.innerWidth<768?30:0)); // hide the next row's projecting crown
     if(!Number.isFinite(height)||height<130||height>850)return;
     for(const prop of ['height','min-height','max-height'])
       scrollFrame.style.setProperty(prop,height+'px','important');
