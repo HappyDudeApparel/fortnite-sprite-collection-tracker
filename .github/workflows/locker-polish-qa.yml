@@ -38,7 +38,7 @@ jobs:
               assert a(base,k)==a(current,k),k
           assert len(a(current,'SPRITES'))==316 and len(a(current,'BACKGROUNDS'))==58
           stripped=re.sub(r'^.*locker-vault-polish.css.*\n','',current,flags=re.M)
-          normalized=stripped.replace('Sprite Collection Locker — v2.0.58</title>','Sprite Collection Locker — v2.0.58</title>').replace("const APP_VERSION='2.0.58'","const APP_VERSION='2.0.57'").replace('assets/ui/locker-vault.js?v=2.0.58-frame-fit','assets/ui/locker-vault.js?v=2.0.57-frame-fit')
+          normalized=stripped.replace('Sprite Collection Locker — v2.0.58</title>','Sprite Collection Locker — v2.0.57</title>').replace("const APP_VERSION='2.0.58'","const APP_VERSION='2.0.57'").replace('assets/ui/locker-vault.js?v=2.0.58','assets/ui/locker-vault.js?v=2.0.57-frame-fit')
           assert normalized==base, 'Original site markup changed outside additive Locker stylesheet and intended version bump'
           versions=(json.loads(pathlib.Path('version.json').read_text())['version'],json.loads(pathlib.Path('asset-manifest.json').read_text())['version'],re.search(r"const APP_VERSION = '([^']+)'",pathlib.Path('service-worker.js').read_text()).group(1),re.search(r"const APP_VERSION='([^']+)'",current).group(1))
           assert versions==('2.0.58',)*4, versions
