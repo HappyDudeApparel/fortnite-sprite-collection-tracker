@@ -155,9 +155,11 @@ with sync_playwright() as p:
   assert page.evaluate("""() => {
      const root=document.querySelector('#lockerView');
      const panel=root.querySelector('.vaultGallerySection');
-     return getComputedStyle(panel,'::before').backgroundImage.includes('locker-gallery-border-polish.svg') &&
-            getComputedStyle(root.querySelector('.lockerVaultFooter')).backgroundImage.includes('locker-gallery-plinth-approved.webp');
-  }"""), 'Approved ornate gallery surround and real crystal floor must be active'
+     const chrome=getComputedStyle(panel,'::before');
+     return chrome.display==='none' &&
+            getComputedStyle(root.querySelector('.lockerVaultFooter')).backgroundImage.includes('locker-gallery-plinth-approved.webp') &&
+            getComputedStyle(root.querySelector('.lockerBaseCard'),'::before').backgroundImage.includes('locker-card-approved-cyan.png');
+  }"""), 'No unapproved rectangular cage; authentic card chrome and crystalline foot remain'
   if width<=430:
     cardWidth=page.locator('#lockerView .lockerBaseCard').first.evaluate("(e)=>e.getBoundingClientRect().width")
     assert cardWidth>=72, (width,'Phone Sprite artwork must be significantly larger than eight-across layout',cardWidth)
