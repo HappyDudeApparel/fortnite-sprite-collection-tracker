@@ -83,7 +83,9 @@
     <label class="vaultSearchWrap"><span aria-hidden="true">⌕</span><input id="vaultLockerSearch" type="search" placeholder="Search Sprites…" autocomplete="off" aria-label="Search base Sprite collection"/></label>
     <label class="vaultFilterWrap"><span class="sr-only">Filter collection</span><select id="vaultLockerFilter" aria-label="Filter base Sprites"><option value="all">All Sprites</option><option value="owned">Owned</option><option value="missing">Missing</option></select></label>
     <div class="vaultLayoutSwitch" role="group" aria-label="Collection layout"><button type="button" id="vaultGridButton" class="active" aria-label="Grid view" aria-pressed="true">▦</button><button type="button" id="vaultListButton" aria-label="List view" aria-pressed="false">☷</button></div>`;
-  baseGrid.parentNode.insertBefore(toolbar,baseGrid);
+  // Keep controls OUTSIDE the scrolling collection: no search-field loss or
+  // partially framed first row when the user scrolls through their Sprites.
+  scrollFrame.parentNode.insertBefore(toolbar,scrollFrame);
 
   const footer=document.createElement('div');
   footer.className='lockerVaultFooter';
@@ -223,6 +225,39 @@
     }
     update();
   });
+  // Show only COMPLETE rows beneath the ornamental gallery surround.
+  // The old fixed-height viewport stopped halfway through a row at 320–1440px,
+  // so card artwork appeared outside or underneath the decorative border.
+  // Measure the real card size (not assumed image aspect/phone pixels).
+  let rowFitQueued=false;
+  const fitCompleteRows=()=>{
+    rowFitQueued=false;
+    const sample=baseGrid.querySelector('.lockerBaseCard:not([hidden])');
+    if(!sample)return;
+    const cardHeight=sample.getBoundingClientRect().height;
+    if(cardHeight<30)return; // hidden tab: retry on its native render
+    const gridCSS=getComputedStyle(baseGrid), frameCSS=getComputedStyle(scrollFrame);
+    const px=value=>parseFloat(value)||0;
+    const rows=window.innerWidth<768?2:3;
+    const height=Math.ceil(
+      rows*cardHeight+(rows-1)*px(gridCSS.rowGap)+
+      px(gridCSS.paddingTop)+px(gridCSS.paddingBottom)+
+      px(frameCSS.paddingTop)+px(frameCSS.paddingBottom)+
+      px(frameCSS.borderTopWidth)+px(frameCSS.borderBottomWidth)+2);
+    if(!Number.isFinite(height)||height<130||height>850)return;
+    for(const prop of ['height','min-height','max-height'])
+      scrollFrame.style.setProperty(prop,height+'px','important');
+  };
+  const queueRowFit=()=>{
+    if(rowFitQueued)return;
+    rowFitQueued=true;
+    requestAnimationFrame(fitCompleteRows);
+  };
+  window.addEventListener('resize',queueRowFit,{passive:true});
   observer.observe(baseGrid,{childList:true});
+  // The existing native render replaces card children on Sprite changes.
+  // Refit without changing their IDs, image sources, click handlers or state.
+  new MutationObserver(queueRowFit).observe(baseGrid,{childList:true});
   update();
+  queueRowFit();
 })();
