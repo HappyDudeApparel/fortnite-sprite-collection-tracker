@@ -238,7 +238,7 @@
     if(cardHeight<30)return; // hidden tab: retry on its native render
     const gridCSS=getComputedStyle(baseGrid), frameCSS=getComputedStyle(scrollFrame);
     const px=value=>parseFloat(value)||0;
-    const rows=window.innerWidth<768?2:3;
+    const rows=3;
     const height=Math.ceil(
       rows*cardHeight+(rows-1)*px(gridCSS.rowGap)+
       px(gridCSS.paddingTop)+px(gridCSS.paddingBottom)+
