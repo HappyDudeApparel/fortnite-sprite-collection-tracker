@@ -268,3 +268,100 @@
     grid-column:2!important;grid-row:2!important;
   }
 }
+
+/* FINAL CARD CONTAINMENT — v2.0.58
+   Keep every authentic portrait and its entire name INSIDE its ornamental
+   chrome. Applies to all 67 current base families and future additions. */
+#lockerView .vaultGallerySection .lockerBaseCard:not(.vaultListMode .lockerBaseCard){
+  aspect-ratio:106 / 153!important;
+  border:0!important;
+  box-sizing:border-box!important;
+}
+#lockerView .vaultGallerySection .lockerBaseCard:before{
+  inset:0!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+  background-size:100% 100%!important;
+  transform:none!important;
+}
+#lockerView .vaultGallerySection .lockerBaseCard img{
+  position:absolute!important;
+  left:50%!important;
+  top:12%!important;
+  width:86%!important;
+  max-width:86%!important;
+  height:59%!important;
+  max-height:59%!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+}
+#lockerView .vaultGallerySection .lockerBaseCard>span{
+  display:grid!important;
+  place-items:center!important;
+  left:5%!important;
+  right:5%!important;
+  top:72%!important;
+  bottom:6%!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:0 1px!important;
+  font-size:clamp(9px,.81vw,12px)!important;
+  line-height:1.1!important;
+  letter-spacing:0!important;
+  white-space:normal!important;
+  text-wrap:balance!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  overflow:visible!important;
+  text-align:center!important;
+}
+#lockerView .vaultGallerySection .lockerBaseCard:focus-visible{
+  outline:2px solid #fff1cd!important;
+  outline-offset:1px!important;
+}
+/* The approved illustrated frame is the card edge. In list mode restore the
+   horizontal portrait/name geometry rather than squeezing it into a tile. */
+#lockerView .vaultGallerySection .lockerBaseGrid.vaultListMode .lockerBaseCard{
+  aspect-ratio:auto!important;
+  overflow:hidden!important;
+}
+#lockerView .vaultGallerySection .lockerBaseGrid.vaultListMode .lockerBaseCard img{
+  left:12px!important;top:9px!important;
+  transform:none!important;
+  width:48px!important;max-width:48px!important;
+  height:50px!important;max-height:50px!important;
+}
+#lockerView .vaultGallerySection .lockerBaseGrid.vaultListMode .lockerBaseCard>span{
+  display:flex!important;align-items:center!important;
+  justify-content:flex-start!important;
+  left:68px!important;right:8px!important;
+  top:7px!important;bottom:7px!important;
+  font-size:12px!important;text-align:left!important;
+}
+@media(max-width:767px){
+  #lockerView .vaultGallerySection .lockerBaseCard>span{
+    font-size:clamp(8.6px,2.3vw,11.2px)!important;
+    top:72%!important;bottom:6%!important;
+  }
+}
+/* Desktop gallery heading must not straddle the engraved horizontal border. */
+@media(min-width:768px){
+  #lockerView .vaultGallerySection .lockerPanelHead{
+    position:relative!important;z-index:6!important;
+    margin-top:25px!important;
+    padding:0 10px!important;
+  }
+}
+/* Long genuine scene titles must remain legible within their own thumbnails. */
+#lockerView .vaultPhase2Background .lockerBgCard>span{
+  padding:4px 5px!important;
+  font-size:clamp(9px,.85vw,11px)!important;
+  line-height:1.15!important;
+  overflow-wrap:anywhere!important;
+  overflow:hidden!important;
+  max-height:47%!important;
+}
