@@ -1,7 +1,7 @@
 {
-  "version": "2.0.58",
+  "version": "2.0.59",
   "published": "2026-11-14",
-  "notes": "Final Locker artwork fit refinement: authentic crystal floor, luminous gold/cyan/violet gallery border, much larger 3-across phone Sprite portraits, always-visible mobile search controls and complete framed rows at all viewport sizes. All 316 canonical Sprite records, 58 backgrounds, existing features and seasons preserved.",
+  "notes": "Final approved-reference Locker gallery continuity on top of v2.0.58 portrait/label containment: no extraneous rectangular cage; authentic gem-cut tile chrome; three full rows; enhanced real Llama hologram; existing featured and background controls. No Sprite or background records changed.",
   "artwork": {
     "kind": "verified individual Fortnite.GG source WebP icons (512 x 512)",
     "localC7S5PortraitCount": 35,
