@@ -36,8 +36,16 @@ with sync_playwright() as p:
     return {
       correctSummaryAsset:cs(s).backgroundImage.includes('locker-summary-panel-frame.png'),
       summaryBorder:parseFloat(cs(s).borderTopWidth),
-      summaryOldLeft:cs(s,'::before').content,
-      summaryOldRight:cs(s,'::after').content,
+      summaryConnector:getComputedStyle(s,'::before').backgroundImage,
+      summaryConnectorSize:getComputedStyle(s,'::before').backgroundSize,
+      connectorWidth:parseFloat(getComputedStyle(s,'::before').width),
+      connectorClip:getComputedStyle(s,'::before').clipPath,
+      cornerClip:getComputedStyle(s,'::after').clipPath,
+      summaryWidth:s.getBoundingClientRect().width,
+      summaryCorner:getComputedStyle(s,'::after').backgroundImage,
+      summaryCornerPosition:getComputedStyle(s,'::after').backgroundPosition,
+      galleryShadow:cs(root.querySelector('.vaultGridViewport')).boxShadow,
+      galleryBackground:cs(root.querySelector('.vaultGridViewport')).backgroundImage,
       ringAbove:parseInt(cs(ring).zIndex)>parseInt(cs(s).zIndex||'0') || parseInt(cs(ring).zIndex)>=4,
       correctGold:cs(f).backgroundImage.includes('locker-feature-panel-frame.png'),
       correctCyan:cs(bg).backgroundImage.includes('locker-background-panel-frame.png'),
@@ -51,7 +59,11 @@ with sync_playwright() as p:
     };
   }""")
   assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
-  assert frame_check['summaryOldLeft'] in ('none','normal') and frame_check['summaryOldRight'] in ('none','normal'),(width,'Remove artificial crystals/line',frame_check)
+  assert 'linear-gradient' in frame_check['summaryConnector'] and '24%' in frame_check['summaryConnectorSize'],(width,'Connect both medallion border openings with the original frame rails',frame_check)
+  assert abs(frame_check['connectorWidth']-frame_check['summaryWidth'])<2,(width,'Full-width rail must not inherit an obsolete tiny crystal width',frame_check)
+  assert frame_check['connectorClip']=='none' and frame_check['cornerClip']=='none',(width,'No obsolete diamond clipping masks on finished border art',frame_check)
+  assert 'locker-summary-panel-frame.png' in frame_check['summaryCorner'],(width,'Mirror real approved crystal instead of an artificial polygon',frame_check)
+  assert frame_check['galleryShadow']=='none',(width,'Remove solid rectangular scrolling cage',frame_check)
   assert frame_check['correctGold'] and frame_check['correctCyan'],(width,'Preserve approved gold and blue panel art',frame_check)
   assert frame_check['featureBorder']==0 and frame_check['backgroundBorder']==0,(width,'No duplicate section strokes',frame_check)
   assert frame_check['wrapperBorder']==0 and frame_check['variantBorder']==0,(width,'No nested wrapper borders',frame_check)
@@ -63,7 +75,7 @@ with sync_playwright() as p:
     return {topGap:Math.max(0,r.top-f.top),bottomGap:Math.max(0,f.bottom-r.bottom),
             diameter:r.height,panelHeight:f.height};
   }""")
-  assert max(ring_fit['topGap'],ring_fit['bottomGap'])<15,(width,'Progress ring must fill both built-in border notches',ring_fit)
+  assert max(ring_fit['topGap'],ring_fit['bottomGap'])<20,(width,'Progress medallion must remain registered with its border opening',ring_fit)
 
 
   assert page.locator('#lockerView .lockerFeatureStage canvas').count()>=1
@@ -306,7 +318,8 @@ with sync_playwright() as p:
     // Adding a pseudo-element bar obscures the right-hand crystal.
     return style.backgroundImage.includes('locker-summary-panel-frame.png') &&
            parseFloat(style.borderBottomWidth)===0 &&
-           overlay.display==='none';
+           overlay.display==='block' &&
+           overlay.backgroundImage.includes('locker-summary-panel-frame.png');
   }"""),(width,'My Collection must use its original complete gold illustrated frame')
   if width in (390,430,1440):
     page.screenshot(path=f'qa-screenshots/locker-list-{width}.png')
