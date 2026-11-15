@@ -621,7 +621,7 @@
  background-image:url('./locker-art/locker-summary-panel-frame.png')!important;
  background-repeat:no-repeat!important;
  background-size:1111% 175%!important;
- background-position:left bottom!important;
+ background-position:2% bottom!important; /* crop original edge seam */
  transform:scaleX(-1)!important;
  filter:hue-rotate(80deg) saturate(1.35) drop-shadow(0 0 4px #aa5fff80)!important;
  opacity:.86!important;
