@@ -38,8 +38,11 @@ def capture(browser,label,url,width,height):
        baseCards:root.querySelectorAll('.lockerBaseCard').length,
        summary:{box:rect(summary),image:cs(summary).backgroundImage,
          border:cs(summary).borderWidth,panelBackground:cs(summary).backgroundColor,
-         connecting:cs(summary,'::before').backgroundImage,
-         corner:cs(summary,'::after').backgroundImage},
+         connecting:getComputedStyle(summary,'::before').backgroundImage,
+         connectorClip:getComputedStyle(summary,'::before').clipPath,
+         connectorWidth:getComputedStyle(summary,'::before').width,
+         corner:getComputedStyle(summary,'::after').backgroundImage,
+         cornerClip:getComputedStyle(summary,'::after').clipPath},
        ring:rect(ring),
        feature:{box:rect(frame),border:cs(frame).borderWidth,shadow:cs(frame).boxShadow,
          image:cs(frame).backgroundImage},
@@ -79,6 +82,7 @@ for width in (390,1440):
     assert 'locker-summary-panel-frame.png' in candidate['summary']['image']
     assert 'linear-gradient' in candidate['summary']['connecting']
     assert 'locker-summary-panel-frame.png' in candidate['summary']['corner']
+    assert candidate['summary']['connectorClip']=='none' and candidate['summary']['cornerClip']=='none',(width,'Legacy polygon mask must not hide corner or connector')
     assert candidate['gallery']['shadow']=='none'
     assert not candidate['browserErrors'],(width,candidate['browserErrors'])
 print('PASS: live public v2.0.61 compared with v2.0.62 candidate at 390/1440; geometry and source images checked',flush=True)
