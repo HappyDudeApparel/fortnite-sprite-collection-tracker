@@ -57,6 +57,14 @@ with sync_playwright() as p:
   assert frame_check['wrapperBorder']==0 and frame_check['variantBorder']==0,(width,'No nested wrapper borders',frame_check)
   assert frame_check['separated'] and frame_check['orderBackground']>=frame_check['orderFeature']-4,(width,'Background selector must be BELOW gold feature',frame_check)
   assert frame_check['ringAbove'],(width,'Medallion must overlap the frame, not sit behind its rim',frame_check)
+  ring_fit=page.evaluate("""() => {
+    const f=document.querySelector('#lockerView .lockerVaultSummary').getBoundingClientRect();
+    const r=document.querySelector('#lockerView .vaultProgressCircle').getBoundingClientRect();
+    return {topGap:Math.max(0,r.top-f.top),bottomGap:Math.max(0,f.bottom-r.bottom),
+            diameter:r.height,panelHeight:f.height};
+  }""")
+  assert max(ring_fit['topGap'],ring_fit['bottomGap'])<15,(width,'Progress ring must fill both built-in border notches',ring_fit)
+
 
   assert page.locator('#lockerView .lockerFeatureStage canvas').count()>=1
   assert page.locator('#lockerView #lockerBackgroundGrid .lockerBgCard').count()>4
