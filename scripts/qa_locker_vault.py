@@ -20,6 +20,44 @@ with sync_playwright() as p:
   actual=page.evaluate('lockerFamilyEntries().length')
   assert count==actual and count>=60,(width,count,actual)
   assert page.locator('#lockerView .lockerVaultSummary').count()==1
+  # Verify the actual approved transparent PNG with complete corners and
+  # medallion cut-outs, not substitute CSS borders / decorative pseudo strips.
+  # Featured's gold illustration and Background's cyan/violet illustration
+  # must be distinct sibling panels with NO boxes painted around them.
+  frame_check=page.evaluate("""() => {
+    const root=document.querySelector('#lockerView');
+    const s=root.querySelector('.lockerVaultSummary');
+    const ring=s.querySelector('.vaultProgressCircle');
+    const f=root.querySelector('.vaultPhase2Feature');
+    const bg=root.querySelector('.vaultPhase2Background');
+    const layout=root.querySelector('.vaultPhase2Layout');
+    const variants=root.querySelector('.vaultCompactVariantSection');
+    const cs=(e)=>getComputedStyle(e);
+    return {
+      correctSummaryAsset:cs(s).backgroundImage.includes('locker-summary-panel-frame.png'),
+      summaryBorder:parseFloat(cs(s).borderTopWidth),
+      summaryOldLeft:cs(s,'::before').content,
+      summaryOldRight:cs(s,'::after').content,
+      ringAbove:parseInt(cs(ring).zIndex)>parseInt(cs(s).zIndex||'0') || parseInt(cs(ring).zIndex)>=4,
+      correctGold:cs(f).backgroundImage.includes('locker-feature-panel-frame.png'),
+      correctCyan:cs(bg).backgroundImage.includes('locker-background-panel-frame.png'),
+      featureBorder:parseFloat(cs(f).borderTopWidth),
+      backgroundBorder:parseFloat(cs(bg).borderTopWidth),
+      wrapperBorder:parseFloat(cs(layout).borderLeftWidth),
+      variantBorder:parseFloat(cs(variants).borderTopWidth),
+      separated:!f.contains(bg) && bg.parentElement===layout,
+      orderFeature:f.getBoundingClientRect().bottom,
+      orderBackground:bg.getBoundingClientRect().top
+    };
+  }""")
+  assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
+  assert frame_check['summaryOldLeft']=='none' and frame_check['summaryOldRight']=='none',(width,'Remove artificial crystals/line',frame_check)
+  assert frame_check['correctGold'] and frame_check['correctCyan'],(width,'Preserve approved gold and blue panel art',frame_check)
+  assert frame_check['featureBorder']==0 and frame_check['backgroundBorder']==0,(width,'No duplicate section strokes',frame_check)
+  assert frame_check['wrapperBorder']==0 and frame_check['variantBorder']==0,(width,'No nested wrapper borders',frame_check)
+  assert frame_check['separated'] and frame_check['orderBackground']>=frame_check['orderFeature']-4,(width,'Background selector must be BELOW gold feature',frame_check)
+  assert frame_check['ringAbove'],(width,'Medallion must overlap the frame, not sit behind its rim',frame_check)
+
   assert page.locator('#lockerView .lockerFeatureStage canvas').count()>=1
   assert page.locator('#lockerView #lockerBackgroundGrid .lockerBgCard').count()>4
   viewport=page.locator('#lockerView .vaultGridViewport')
@@ -126,8 +164,8 @@ with sync_playwright() as p:
     const feature=root.querySelector('.vaultPhase2Feature').getBoundingClientRect();
     const bg=root.querySelector('.vaultPhase2Background').getBoundingClientRect();
     return footer.top>=frame.bottom-4 && variant.top>=footer.bottom-4 &&
-           feature.top>=variant.bottom-4 && bg.top>=feature.top && bg.bottom<=feature.bottom+2;
-  }"""), 'Gallery, collection footer, variants, featured scene and backgrounds must follow the approved vertical order'
+           feature.top>=variant.bottom-4 && bg.top>=feature.bottom-4 && bg.bottom>bg.top;
+  }"""), 'Gallery, footer, variants, gold featured and independent background selector must follow approved vertical order'
   assert page.evaluate("""() => {
     const g=document.querySelector('#lockerVariantGrid');
     return getComputedStyle(g).overflowX==='auto' && g.querySelectorAll('.lockerVariantCard').length>0;
