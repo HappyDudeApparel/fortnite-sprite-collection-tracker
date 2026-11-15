@@ -85,4 +85,16 @@ for width in (390,1440):
     assert candidate['summary']['connectorClip']=='none' and candidate['summary']['cornerClip']=='none',(width,'Legacy polygon mask must not hide corner or connector')
     assert candidate['gallery']['shadow']=='none'
     assert not candidate['browserErrors'],(width,candidate['browserErrors'])
+# Visual-pixel acceptance, not only a CSS string assertion: measure the
+# missing 30–54% top and bottom frame opening, outside the medallion.
+# Current production v2.0.61 has near-black pixels in those exact gaps.
+from PIL import Image
+before=Image.open(OUT/'published_v2061-summary-1440.png').convert('RGB')
+after=Image.open(OUT/'unmerged_candidate_v2062-summary-1440.png').convert('RGB')
+for x in (335,345,355,550,560,570):
+    for y in (3, before.height-4):
+        original=sum(before.getpixel((x,y)))
+        repaired=sum(after.getpixel((x,y)))
+        assert repaired-original>125,(x,y,original,repaired,'Frame gap must visibly be filled, not merely styled')
+print('PASS: real raster confirms both top and bottom border gaps are visibly closed',flush=True)
 print('PASS: live public v2.0.61 compared with v2.0.62 candidate at 390/1440; geometry and source images checked',flush=True)
