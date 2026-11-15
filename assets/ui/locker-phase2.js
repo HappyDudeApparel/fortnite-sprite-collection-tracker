@@ -138,6 +138,12 @@
   observer.observe(bgGrid,{childList:true});
   reflectArrows();
 
+  // Match the approved image: the cyan/violet Background Selector is a
+  // sibling BELOW the gold Featured Sprite, never boxed inside its frame.
+  // Moving the *existing* node keeps its 58 real backgrounds, ownership,
+  // live selection, event listeners and carousel scroll position intact.
+  feature.after(bgPanel);
+
   // Improve discoverability of the native export operation without changing it.
   const nativeShare=feature.querySelector('#lockerShareBtn');
   if(nativeShare){

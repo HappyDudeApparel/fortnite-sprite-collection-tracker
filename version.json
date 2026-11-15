@@ -1,7 +1,7 @@
 {
-  "version": "2.0.60",
+  "version": "2.0.61",
   "published": "2026-11-14",
-  "notes": "Repair proven responsive Locker list/grid mode regression. Distinct full-width phone list cards, readable labels inside frames, complete gold/cyan collection-panel edge, viewport refit after toggle; no changes to roster, backgrounds, state keys, seasons, export or artwork.",
+  "notes": "Restore existing approved complete My Collection panel corners and integrated medallion artwork, remove extra outlines/cages, and separate genuine Background Selector below Featured Sprite. No change to canonical Sprite data, season views, backgrounds, ownership persistence, or image export.",
   "artwork": {
     "kind": "verified individual Fortnite.GG source WebP icons (512 x 512)",
     "localC7S5PortraitCount": 35,
