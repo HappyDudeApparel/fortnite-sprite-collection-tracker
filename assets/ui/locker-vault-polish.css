@@ -593,7 +593,7 @@
  position:relative!important;
  z-index:4!important;
  isolation:isolate!important;
- transform:scale(1.08)!important;
+ transform:scale(1.30)!important;
  transform-origin:center!important;
  border:3px solid #7eeaff!important;
  background:conic-gradient(from -100deg,#4be4ff 0%,#b264ff var(--vault-pct),#162d55 var(--vault-pct) 100%)!important;
@@ -649,12 +649,12 @@
 }
 @media(max-width:767px){
  #lockerView .lockerVaultSummary {
-   min-height:94px!important;
-   padding:12px 9px!important;
+   min-height:86px!important;
+   padding:9px 9px!important;
    margin-bottom:9px!important;
  }
  #lockerView .lockerVaultSummary .vaultProgressCircle {
-   transform:scale(1.11)!important;
+   transform:scale(1.30)!important;
  }
  #lockerView .lockerFeaturePanel.vaultPhase2Feature {
    padding:clamp(9px,2.4vw,17px)!important;
