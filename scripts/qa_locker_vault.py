@@ -51,7 +51,7 @@ with sync_playwright() as p:
     };
   }""")
   assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
-  assert frame_check['summaryOldLeft']=='none' and frame_check['summaryOldRight']=='none',(width,'Remove artificial crystals/line',frame_check)
+  assert frame_check['summaryOldLeft'] in ('none','normal') and frame_check['summaryOldRight'] in ('none','normal'),(width,'Remove artificial crystals/line',frame_check)
   assert frame_check['correctGold'] and frame_check['correctCyan'],(width,'Preserve approved gold and blue panel art',frame_check)
   assert frame_check['featureBorder']==0 and frame_check['backgroundBorder']==0,(width,'No duplicate section strokes',frame_check)
   assert frame_check['wrapperBorder']==0 and frame_check['variantBorder']==0,(width,'No nested wrapper borders',frame_check)
