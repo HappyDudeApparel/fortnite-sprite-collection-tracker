@@ -1,10 +1,11 @@
-name: Locker v2.0.61 approved border hierarchy and progress medallion QA
+name: Locker v2.0.62 live-audited border continuity and visual regression
 on:
   push:
-    branches: [fix/locker-frame-hierarchy-v2061]
+    branches: [fix/locker-frame-continuity-visual-audit-v2062]
     paths:
       - index.html
       - scripts/qa_locker_vault.py
+      - scripts/qa_locker_live_compare.py
       - assets/ui/locker-vault.js
       - assets/ui/locker-phase2.js
       - assets/ui/locker-vault-polish.css
@@ -38,10 +39,10 @@ jobs:
           for k in ['SPRITES','BACKGROUNDS']:
               assert a(base,k)==a(current,k),k
           assert len(a(current,'SPRITES'))==316 and len(a(current,'BACKGROUNDS'))==58
-          normalized=current.replace('Sprite Collection Locker — v2.0.61</title>','Sprite Collection Locker — v2.0.60</title>').replace("const APP_VERSION='2.0.61'","const APP_VERSION='2.0.60'").replace('locker-vault-polish.css?v=2.0.61','locker-vault-polish.css?v=2.0.60').replace('locker-phase2.js?v=2.0.61-hierarchy','locker-phase2.js?v=20261111-vault-phase2')
+          normalized=current.replace('Sprite Collection Locker — v2.0.62</title>','Sprite Collection Locker — v2.0.61</title>').replace("const APP_VERSION='2.0.62'","const APP_VERSION='2.0.61'").replace('locker-vault-polish.css?v=2.0.62','locker-vault-polish.css?v=2.0.61')
           assert normalized==base, 'Original site markup changed outside additive Locker stylesheet and intended version bump'
           versions=(json.loads(pathlib.Path('version.json').read_text())['version'],json.loads(pathlib.Path('asset-manifest.json').read_text())['version'],re.search(r"const APP_VERSION = '([^']+)'",pathlib.Path('service-worker.js').read_text()).group(1),re.search(r"const APP_VERSION='([^']+)'",current).group(1))
-          assert versions==('2.0.61',)*4, versions
+          assert versions==('2.0.62',)*4, versions
           assert all(x in json.loads(pathlib.Path('asset-manifest.json').read_text())['assets'] for x in ['assets/ui/locker-vault-polish.css','assets/ui/locker-art/locker-gallery-border-polish.svg','assets/ui/locker-art/locker-gallery-plinth-approved.webp'])
           print('PASS: all 316 Sprite rows and 58 backgrounds byte-identical; entire base markup preserved')
           PY
@@ -50,10 +51,12 @@ jobs:
           playwright install --with-deps chromium
       - name: Browser and visual screenshots at 7 widths plus persistence/export
         run: python scripts/qa_locker_vault.py
+      - name: Compare live published site with unmerged visual changes at mobile and desktop
+        run: python scripts/qa_locker_live_compare.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: locker-v2061-approved-single-frame-screenshots
+          name: locker-v2062-public-vs-candidate-frame-audit
           path: qa-screenshots/
           retention-days: 7
           if-no-files-found: ignore
