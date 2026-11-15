@@ -55,6 +55,18 @@ with sync_playwright() as p:
     };
   }""")
   assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
+  if width==320:
+    print('FRAME_PSEUDO_DEBUG',page.evaluate("""() => {
+       const e=document.querySelector('#lockerView .lockerVaultSummary');
+       const p=getComputedStyle(e,'::before'),q=getComputedStyle(e,'::after');
+       const sheet=[...document.styleSheets].filter(x=>x.href?.includes('locker-vault-polish'));
+       const rules=sheet.flatMap(x=>{try{return [...x.cssRules]}catch(_){return []}});
+       return {p:{content:p.content,display:p.display,background:p.backgroundImage,
+                    zIndex:p.zIndex,width:p.width,position:p.position},
+               q:{content:q.content,display:q.display,background:q.backgroundImage},
+               sheet:sheet.map(x=>x.href),
+               matchingRules:rules.filter(x=>x.selectorText?.includes('lockerVaultSummary')).slice(-10).map(x=>x.cssText.slice(0,500))};
+    }"""),flush=True)
   assert 'linear-gradient' in frame_check['summaryConnector'] and '24%' in frame_check['summaryConnectorSize'],(width,'Connect both medallion border openings with the original frame rails',frame_check)
   assert 'locker-summary-panel-frame.png' in frame_check['summaryCorner'],(width,'Mirror real approved crystal instead of an artificial polygon',frame_check)
   assert frame_check['galleryShadow']=='none',(width,'Remove solid rectangular scrolling cage',frame_check)
