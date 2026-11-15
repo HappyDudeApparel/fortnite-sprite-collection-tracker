@@ -315,7 +315,8 @@ with sync_playwright() as p:
     // Adding a pseudo-element bar obscures the right-hand crystal.
     return style.backgroundImage.includes('locker-summary-panel-frame.png') &&
            parseFloat(style.borderBottomWidth)===0 &&
-           overlay.display==='none';
+           overlay.display==='block' &&
+           overlay.backgroundImage.includes('locker-summary-panel-frame.png');
   }"""),(width,'My Collection must use its original complete gold illustrated frame')
   if width in (390,430,1440):
     page.screenshot(path=f'qa-screenshots/locker-list-{width}.png')
