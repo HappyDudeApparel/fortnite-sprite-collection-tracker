@@ -36,10 +36,12 @@ with sync_playwright() as p:
     return {
       correctSummaryAsset:cs(s).backgroundImage.includes('locker-summary-panel-frame.png'),
       summaryBorder:parseFloat(cs(s).borderTopWidth),
-      summaryConnector:cs(s,'::before').backgroundImage,
-      summaryConnectorSize:cs(s,'::before').backgroundSize,
-      summaryCorner:cs(s,'::after').backgroundImage,
-      summaryCornerPosition:cs(s,'::after').backgroundPosition,
+      summaryConnector:getComputedStyle(s,'::before').backgroundImage,
+      summaryConnectorSize:getComputedStyle(s,'::before').backgroundSize,
+      connectorWidth:parseFloat(getComputedStyle(s,'::before').width),
+      summaryWidth:s.getBoundingClientRect().width,
+      summaryCorner:getComputedStyle(s,'::after').backgroundImage,
+      summaryCornerPosition:getComputedStyle(s,'::after').backgroundPosition,
       galleryShadow:cs(root.querySelector('.vaultGridViewport')).boxShadow,
       galleryBackground:cs(root.querySelector('.vaultGridViewport')).backgroundImage,
       ringAbove:parseInt(cs(ring).zIndex)>parseInt(cs(s).zIndex||'0') || parseInt(cs(ring).zIndex)>=4,
@@ -55,19 +57,8 @@ with sync_playwright() as p:
     };
   }""")
   assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
-  if width==320:
-    print('FRAME_PSEUDO_DEBUG',page.evaluate("""() => {
-       const e=document.querySelector('#lockerView .lockerVaultSummary');
-       const p=getComputedStyle(e,'::before'),q=getComputedStyle(e,'::after');
-       const sheet=[...document.styleSheets].filter(x=>x.href?.includes('locker-vault-polish'));
-       const rules=sheet.flatMap(x=>{try{return [...x.cssRules]}catch(_){return []}});
-       return {p:{content:p.content,display:p.display,background:p.backgroundImage,
-                    zIndex:p.zIndex,width:p.width,position:p.position},
-               q:{content:q.content,display:q.display,background:q.backgroundImage},
-               sheet:sheet.map(x=>x.href),
-               matchingRules:rules.filter(x=>x.selectorText?.includes('lockerVaultSummary')).slice(-10).map(x=>x.cssText.slice(0,500))};
-    }"""),flush=True)
   assert 'linear-gradient' in frame_check['summaryConnector'] and '24%' in frame_check['summaryConnectorSize'],(width,'Connect both medallion border openings with the original frame rails',frame_check)
+  assert abs(frame_check['connectorWidth']-frame_check['summaryWidth'])<2,(width,'Full-width rail must not inherit an obsolete tiny crystal width',frame_check)
   assert 'locker-summary-panel-frame.png' in frame_check['summaryCorner'],(width,'Mirror real approved crystal instead of an artificial polygon',frame_check)
   assert frame_check['galleryShadow']=='none',(width,'Remove solid rectangular scrolling cage',frame_check)
   assert frame_check['correctGold'] and frame_check['correctCyan'],(width,'Preserve approved gold and blue panel art',frame_check)
