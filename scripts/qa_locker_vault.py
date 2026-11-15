@@ -216,9 +216,55 @@ with sync_playwright() as p:
   assert page.locator('#lockerBaseGrid .lockerBaseCard:visible').count()==0
   q.fill('')
   assert page.locator('#lockerBaseGrid .lockerBaseCard:visible').count()==actual
+  # Reproduce owner's v2.0.59 screenshot: the list button formerly left three
+  # columns active and split WATER into WATE/R above the authentic artwork.
   page.locator('#vaultListButton').click()
   assert 'vaultListMode' in page.locator('#lockerBaseGrid').get_attribute('class')
+  page.wait_for_timeout(220)
+  assert page.locator('#vaultListButton').get_attribute('aria-pressed')=='true'
+  list_data=page.evaluate("""() => {
+    const grid=document.querySelector('#lockerView .lockerBaseGrid');
+    const card=grid.querySelector('.lockerBaseCard:not([hidden])');
+    const img=card.querySelector('img');
+    const title=card.querySelector('span');
+    const c=card.getBoundingClientRect(),i=img.getBoundingClientRect(),t=title.getBoundingClientRect();
+    return {
+      columns:getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+      cardWidth:c.width,cardHeight:c.height,portraitRight:i.right,
+      titleLeft:t.left,titleRight:t.right,titleTop:t.top,titleBottom:t.bottom,
+      cardLeft:c.left,cardRight:c.right,cardTop:c.top,cardBottom:c.bottom,
+      text:title.textContent,cssWrap:getComputedStyle(title).overflowWrap,
+      rowViewportHeight:document.querySelector('.vaultGridViewport').getBoundingClientRect().height
+    };
+  }""")
+  assert list_data['columns']==(1 if width<768 else 2),(width,'True list mode must not be 3-column portrait mode',list_data)
+  assert list_data['cardWidth']>=165 and list_data['cardHeight']>=80,(width,'List card must be wide enough for unbroken labels',list_data)
+  assert list_data['titleLeft']>=list_data['portraitRight']+1,(width,'List title may not overlay artwork',list_data)
+  assert list_data['titleRight']<=list_data['cardRight']+1,(width,'List title must fit inside frame',list_data)
+  assert list_data['titleTop']>=list_data['cardTop']-1 and list_data['titleBottom']<=list_data['cardBottom']+1,(width,'List title must not cross frame edges',list_data)
+  assert list_data['cssWrap']=='normal',(width,'List labels may not split inside words',list_data)
+  assert page.evaluate("""() => {
+    const cards=[...document.querySelectorAll('#lockerView .lockerBaseGrid.vaultListMode .lockerBaseCard:not([hidden])')];
+    return cards.every(card=>{
+      const c=card.getBoundingClientRect();
+      const img=card.querySelector('img').getBoundingClientRect();
+      const title=card.querySelector('span').getBoundingClientRect();
+      return title.left>=img.right && title.right<=c.right+1 && title.bottom<=c.bottom+1;
+    })
+  }"""),(width,'Every list item must contain its portrait and whole label')
+  assert page.evaluate("""() => {
+    const summary=document.querySelector('#lockerView .lockerVaultSummary');
+    const border=getComputedStyle(summary,'::after');
+    return border.display==='block' && border.backgroundImage.includes('linear-gradient');
+  }"""),(width,'My Collection must have its finished gilded lower edge')
+  if width in (390,430,1440):
+    page.screenshot(path=f'qa-screenshots/locker-list-{width}.png')
   page.locator('#vaultGridButton').click()
+  page.wait_for_timeout(180)
+  assert page.locator('#vaultGridButton').get_attribute('aria-pressed')=='true'
+  assert 'vaultListMode' not in page.locator('#lockerBaseGrid').get_attribute('class')
+  grid_cols=page.evaluate("getComputedStyle(document.querySelector('#lockerView .lockerBaseGrid')).gridTemplateColumns.split(' ').length")
+  assert grid_cols==expected_columns,(width,'Returning to grid must restore approved columns',grid_cols,expected_columns)
   page.locator('#lockerBaseGrid .lockerBaseCard').last.scroll_into_view_if_needed()
   previous_grid_scroll=viewport.evaluate('(e)=>e.scrollTop')
   page.locator('#lockerBaseGrid .lockerBaseCard').last.click()
