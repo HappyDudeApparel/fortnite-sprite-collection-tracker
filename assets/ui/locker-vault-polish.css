@@ -590,6 +590,7 @@
  width:100%!important;
  height:100%!important;
  min-width:0!important;min-height:0!important;
+ clip-path:none!important; /* remove inherited fake-crystal polygon mask */
  z-index:2!important;
  pointer-events:none!important;
  background-image:
@@ -614,6 +615,7 @@
  right:.5%!important;
  width:9%!important;
  height:57%!important;
+ clip-path:none!important; /* preserve the entire ORIGINAL crystal crop */
  z-index:2!important;
  pointer-events:none!important;
  background-image:url('./locker-art/locker-summary-panel-frame.png')!important;
