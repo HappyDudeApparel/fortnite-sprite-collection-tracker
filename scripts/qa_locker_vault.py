@@ -39,6 +39,8 @@ with sync_playwright() as p:
       summaryConnector:getComputedStyle(s,'::before').backgroundImage,
       summaryConnectorSize:getComputedStyle(s,'::before').backgroundSize,
       connectorWidth:parseFloat(getComputedStyle(s,'::before').width),
+      connectorClip:getComputedStyle(s,'::before').clipPath,
+      cornerClip:getComputedStyle(s,'::after').clipPath,
       summaryWidth:s.getBoundingClientRect().width,
       summaryCorner:getComputedStyle(s,'::after').backgroundImage,
       summaryCornerPosition:getComputedStyle(s,'::after').backgroundPosition,
@@ -59,6 +61,7 @@ with sync_playwright() as p:
   assert frame_check['correctSummaryAsset'] and frame_check['summaryBorder']==0,(width,'Restore real complete summary frame',frame_check)
   assert 'linear-gradient' in frame_check['summaryConnector'] and '24%' in frame_check['summaryConnectorSize'],(width,'Connect both medallion border openings with the original frame rails',frame_check)
   assert abs(frame_check['connectorWidth']-frame_check['summaryWidth'])<2,(width,'Full-width rail must not inherit an obsolete tiny crystal width',frame_check)
+  assert frame_check['connectorClip']=='none' and frame_check['cornerClip']=='none',(width,'No obsolete diamond clipping masks on finished border art',frame_check)
   assert 'locker-summary-panel-frame.png' in frame_check['summaryCorner'],(width,'Mirror real approved crystal instead of an artificial polygon',frame_check)
   assert frame_check['galleryShadow']=='none',(width,'Remove solid rectangular scrolling cage',frame_check)
   assert frame_check['correctGold'] and frame_check['correctCyan'],(width,'Preserve approved gold and blue panel art',frame_check)
