@@ -1,0 +1,92 @@
+name: Verify live Locker v2.0.62 after GitHub Pages deployment
+on:
+  push:
+    branches: [verify/locker-v2062-public-postdeploy]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install browser and screenshot validator
+        run: |
+          pip install --quiet playwright pillow
+          python -m playwright install --with-deps chromium
+      - name: Verify actual served URL and screenshot both viewports
+        run: |
+          python - <<'PY'
+          import json,urllib.request,pathlib
+          from playwright.sync_api import sync_playwright
+          from PIL import Image
+          base='https://sprites.happydude.ca/'
+          p=pathlib.Path('live-verification');p.mkdir(exist_ok=True)
+          with urllib.request.urlopen(base+'version.json?public-verification=2062',timeout=25) as resp:
+              release=json.load(resp)
+          assert release['version']=='2.0.62',('Server still serving wrong version',release['version'])
+          with sync_playwright() as playwright:
+              browser=playwright.chromium.launch(args=['--no-sandbox'])
+              for width,height in [(390,844),(1440,900)]:
+                  ctx=browser.new_context(viewport={'width':width,'height':height},service_workers='block')
+                  page=ctx.new_page()
+                  errors=[]
+                  page.on('pageerror',lambda e:errors.append(str(e)))
+                  page.goto(base+'?public-audit=2062',wait_until='domcontentloaded',timeout=45000)
+                  page.locator('button[data-tab="locker"]').click()
+                  page.locator('#lockerView .lockerVaultSummary').wait_for(timeout=30000)
+                  page.wait_for_timeout(450)
+                  assert page.evaluate('APP_VERSION')=='2.0.62'
+                  audit=page.evaluate("""() => {
+                    const root=document.querySelector('#lockerView');
+                    const s=root.querySelector('.lockerVaultSummary');
+                    const c=getComputedStyle(s,'::before');
+                    const m=getComputedStyle(s,'::after');
+                    const cs=e=>getComputedStyle(e);
+                    const feature=root.querySelector('.vaultPhase2Feature');
+                    const bg=root.querySelector('.vaultPhase2Background');
+                    const grid=root.querySelector('.vaultGridViewport');
+                    return {
+                      cards:root.querySelectorAll('.lockerBaseCard').length,
+                      originalFrame:cs(s).backgroundImage.includes('locker-summary-panel-frame.png'),
+                      lineWidth:parseFloat(c.width),panelWidth:s.getBoundingClientRect().width,
+                      lineMask:c.clipPath,cornerMask:m.clipPath,
+                      lineArt:c.backgroundImage.includes('linear-gradient'),
+                      cornerArt:m.backgroundImage.includes('locker-summary-panel-frame.png'),
+                      galleryShadow:cs(grid).boxShadow,
+                      backgroundSeparate:!feature.contains(bg),
+                      featureBorder:cs(feature).borderTopWidth,
+                      horizontalOverflow:document.documentElement.scrollWidth-innerWidth
+                    }
+                  }""")
+                  assert audit['cards']>=60 and audit['originalFrame'] and audit['lineArt']
+                  assert abs(audit['lineWidth']-audit['panelWidth'])<2
+                  assert audit['lineMask']=='none' and audit['cornerMask']=='none' and audit['cornerArt']
+                  assert audit['galleryShadow']=='none' and audit['backgroundSeparate']
+                  assert audit['featureBorder']=='0px' and audit['horizontalOverflow']<=1
+                  assert not errors,errors
+                  page.locator('#lockerView .lockerVaultSummary').screenshot(path=str(p/f'actual-live-summary-{width}.png'))
+                  page.screenshot(path=str(p/f'actual-live-top-{width}.png'))
+                  page.locator('.vaultPhase2Feature').scroll_into_view_if_needed()
+                  page.screenshot(path=str(p/f'actual-live-feature-{width}.png'))
+                  print('ACTUAL LIVE RENDER PASS',width,audit,flush=True)
+                  ctx.close()
+              browser.close()
+          with Image.open(p/'actual-live-summary-1440.png') as im:
+              im=im.convert('RGB')
+              for x in (335,345,355,550,560,570):
+                  for y in (3,im.height-4):
+                      assert sum(im.getpixel((x,y)))>285,(x,y,im.getpixel((x,y)))
+          print('PASS published public URL serves v2.0.62 and frame gaps are visibly closed in screenshot pixels')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-public-v2062-live-screenshots
+          path: live-verification/
+          retention-days: 7
+          if-no-files-found: ignore
