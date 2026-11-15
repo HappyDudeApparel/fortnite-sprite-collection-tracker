@@ -215,6 +215,7 @@
       }
       resetScroll();
       update();
+      queueRowFit(); // a changed card mode changes row height as well as columns
     });
   }
   // Observing only childList preserves all native dynamically rendered handlers,
@@ -238,13 +239,13 @@
     if(cardHeight<30)return; // hidden tab: retry on its native render
     const gridCSS=getComputedStyle(baseGrid), frameCSS=getComputedStyle(scrollFrame);
     const px=value=>parseFloat(value)||0;
-    const rows=3;
+    const rows=state.layout==='list' ? (window.innerWidth<768?4:3) : 3;
     const height=Math.ceil(
       rows*cardHeight+(rows-1)*px(gridCSS.rowGap)+
       px(gridCSS.paddingTop)+px(gridCSS.paddingBottom)+
       px(frameCSS.paddingTop)+px(frameCSS.paddingBottom)+
       px(frameCSS.borderTopWidth)+px(frameCSS.borderBottomWidth)+2-
-      (window.innerWidth<768?30:0)); // hide the next row's projecting crown
+      (state.layout==='grid' && window.innerWidth<768?30:0)); // portraits only
     if(!Number.isFinite(height)||height<130||height>850)return;
     for(const prop of ['height','min-height','max-height'])
       scrollFrame.style.setProperty(prop,height+'px','important');
