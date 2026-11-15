@@ -589,3 +589,13 @@
   border-color:#65b6ea!important;
   box-shadow:inset 0 0 0 1px #a567c44d,0 0 11px #246edb55!important;
 }
+
+/* 320px long-label hardening: block line layout honors break opportunities
+   instead of anonymous grid min-content sizing within portrait chrome. */
+#lockerView .vaultGallerySection .lockerBaseGrid:not(.vaultListMode) .lockerBaseCard>span{
+  display:block!important;
+  align-content:center!important;
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
