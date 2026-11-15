@@ -292,9 +292,14 @@ with sync_playwright() as p:
   }"""),(width,'Every list item must contain its portrait and whole label')
   assert page.evaluate("""() => {
     const summary=document.querySelector('#lockerView .lockerVaultSummary');
-    const border=getComputedStyle(summary,'::after');
-    return border.display==='block' && border.backgroundImage.includes('linear-gradient');
-  }"""),(width,'My Collection must have its finished gilded lower edge')
+    const style=getComputedStyle(summary);
+    const overlay=getComputedStyle(summary,'::after');
+    // The approved PNG contains the actual complete corners and lower edge.
+    // Adding a pseudo-element bar obscures the right-hand crystal.
+    return style.backgroundImage.includes('locker-summary-panel-frame.png') &&
+           parseFloat(style.borderBottomWidth)===0 &&
+           overlay.display==='none';
+  }"""),(width,'My Collection must use its original complete gold illustrated frame')
   if width in (390,430,1440):
     page.screenshot(path=f'qa-screenshots/locker-list-{width}.png')
   page.locator('#vaultGridButton').click()
