@@ -1,0 +1,44 @@
+name: Import seven verified C7S5 portraits (one-time)
+on:
+  push:
+    branches:
+      - update/c7s5-nov16-seven-sprites
+    paths:
+      - .github/workflows/scl-import-nov16-portraits.yml
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download individual source portraits from Fortnite.GG
+        run: |
+          set -euo pipefail
+          mkdir -p assets/sprites/c7s5
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_LushlyZest_ui_v2_1_Alpha_L.webp" -o "assets/sprites/c7s5/mini-miku-base.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_LushlyZest_Jeweled_ui_v1_1_Alpha_L.webp" -o "assets/sprites/c7s5/mini-miku-fortune.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_LushlyZest_Cursed_ui_v1_1_Alpha_L.webp" -o "assets/sprites/c7s5/mini-miku-cursed.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PirateCalamari_L.webp" -o "assets/sprites/c7s5/squiplash-base.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PirateCalamari_Jeweled_L.webp" -o "assets/sprites/c7s5/squiplash-fortune.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_PirateCalamari_Cursed_L.webp" -o "assets/sprites/c7s5/squiplash-cursed.webp"
+          curl --fail --silent --show-error --location --retry 4 --retry-delay 2 --max-time 60 -A "Mozilla/5.0 (compatible; SpriteCollectionLocker/2.0.63)" "https://fortnite.gg/img/x/sprites/icons/T_Icon_BR_Creature_Sprite_ZeroPointPiece_ui_v3_1_Alpha_L.webp" -o "assets/sprites/c7s5/zee-base.webp"
+      - name: Validate all seven authentic WebP files and commit
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          files = ["mini-miku-base.webp","mini-miku-fortune.webp","mini-miku-cursed.webp","squiplash-base.webp","squiplash-fortune.webp","squiplash-cursed.webp","zee-base.webp"]
+          for name in files:
+              path = Path("assets/sprites/c7s5") / name
+              data = path.read_bytes()
+              assert len(data)>5000, f"Unexpectedly small: {path} {len(data)}"
+              assert data[:4]==b"RIFF" and data[8:12]==b"WEBP", f"Not WebP: {path}"
+              print(f"PASS {path} ({len(data)} bytes)")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/sprites/c7s5/mini-miku-*.webp assets/sprites/c7s5/squiplash-*.webp assets/sprites/c7s5/zee-base.webp
+          git commit -m "Import seven authentic Nov 15 Treasure Hunters portraits"
+          git push
