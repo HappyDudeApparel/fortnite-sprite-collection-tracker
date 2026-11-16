@@ -1,3 +1,18 @@
+# Sprite Collection Locker — v2.0.63 · November 16, 2026
+
+GitHub Pages: https://sprites.happydude.ca/ · Production branch: `main`.
+
+## November 15 Sprite release (verified November 16)
+- **42 collectible Treasure Hunters entries** across 16 collectible families; **321** collectible across C7S3 (117), C7S4 (162), and C7S5 (42).
+- Seven new collectible entries: Mini Miku (Base/Fortune/Cursed), Squiplash (Base/Fortune/Cursed), and Zee (secret-rare Base, concealed until marked found). Seven authentic, individual Fortnite.GG WebP portraits are self-hosted.
+- Cursed Kelper was in the existing build as unreleased, but is now marked collectible to reconcile Fortnite.GG's 42 total. This is **one release-state correction in addition to seven new records**.
+- 14 Gold variants, including Mini Miku and Squiplash, plus Sir Oscar the Second (Base/Fortune/Cursed/Gold), remain **unreleased**. These are catalogue records only and do not count toward ownership; no speculative Gold/Oscar portrait was fabricated.
+- Exact drop rates and summon costs remain **unverified**. No new Gummy, Galaxy, Holofoil, Gem, Cube, or Quack art added.
+- Original C7S3/C7S4 records, persistent progress keys, background presets, icons, and Vault layouts are unchanged.
+- QA and source audit: `docs/C7S5-NOV-16-2026-ROSTER-QA.md`.
+
+---
+
 # Sprite Collection Locker — v2.0.56 Vault Redesign (November 11, 2026)
 
 Production release candidate for the owner-approved November 1 Locker. Original 316 canonical Sprite records, 58 backgrounds, C7S3/C7S4/C7S5 gameplay and saved collection keys remain unchanged. The central 67-family Locker grid scrolls independently, with authentic artwork, a compact variant ribbon, live featured scene and horizontally browseable background selector. Release QA is recorded in `docs/LOCKER-PHASE3-ACCEPTANCE-2026-11-11.md`. GitHub Pages deploys from main. Cache name and app release badge change to v2.0.56. Until release validation and merge, this text is only on the review branch.
