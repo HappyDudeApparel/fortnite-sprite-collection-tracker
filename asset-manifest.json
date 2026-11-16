@@ -1,5 +1,5 @@
 {
-  "version": "2.0.62",
+  "version": "2.0.63",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -418,6 +418,13 @@
     "assets/ui/locker-phase2.js",
     "assets/ui/locker-vault-polish.css",
     "assets/ui/locker-art/locker-gallery-border-polish.svg",
-    "assets/ui/locker-art/locker-gallery-plinth-approved.webp"
+    "assets/ui/locker-art/locker-gallery-plinth-approved.webp",
+    "assets/sprites/c7s5/mini-miku-base.webp",
+    "assets/sprites/c7s5/mini-miku-fortune.webp",
+    "assets/sprites/c7s5/mini-miku-cursed.webp",
+    "assets/sprites/c7s5/squiplash-base.webp",
+    "assets/sprites/c7s5/squiplash-fortune.webp",
+    "assets/sprites/c7s5/squiplash-cursed.webp",
+    "assets/sprites/c7s5/zee-base.webp"
   ]
 }
