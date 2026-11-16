@@ -1,5 +1,5 @@
-// Sprite Collection Locker — v2.0.62. Cache conservatively on low-storage devices.
-const APP_VERSION = '2.0.62';
+// Sprite Collection Locker — v2.0.63. Cache conservatively on low-storage devices.
+const APP_VERSION = '2.0.63';
 const CACHE_NAME = `sprites-tracker-${APP_VERSION}`;
 const APP_SHELL = ['./index.html','./manifest.webmanifest','./version.json'];
 
@@ -47,7 +47,7 @@ self.addEventListener('fetch',event=>{
       }
     })());
   } else {
-    // Locally hosted images load as usual; independently verified newer Fortnite.GG portraits are temporarily remote and not cached here.
+    // Locally hosted images load as usual; seven November 15 portraits are self-hosted; leave heavy image caching demand-based.
     event.respondWith(fetch(event.request).catch(async()=>{
       try {return await caches.match(event.request)||Response.error();}catch(_){return Response.error();}
     }));
