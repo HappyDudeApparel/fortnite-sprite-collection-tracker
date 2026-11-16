@@ -1,3 +1,12 @@
+## v2.0.63 — November 16, 2026
+
+- Imported 7 authentic 512px source WebP portraits from Fortnite.GG: Mini Miku Base/Fortune/Cursed; Squiplash Base/Fortune/Cursed; Zee Base. No generated or recoloured replacement artwork.
+- Added seven collectible C7S5 records, corrected already-catalogued Cursed Kelper to collectible, and reconciled **42 collectible C7S5 / 321 total**. Records now: 59 catalogued for C7S5, including 17 unreleased.
+- Catalogued all **14 Gold** variants as unreleased, and Sir Oscar the Second in four unreleased forms. No bogus drop rates or costs.
+- Secret-rare Zee appears as an undiscovered mystery in the Treasure Hunters grid and is excluded from the Locker until ownership is recorded.
+- Preserved prior season records, stable IDs 1–537, previous progress/storage keys, backgrounds, approved variant icons and Vault layout; updated PWA cache and release metadata.
+- See `docs/C7S5-NOV-16-2026-ROSTER-QA.md` for evidence and constraints.
+
 ## v2.0.55 — November 9, 2026 (review branch)
 
 - Reconciled C7S5 to the live Fortnite.GG **34 obtainable / 35 catalogued** Treasure Hunters entries, of which Cursed Kelper is explicitly unreleased. Overall collectible count is **313** (117 + 162 + 34), not the alert's 312.
