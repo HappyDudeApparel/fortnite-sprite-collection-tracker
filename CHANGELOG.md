@@ -1,3 +1,12 @@
+## v2.0.64 — November 16, 2026 (owner-approved artwork catalogue policy)
+
+- Verified and locally imported all 14 individual Gold portraits and Sir Oscar the Second's four portraits (17 newly imported assets, including Gold Sir Oscar).
+- Enabled the 17 previously preview-only records for ownership, leveling, detail, export and Vault with exact canonical source artwork. Fortnite.GG's not-yet-obtainable status is preserved in source metadata; site status is now `released` and `Collectible` per owner direction.
+- Complete C7S5 collection **59/59 authentic assets** across 17 families; combined site catalogue **338** (117 + 162 + 59).
+- Original 316 records and the seven newly-added Sprite IDs remain unchanged; no existing progress or saved keys were reset; Zee intentionally stays masked until marked discovered.
+- Previous label `42 collectible` now refers only to in-game obtainable total, not the user's artwork-driven Locker denominator.
+- See documentation and browser acceptance tests.
+
 ## v2.0.63 — November 16, 2026
 
 - Imported 7 authentic 512px source WebP portraits from Fortnite.GG: Mini Miku Base/Fortune/Cursed; Squiplash Base/Fortune/Cursed; Zee Base. No generated or recoloured replacement artwork.
