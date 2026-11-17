@@ -1,3 +1,10 @@
+## v2.0.65 — November 16, 2026
+
+- Show real, original pink Zee portrait and proper name immediately in Treasure Hunters and Locker, regardless of owned or missing status; Zee remains classified secret-rare and retains its independent ownership/level controls. Removed effective mystery-gating without any progress reset.
+- Verified Sweet Dreams against Fortnite.GG's individual entry /sprites/301-sweet-dreams: corrected rarity from Unverified to **Mythic** and restored the documented level-up description. Confirmed Base only; existing portrait visually matches genuine source artwork and is unchanged.
+- Archive data, all sprite IDs, variant icons, art, backgrounds, Vault layout and persisted keys remain unchanged. Denominators stay 59 Treasure Hunters and 338 combined.
+- Source and responsive-browser tests updated.
+
 ## v2.0.64 — November 16, 2026 (owner-approved artwork catalogue policy)
 
 - Verified and locally imported all 14 individual Gold portraits and Sir Oscar the Second's four portraits (17 newly imported assets, including Gold Sir Oscar).
