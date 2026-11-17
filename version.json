@@ -1,13 +1,13 @@
 {
-  "version": "2.0.63",
+  "version": "2.0.64",
   "published": "2026-11-16",
-  "notes": "Add seven verified collectible sprites (Mini Miku Base/Fortune/Cursed; Squiplash Base/Fortune/Cursed; secret-rare Zee), release Cursed Kelper, and reconcile 42 Treasure Hunters / 321 combined. Keep 14 Gold variants and Sir Oscar forms unreleased. All seven authentic images self-hosted; preserve archived seasons, storage keys, approved artwork and Vault.",
+  "notes": "All 59 Treasure Hunters catalogue records with independently verified genuine portraits shown and locally marked released, regardless of in-game release status; includes seven November 15 additions, 14 Gold, four Sir Oscar. 338 total site-counted across C7S3/C7S4/C7S5. Preserve original storage, art and Vault.",
   "artwork": {
     "kind": "verified individual Fortnite.GG source WebP icons (512 x 512)",
-    "localC7S5PortraitCount": 42,
-    "newPortraitsImported": 7,
+    "localC7S5PortraitCount": 59,
+    "newPortraitsImported": 24,
     "source": "Fortnite.GG",
-    "status": "42 collectible C7S5 individual portraits are locally hosted; 17 unreleased variant records use no speculative artwork",
+    "status": "All 59 C7S5 individual authentic portraits locally hosted and visible, except undiscovered secret rare Zee retains intentional mystery reveal",
     "existingSourceManifest": "docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json",
     "newImportManifest": "docs/C7S5-NOV-16-2026-ROSTER-QA.md"
   },
@@ -33,11 +33,14 @@
     "unique ID and persisted progress key checks",
     "inline JavaScript parse validation",
     "4 newly imported 512px WebP verified by individual source page and SHA256",
-    "C7S5: 42 collectible across 16 families, 59 catalogued including 17 unreleased",
     "C7S3/C7S4 281 original records preserved unchanged",
-    "7 new WebP signatures and real source page mappings validated",
-    "14 Gold unreleased / Sir Oscar four forms unreleased / hidden Zee reveal",
-    "No persisted storage keys changed"
+    "No persisted storage keys changed",
+    "C7S5: 59 locally activated records across 17 families; 338 site-counted total",
+    "All 24 new portraits (7 launch + 17 Gold/Oscar) locally hosted and source linked",
+    "All 14 Gold portraits and four Sir Oscar forms live in app",
+    "In-game availability distinct from site catalogue release status",
+    "Zee secret concealment until ownership; all 59 portraits retained",
+    "C7S3/C7S4 original records unchanged, same localStorage keys"
   ],
   "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens",
   "lockerRelease": {
