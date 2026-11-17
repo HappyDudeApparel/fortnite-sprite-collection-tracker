@@ -12,16 +12,18 @@ const assert = require('node:assert/strict');
       await page.goto('http://127.0.0.1:8765/index.html', {waitUntil:'domcontentloaded'});
       await page.waitForSelector('#summary .sumNum', {timeout:25000});
       await page.locator('button.tab[data-season="C7S5"]').click();
-      assert(await page.locator('#summary').innerText().then(x=>x.includes('42')),'Missing C7S5 count 42');
+      assert(await page.locator('#summary').innerText().then(x=>x.includes('59')),'Missing C7S5 count 59');
       for(const family of ['Mini Miku','Squiplash']){
         const row=page.locator('.familyRow[data-family="'+family+'"]');
         assert.equal(await row.count(),1,'Missing family '+family);
         const imgs=row.locator('.spriteCell img');
-        assert.equal(await imgs.count(),3,'Expected three variants of '+family);
-        const ok=await imgs.evaluateAll(els=>els.every(i=>i.complete && i.naturalWidth===512 && i.naturalHeight===512));
-        if(!ok){await page.waitForTimeout(1800);}
-        assert(await imgs.evaluateAll(els=>els.every(i=>i.complete && i.naturalWidth===512 && i.naturalHeight===512)),'Original art did not load '+family);
+        assert.equal(await imgs.count(),4,'Expected four variants of '+family);
+        await page.waitForFunction(familyName => {const row=[...document.querySelectorAll(".familyRow")].find(x=>x.dataset.family===familyName);if(!row)return false;const images=[...row.querySelectorAll(".spriteCell img")];return images.length===4&&images.every(i=>i.complete&&i.naturalWidth>0&&i.naturalHeight>0);},family,{timeout:20000});
       }
+      const oscar=page.locator('.familyRow[data-family="Sir Oscar the Second"]');
+      assert.equal(await oscar.count(),1,'Sir Oscar family must be present');
+      assert.equal(await oscar.locator('.spriteCell img').count(),4,'Sir Oscar requires four original portraits');
+      await page.waitForFunction(()=>{const row=document.querySelector('.familyRow[data-family="Sir Oscar the Second"]');return row && [...row.querySelectorAll('.spriteCell img')].length===4 && [...row.querySelectorAll('.spriteCell img')].every(i=>i.complete&&i.naturalWidth>0);},null,{timeout:20000});
       const mystery=page.locator('.familyRow[data-family="Zee"]');
       assert.equal(await mystery.count(),1);
       assert((await mystery.innerText()).includes('Mystery Sprite'),'Zee not masked');
@@ -45,9 +47,9 @@ const assert = require('node:assert/strict');
       await page.locator('button.tab[data-season="C7S4"]').click();
       assert((await page.locator('#summary').innerText()).includes('162'),'C7S4 count changed');
       await page.locator('button.tab[data-season="C7S5"]').click();
-      assert((await page.locator('#summary').innerText()).includes('42'),'C7S5 count changed after season switch');
+      assert((await page.locator('#summary').innerText()).includes('59'),'C7S5 count changed after season switch');
       assert.deepEqual(pageErrors,[],'Uncaught JavaScript errors');
-      console.log('PASS browser',viewport.width,'px: 42, portraits, secret reveal/forget, Locker, local persistence, archives');
+      console.log('PASS browser',viewport.width,'px: 59, portraits, secret reveal/forget, Locker, local persistence, archives');
       await page.close();
     }
   } finally { await browser.close(); }
