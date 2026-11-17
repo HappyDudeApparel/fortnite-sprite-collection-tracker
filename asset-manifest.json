@@ -1,5 +1,5 @@
 {
-  "version": "2.0.62",
+  "version": "2.0.64",
   "assets": [
     "assets/embedded/005fd1b8eb54ef02b99a.webp",
     "assets/embedded/0072a448396462a0fbbc.webp",
@@ -418,6 +418,30 @@
     "assets/ui/locker-phase2.js",
     "assets/ui/locker-vault-polish.css",
     "assets/ui/locker-art/locker-gallery-border-polish.svg",
-    "assets/ui/locker-art/locker-gallery-plinth-approved.webp"
+    "assets/ui/locker-art/locker-gallery-plinth-approved.webp",
+    "assets/sprites/c7s5/mini-miku-base.webp",
+    "assets/sprites/c7s5/mini-miku-fortune.webp",
+    "assets/sprites/c7s5/mini-miku-cursed.webp",
+    "assets/sprites/c7s5/squiplash-base.webp",
+    "assets/sprites/c7s5/squiplash-fortune.webp",
+    "assets/sprites/c7s5/squiplash-cursed.webp",
+    "assets/sprites/c7s5/zee-base.webp",
+    "assets/sprites/c7s5/halfpeel-d-gold.webp",
+    "assets/sprites/c7s5/re-pete-gold.webp",
+    "assets/sprites/c7s5/barry-o-fish-gold.webp",
+    "assets/sprites/c7s5/wayfinder-gold.webp",
+    "assets/sprites/c7s5/chester-gold.webp",
+    "assets/sprites/c7s5/kelper-gold.webp",
+    "assets/sprites/c7s5/exmarks-gold.webp",
+    "assets/sprites/c7s5/lil-squibbly-gold.webp",
+    "assets/sprites/c7s5/squiplash-gold.webp",
+    "assets/sprites/c7s5/lil-flacko-gold.webp",
+    "assets/sprites/c7s5/lil-uzi-vert-jr-gold.webp",
+    "assets/sprites/c7s5/plundarrgh-gold.webp",
+    "assets/sprites/c7s5/mini-miku-gold.webp",
+    "assets/sprites/c7s5/sir-oscar-the-second-gold.webp",
+    "assets/sprites/c7s5/sir-oscar-the-second-base.webp",
+    "assets/sprites/c7s5/sir-oscar-the-second-fortune.webp",
+    "assets/sprites/c7s5/sir-oscar-the-second-cursed.webp"
   ]
 }

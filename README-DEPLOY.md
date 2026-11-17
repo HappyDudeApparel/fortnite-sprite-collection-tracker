@@ -1,3 +1,20 @@
+# Sprite Collection Locker — v2.0.64 · November 16, 2026
+
+GitHub Pages: https://sprites.happydude.ca/ · Production branch: `main`.
+
+## Owner-approved live catalogue rule
+The Locker marks a Sprite **released and fully interactive** when its exact authentic individual portrait can be verified from Fortnite.GG, Fortnite or another reliable official/fan catalogue, even if not yet obtainable in the Fortnite game. This is a deliberate **site status**, not a claim that the item has appeared in-game.
+
+- C7S5 **59 live catalogue records** across **17 families**, each with an authentic locally hosted portrait. Site denominator **338** = C7S3 117 + C7S4 162 + C7S5 59.
+- November 15 additions: Mini Miku Base/Fortune/Cursed; Squiplash Base/Fortune/Cursed; Zee Base; and earlier Cursed Kelper changed to collectible.
+- All **14 Gold** portraits and the **four Sir Oscar the Second** portraits (Base/Fortune/Cursed/Gold) are fully visible and marked released in this site, notwithstanding Fortnite.GG's in-game Unreleased labels.
+- Zee remains an intentionally unidentified secret-rare silhouette until marked owned; authentic Zee portrait is locally stored and shown immediately afterward.
+- All original ownership/progress keys, C7S3/C7S4 records, approved backgrounds/icons, and the Vault layout are unchanged.
+- In-game drop rates, summon costs and release/obtainability details are not represented as verified when unknown. See `docs/C7S5-NOV-16-2026-ROSTER-QA.md`.
+
+---
+
+
 # Sprite Collection Locker — v2.0.56 Vault Redesign (November 11, 2026)
 
 Production release candidate for the owner-approved November 1 Locker. Original 316 canonical Sprite records, 58 backgrounds, C7S3/C7S4/C7S5 gameplay and saved collection keys remain unchanged. The central 67-family Locker grid scrolls independently, with authentic artwork, a compact variant ribbon, live featured scene and horizontally browseable background selector. Release QA is recorded in `docs/LOCKER-PHASE3-ACCEPTANCE-2026-11-11.md`. GitHub Pages deploys from main. Cache name and app release badge change to v2.0.56. Until release validation and merge, this text is only on the review branch.

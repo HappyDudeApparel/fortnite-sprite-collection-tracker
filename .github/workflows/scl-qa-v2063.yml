@@ -1,0 +1,32 @@
+name: C7S5 v2.0.63 static and browser acceptance
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [update/c7s5-nov16-seven-sprites]
+    paths:
+      - .github/workflows/scl-qa-v2063.yml
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Static source and provenance checks
+        run: python3 scripts/qa-c7s5-nov16.py
+      - name: Install headless browser for interaction tests
+        run: |
+          npm install --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser acceptance, including mobile and desktop
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/scl-qa-http.log 2>&1 &
+          sleep 2
+          node scripts/qa-c7s5-nov16-browser.cjs
