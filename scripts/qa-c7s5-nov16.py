@@ -66,9 +66,9 @@ with tempfile.TemporaryDirectory() as tmp:
     print("INLINE JS SYNTAX PASS", len(scripts), "tags examined")
 
 try:
-    old = subprocess.check_output(["git","show","origin/main:index.html"], cwd=root, text=True)
+    old = subprocess.check_output(["git","show","a78272b012e7fdb522a13e4866e9387b6e631c21:index.html"], cwd=root, text=True)
 except subprocess.CalledProcessError:
-    old = ""
+    old = ""  # shallow or incomplete history: structural checks still apply
 if old:
     o = re.search(pattern, old, re.S)
     assert o, "base roster missing"
