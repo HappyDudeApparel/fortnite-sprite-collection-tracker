@@ -1,3 +1,9 @@
+# Sprite Collection Locker — v2.0.65 · November 16, 2026
+
+Targeted follow-up to v2.0.64: Zee now always displays its authentic pink crystalline portrait and name, including when missing. Its secret-rare classification and ownership data remain intact; tapping still cycles normal ownership/levels. Sweet Dreams is Mythic Base-only with verified source and level-up metadata, unchanged original artwork. C7S5 count stays 59, combined stays 338; all older data and Vault UI are preserved.
+
+---
+
 # Sprite Collection Locker — v2.0.64 · November 16, 2026
 
 GitHub Pages: https://sprites.happydude.ca/ · Production branch: `main`.
