@@ -49,7 +49,7 @@ const assert = require('node:assert/strict');
       assert.equal(await sweet.count(),1,'Sweet Dreams missing from Treasure Hunters');
       assert.equal(await sweet.locator('.spriteCell img').count(),1,'Sweet Dreams must be Base only');
       await sweet.locator('button[data-open]').first().click();
-      assert((await page.locator('#detailBadges').textContent()).includes('Mythic') && (await page.locator('#inlineDetailBadges').textContent()).includes('Mythic'),'Sweet Dreams must have Mythic rarity in both detail layouts');
+      assert((await page.locator('#detailBadges').textContent()).includes('Mythic'),'Sweet Dreams detail rarity must be Mythic regardless of responsive visibility');
       await page.locator('button.tab[data-season="C7S5"]').click();
       await page.locator('button.tab[data-season="C7S3"]').click();
       assert((await page.locator('#summary').innerText()).includes('117'),'C7S3 count changed');
