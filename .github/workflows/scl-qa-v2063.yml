@@ -1,4 +1,4 @@
-name: C7S5 v2.0.63 static and browser acceptance
+name: C7S5 v2.0.64 static and browser acceptance
 on:
   pull_request:
     branches: [main]
