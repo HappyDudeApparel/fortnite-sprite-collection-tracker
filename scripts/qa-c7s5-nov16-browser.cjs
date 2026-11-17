@@ -1,4 +1,4 @@
-/* Browser smoke-test of v2.0.63, independent of saved real-user progress. */
+/* Browser smoke-test of v2.0.65, independent of saved real-user progress. */
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
@@ -24,24 +24,33 @@ const assert = require('node:assert/strict');
       assert.equal(await oscar.count(),1,'Sir Oscar family must be present');
       assert.equal(await oscar.locator('.spriteCell img').count(),4,'Sir Oscar requires four original portraits');
       await page.waitForFunction(()=>{const row=document.querySelector('.familyRow[data-family="Sir Oscar the Second"]');return row && [...row.querySelectorAll('.spriteCell img')].length===4 && [...row.querySelectorAll('.spriteCell img')].every(i=>i.complete&&i.naturalWidth>0);},null,{timeout:20000});
-      const mystery=page.locator('.familyRow[data-family="Zee"]');
-      assert.equal(await mystery.count(),1);
-      assert((await mystery.innerText()).includes('Mystery Sprite'),'Zee not masked');
-      assert.equal(await mystery.locator('img').count(),0,'Secret portrait leaked in overview');
-      await mystery.locator('button[data-small="544"]').first().click();
-      assert((await mystery.locator('.familyName').innerText()).includes('Zee'),'Secret not revealed upon ownership');
-      assert.equal(await mystery.locator('img').count(),2,'Revealed Zee should have two displayed portraits');
+      const zee=page.locator('.familyRow[data-family="Zee"]');
+      assert.equal(await zee.count(),1,'Zee family must appear');
+      assert((await zee.locator('.familyName').innerText()).includes('Zee'),'Zee name must display before ownership');
+      assert.equal(await zee.locator('img').count(),2,'Original Zee portrait should display twice without claiming');
+      await page.waitForFunction(()=>{const row=document.querySelector('.familyRow[data-family="Zee"]');return !!row&&[...row.querySelectorAll('img')].length===2&&[...row.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0);},null,{timeout:20000});
+      assert.equal(await zee.locator('[data-small="544"]').count(),1,'Zee must retain level/ownership control');
       await page.locator('button.tab[data-tab="locker"]').click();
       await page.waitForSelector('#lockerBaseGrid');
-      assert(await page.locator('[data-locker-family="Zee"]').count()===1,'Owned Zee absent from Locker');
+      assert.equal(await page.locator('[data-locker-family="Zee"]').count(),1,'Unowned Zee must be available in Vault');
+      await page.locator('button.tab[data-season="C7S5"]').click();
+      await zee.locator('button[data-small="544"]').first().click();
+      assert.equal(await zee.locator('img').count(),2,'Zee artwork should remain visible after claiming');
       await page.reload({waitUntil:'domcontentloaded'});
       await page.waitForSelector('#summary .sumNum');
       await page.locator('button.tab[data-season="C7S5"]').click();
-      assert((await page.locator('.familyRow[data-family="Zee"] .familyName').innerText()).includes('Zee'),'Zee owned state not persisted');
-      for(let j=0;j<5;j++)await page.locator('.familyRow[data-family="Zee"] button[data-small="544"]').first().click();
-      assert((await page.locator('.familyRow[data-family="Zee"] .familyName').innerText()).includes('Mystery Sprite'),'Unowned Zee did not hide again');
+      assert((await page.locator('.familyRow[data-family="Zee"] .familyName').innerText()).includes('Zee'),'Zee visible after saved ownership reload');
+      for(let j=0;j<5;j++) await page.locator('.familyRow[data-family="Zee"] button[data-small="544"]').first().click();
+      assert((await page.locator('.familyRow[data-family="Zee"] .familyName').innerText()).includes('Zee'),'Zee visible after clearing ownership');
       await page.locator('button.tab[data-tab="locker"]').click();
-      assert.equal(await page.locator('[data-locker-family="Zee"]').count(),0,'Unowned Zee leaked into Locker');
+      assert.equal(await page.locator('[data-locker-family="Zee"]').count(),1,'Zee must remain in Vault after clearing');
+      await page.locator('button.tab[data-season="C7S5"]').click();
+      const sweet=page.locator('.familyRow[data-family="Sweet Dreams"]');
+      assert.equal(await sweet.count(),1,'Sweet Dreams missing from Treasure Hunters');
+      assert.equal(await sweet.locator('.spriteCell img').count(),1,'Sweet Dreams must be Base only');
+      await sweet.locator('button[data-open]').first().click();
+      assert((await page.locator('#detailBadges').innerText()).includes('Mythic'),'Sweet Dreams must display Mythic');
+      await page.locator('button.tab[data-season="C7S5"]').click();
       await page.locator('button.tab[data-season="C7S3"]').click();
       assert((await page.locator('#summary').innerText()).includes('117'),'C7S3 count changed');
       await page.locator('button.tab[data-season="C7S4"]').click();
@@ -49,7 +58,7 @@ const assert = require('node:assert/strict');
       await page.locator('button.tab[data-season="C7S5"]').click();
       assert((await page.locator('#summary').innerText()).includes('59'),'C7S5 count changed after season switch');
       assert.deepEqual(pageErrors,[],'Uncaught JavaScript errors');
-      console.log('PASS browser',viewport.width,'px: 59, portraits, secret reveal/forget, Locker, local persistence, archives');
+      console.log('PASS browser',viewport.width,'px: 59, portraits, visible Zee, Sweet Dreams Mythic, Locker, local persistence, archives');
       await page.close();
     }
   } finally { await browser.close(); }
