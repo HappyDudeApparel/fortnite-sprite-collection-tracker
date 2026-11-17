@@ -1,17 +1,19 @@
-# Sprite Collection Locker — v2.0.63 · November 16, 2026
+# Sprite Collection Locker — v2.0.64 · November 16, 2026
 
 GitHub Pages: https://sprites.happydude.ca/ · Production branch: `main`.
 
-## November 15 Sprite release (verified November 16)
-- **42 collectible Treasure Hunters entries** across 16 collectible families; **321** collectible across C7S3 (117), C7S4 (162), and C7S5 (42).
-- Seven new collectible entries: Mini Miku (Base/Fortune/Cursed), Squiplash (Base/Fortune/Cursed), and Zee (secret-rare Base, concealed until marked found). Seven authentic, individual Fortnite.GG WebP portraits are self-hosted.
-- Cursed Kelper was in the existing build as unreleased, but is now marked collectible to reconcile Fortnite.GG's 42 total. This is **one release-state correction in addition to seven new records**.
-- 14 Gold variants, including Mini Miku and Squiplash, plus Sir Oscar the Second (Base/Fortune/Cursed/Gold), remain **unreleased**. These are catalogue records only and do not count toward ownership; no speculative Gold/Oscar portrait was fabricated.
-- Exact drop rates and summon costs remain **unverified**. No new Gummy, Galaxy, Holofoil, Gem, Cube, or Quack art added.
-- Original C7S3/C7S4 records, persistent progress keys, background presets, icons, and Vault layouts are unchanged.
-- QA and source audit: `docs/C7S5-NOV-16-2026-ROSTER-QA.md`.
+## Owner-approved live catalogue rule
+The Locker marks a Sprite **released and fully interactive** when its exact authentic individual portrait can be verified from Fortnite.GG, Fortnite or another reliable official/fan catalogue, even if not yet obtainable in the Fortnite game. This is a deliberate **site status**, not a claim that the item has appeared in-game.
+
+- C7S5 **59 live catalogue records** across **17 families**, each with an authentic locally hosted portrait. Site denominator **338** = C7S3 117 + C7S4 162 + C7S5 59.
+- November 15 additions: Mini Miku Base/Fortune/Cursed; Squiplash Base/Fortune/Cursed; Zee Base; and earlier Cursed Kelper changed to collectible.
+- All **14 Gold** portraits and the **four Sir Oscar the Second** portraits (Base/Fortune/Cursed/Gold) are fully visible and marked released in this site, notwithstanding Fortnite.GG's in-game Unreleased labels.
+- Zee remains an intentionally unidentified secret-rare silhouette until marked owned; authentic Zee portrait is locally stored and shown immediately afterward.
+- All original ownership/progress keys, C7S3/C7S4 records, approved backgrounds/icons, and the Vault layout are unchanged.
+- In-game drop rates, summon costs and release/obtainability details are not represented as verified when unknown. See `docs/C7S5-NOV-16-2026-ROSTER-QA.md`.
 
 ---
+
 
 # Sprite Collection Locker — v2.0.56 Vault Redesign (November 11, 2026)
 
