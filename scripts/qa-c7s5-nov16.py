@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sprite Collection Locker v2.0.64 non-destructive source QA."""
+"""Sprite Collection Locker v2.0.65 non-destructive source QA."""
 from pathlib import Path
 import json
 import re
@@ -35,6 +35,9 @@ assert len([r for r in c7 if r["family"] == "Sir Oscar the Second"]) == 4
 assert all(collectible(r) for r in c7 if r["family"] == "Sir Oscar the Second")
 assert collectible(by_id[527]) and by_id[527]["family"] == "Kelper"
 assert by_id[544]["secretRare"] and collectible(by_id[544])
+assert by_id[511]["rarity"] == "Mythic" and by_id[511]["variantKey"] == "Base"
+assert len([r for r in c7 if r["family"] == "Sweet Dreams"]) == 1
+assert by_id[511]["artworkSourcePage"] == "https://fortnite.gg/sprites/301-sweet-dreams"
 assert [by_id[i]["variantKey"] for i in (538, 539, 540, 541, 542, 543, 544)] == ["Base", "Fortune", "Cursed", "Base", "Fortune", "Cursed", "Base"]
 for i in range(538, 562):
     r = by_id[i]
@@ -50,7 +53,7 @@ for r in records:
         assert r["image"] and (root / r["image"]).is_file(), (r["id"], r["image"])
     if r["id"] >= 538:
         assert r["variantKey"] in ("Base","Fortune","Cursed","Gold")
-for token in ("function isSecretHidden(s)", "c7s5SecretCell", "isSecretHidden(s))continue", "59 released portraits", "const APP_VERSION='2.0.64'"):
+for token in ("function isSecretHidden(s)", "c7s5SecretCell", "function isSecretHidden(s){return false}", "59 released portraits", "const APP_VERSION='2.0.65'"):
     assert token in html, token
 for key in ("sprite-mobile-v33-selected", "sprite-mobile-v33-levels", "sprite-mobile-v33-favorites", "sprite-mobile-v33-bg", "scl-clean-view-mode"):
     assert key in html, key
@@ -78,21 +81,23 @@ if old:
     for r in original:
         candidate = by_id.get(r["id"])
         assert candidate, f"lost ID {r['id']}"
-        if r["id"] == 527:
+        if r["id"] == 511:
+            assert {k:v for k,v in candidate.items() if k not in ("rarity","levelUp","artworkSourcePage","artworkStatus")} == {k:v for k,v in r.items() if k not in ("rarity","levelUp","artworkSourcePage","artworkStatus")}
+        elif r["id"] == 527:
             assert {k:v for k,v in candidate.items() if k not in ("releaseState","status","preview","countsTowardCollection")} == {k:v for k,v in r.items() if k not in ("releaseState","status","preview","countsTowardCollection")}
         else:
             assert candidate == r, f"altered original {r['id']}"
-    print("ALL ORIGINAL RECORDS PRESERVED; only Cursed Kelper release metadata changed")
+    print("ORIGINAL DATA PRESERVED except Cursed Kelper release flags and Sweet Dreams verified metadata")
 
 version = json.loads((root/"version.json").read_text())
 assets = json.loads((root/"asset-manifest.json").read_text())
 pwa = json.loads((root/"manifest.webmanifest").read_text())
 sw = (root/"service-worker.js").read_text()
-assert version["version"] == assets["version"] == "2.0.64"
+assert version["version"] == assets["version"] == "2.0.65"
 assert version["artwork"]["localC7S5PortraitCount"] == 59
-assert pwa["start_url"] == "./index.html?v=2.0.64"
-assert "sprites-tracker-${APP_VERSION}" in sw or "const APP_VERSION = '2.0.64'" in sw
+assert pwa["start_url"] == "./index.html?v=2.0.65"
+assert "sprites-tracker-${APP_VERSION}" in sw or "const APP_VERSION = '2.0.65'" in sw
 assert len(set(assets["assets"])) == len(assets["assets"])
 for i in range(538, 562):
     assert by_id[i]["image"] in assets["assets"]
-print("PASS C7S5 v2.0.64 QA — 59 season, 338 combined, archives unchanged")
+print("PASS C7S5 v2.0.65 QA — 59 season, 338 combined, archives unchanged")
