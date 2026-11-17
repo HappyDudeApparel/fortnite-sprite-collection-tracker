@@ -1,3 +1,12 @@
+## Follow-up v2.0.65 — visible Zee and confirmed Sweet Dreams Mythic
+
+- Owner clarified that every authentic portrait is to be shown immediately. Zee (ID 544) remains labeled secret-rare, but is **not concealed** by ownership. Its original pink crystal artwork matches its individual Fortnite.GG page at https://fortnite.gg/sprites/338-zee and it remains accessible in the main list and Vault when Missing.
+- Sweet Dreams (ID 511) is an actual November 2026 Treasure Hunters Sprite, **Mythic, Base only**, with no Fortune, Cursed, or Gold row. Corrected the site's provisional rarity metadata; added the source's level-up description. Its already-hosted purple star portrait was checked visually against https://fortnite.gg/sprites/301-sweet-dreams and did not require replacing.
+- Two intentionally bounded changes: Zee presentation, Sweet Dreams metadata. No Sprite added/deleted, no image replaced, no old ID or persisted key altered. Counts remain 59/338 and original records/archives remain as previously approved.
+- All earlier statements in this document about Zee being hidden until acquired describe the former v2.0.64 behaviour and have been superseded by this addendum.
+
+---
+
 # Sprite Collection Locker — C7S5 v2.0.64, November 16, 2026
 
 ## Owner-approved distinction: site inclusion versus Fortnite availability

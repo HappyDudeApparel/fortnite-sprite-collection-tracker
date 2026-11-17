@@ -1,13 +1,13 @@
 {
-  "version": "2.0.64",
+  "version": "2.0.65",
   "published": "2026-11-16",
-  "notes": "All 59 Treasure Hunters catalogue records with independently verified genuine portraits shown and locally marked released, regardless of in-game release status; includes seven November 15 additions, 14 Gold, four Sir Oscar. 338 total site-counted across C7S3/C7S4/C7S5. Preserve original storage, art and Vault.",
+  "notes": "Show genuine Zee portrait and name from the outset, without requiring ownership; correct Sweet Dreams to Mythic and original Fortnite.GG source. 59 Treasure Hunters / 338 site total unchanged; existing ownership, artwork, Vault and archived seasons preserved.",
   "artwork": {
     "kind": "verified individual Fortnite.GG source WebP icons (512 x 512)",
     "localC7S5PortraitCount": 59,
     "newPortraitsImported": 24,
     "source": "Fortnite.GG",
-    "status": "All 59 C7S5 individual authentic portraits locally hosted and visible, except undiscovered secret rare Zee retains intentional mystery reveal",
+    "status": "All 59 Treasure Hunters original portraits shown in roster and available in Locker, including Zee regardless of ownership",
     "existingSourceManifest": "docs/C7S5-CANONICAL-PORTRAITS-IMPORT.json",
     "newImportManifest": "docs/C7S5-NOV-16-2026-ROSTER-QA.md"
   },
@@ -39,8 +39,10 @@
     "All 24 new portraits (7 launch + 17 Gold/Oscar) locally hosted and source linked",
     "All 14 Gold portraits and four Sir Oscar forms live in app",
     "In-game availability distinct from site catalogue release status",
-    "Zee secret concealment until ownership; all 59 portraits retained",
-    "C7S3/C7S4 original records unchanged, same localStorage keys"
+    "C7S3/C7S4 original records unchanged, same localStorage keys",
+    "Zee name and authentic pink portrait always visible (secret rare classification retained)",
+    "Sweet Dreams Mythic Base only, verified against official Fortnite.GG image and source page",
+    "Zee ownership state and stable storage keys unaffected"
   ],
   "artworkPresentation": "Unboxed and centered original alpha PNG/WebP; large portrait and variants, unified header+row horizontal scrolling on narrow screens",
   "lockerRelease": {
